@@ -1,0 +1,259 @@
+import { useState, useEffect } from 'react';
+import { 
+    getAppointmentsRequest, 
+    confirmAppointmentAdminRequest, 
+    completeAppointmentRequest,
+    cancelAppointmentRequest 
+} from '../api/appointments';
+
+function AdminAppointments() {
+    const [appointments, setAppointments] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [filters, setFilters] = useState({
+        status: '',
+        startDate: '',
+        endDate: ''
+    });
+
+    useEffect(() => {
+        loadAppointments();
+    }, [filters]);
+
+    const loadAppointments = async () => {
+        try {
+            const params = {};
+            if (filters.status) params.status = filters.status;
+            if (filters.startDate) params.startDate = filters.startDate;
+            if (filters.endDate) params.endDate = filters.endDate;
+
+            const response = await getAppointmentsRequest(params);
+            setAppointments(response.data);
+        } catch (error) {
+            console.error('Error loading appointments:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleStatusChange = async (appointmentId, action) => {
+        try {
+            let message = '';
+            
+            switch (action) {
+                case 'confirm':
+                    await confirmAppointmentAdminRequest(appointmentId);
+                    message = 'Cita confirmada';
+                    break;
+                case 'complete':
+                    await completeAppointmentRequest(appointmentId);
+                    message = 'Cita marcada como completada';
+                    break;
+                case 'cancel':
+                    const reason = prompt('Motivo de cancelación (opcional):');
+                    await cancelAppointmentRequest(appointmentId, reason);
+                    message = 'Cita cancelada';
+                    break;
+            }
+            
+            alert(message);
+            loadAppointments();
+        } catch (error) {
+            console.error('Error updating appointment:', error);
+            alert('Error al actualizar la cita');
+        }
+    };
+
+    const getStatusColor = (status) => {
+        const colors = {
+            'pending': 'bg-yellow-100 text-yellow-800',
+            'confirmed': 'bg-blue-100 text-blue-800',
+            'completed': 'bg-green-100 text-green-800',
+            'cancelled': 'bg-red-100 text-red-800'
+        };
+        return colors[status] || 'bg-gray-100 text-gray-800';
+    };
+
+    const getStatusText = (status) => {
+        const texts = {
+            'pending': 'Pendiente',
+            'confirmed': 'Confirmada',
+            'completed': 'Completada',
+            'cancelled': 'Cancelada'
+        };
+        return texts[status] || status;
+    };
+
+    const formatDateTime = (date, time) => {
+        const appointmentDate = new Date(date);
+        return `${appointmentDate.toLocaleDateString('es-ES')} a las ${time}`;
+    };
+
+    if (loading) return <div className="text-center py-8">Cargando citas...</div>;
+
+    return (
+        <div className="space-y-6">
+            <div className="form-container stagger-item">
+                <h3 className="font-semibold mb-4 text-[var(--charcoal)] flex items-center">
+                    <svg className="w-5 h-5 mr-2 text-[var(--gold-accent)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.414A1 1 0 013 6.707V4z" />
+                    </svg>
+                    Filtros de Búsqueda
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label className="block text-sm font-medium mb-1">Estado</label>
+                        <select
+                            value={filters.status}
+                            onChange={(e) => setFilters({...filters, status: e.target.value})}
+                            className="input-field"
+                        >
+                            <option value="">Todos los estados</option>
+                            <option value="pending">Pendientes</option>
+                            <option value="confirmed">Confirmadas</option>
+                            <option value="completed">Completadas</option>
+                            <option value="cancelled">Canceladas</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium mb-1">Fecha desde</label>
+                        <input
+                            type="date"
+                            value={filters.startDate}
+                            onChange={(e) => setFilters({...filters, startDate: e.target.value})}
+                            className="input-field"
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium mb-1">Fecha hasta</label>
+                        <input
+                            type="date"
+                            value={filters.endDate}
+                            onChange={(e) => setFilters({...filters, endDate: e.target.value})}
+                            className="input-field"
+                        />
+                    </div>
+                </div>
+            </div>
+
+            <div className="form-container stagger-item overflow-hidden">
+                {appointments.length === 0 ? (
+                    <div className="text-center py-12 animate-fade-in">
+                        <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center">
+                            <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                        </div>
+                        <h3 className="text-lg font-semibold text-gray-700 mb-2">No hay citas</h3>
+                        <p className="text-gray-500">No hay citas que coincidan con los filtros seleccionados</p>
+                    </div>
+                ) : (
+                    <div className="overflow-x-auto">
+                        <table className="min-w-full divide-y divide-gray-200">
+                            <thead className="bg-gray-50">
+                                <tr>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                                        Propiedad
+                                    </th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                                        Usuario
+                                    </th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                                        Fecha y Hora
+                                    </th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                                        Estado
+                                    </th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                                        Acciones
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody className="bg-white divide-y divide-gray-200">
+                                {appointments.map((appointment, index) => (
+                                    <tr key={appointment._id} className="table-row stagger-item" style={{animationDelay: `${index * 0.05}s`}}>
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <div>
+                                                <div className="text-sm font-medium text-gray-900">
+                                                    {appointment.property?.title}
+                                                </div>
+                                                <div className="text-sm text-gray-500">
+                                                    {appointment.property?.address?.street}
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <div>
+                                                <div className="text-sm font-medium text-gray-900">
+                                                    {appointment.user?.username || appointment.visitor?.name}
+                                                </div>
+                                                <div className="text-sm text-gray-500">
+                                                    {appointment.user?.email || appointment.visitor?.email}
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                            {formatDateTime(appointment.appointmentDate, appointment.appointmentTime)}
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(appointment.status)}`}>
+                                                {getStatusText(appointment.status)}
+                                            </span>
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                                            {appointment.status === 'pending' && (
+                                                <>
+                                                    <button
+                                                        onClick={() => handleStatusChange(appointment._id, 'confirm')}
+                                                        className="text-blue-600 hover:text-blue-900"
+                                                    >
+                                                        Confirmar
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handleStatusChange(appointment._id, 'cancel')}
+                                                        className="text-red-600 hover:text-red-900"
+                                                    >
+                                                        Cancelar
+                                                    </button>
+                                                </>
+                                            )}
+                                            {appointment.status === 'confirmed' && (
+                                                <>
+                                                    <button
+                                                        onClick={() => handleStatusChange(appointment._id, 'complete')}
+                                                        className="text-green-600 hover:text-green-900"
+                                                    >
+                                                        Completar
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handleStatusChange(appointment._id, 'cancel')}
+                                                        className="text-red-600 hover:text-red-900"
+                                                    >
+                                                        Cancelar
+                                                    </button>
+                                                </>
+                                            )}
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                )}
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                {['pending', 'confirmed', 'completed', 'cancelled'].map((status, index) => {
+                    const count = appointments.filter(apt => apt.status === status).length;
+                    return (
+                        <div key={status} className="card-animated hover-lift stagger-item text-center p-6" style={{animationDelay: `${index * 0.1}s`}}>
+                            <div className="text-3xl font-bold text-[var(--charcoal)] mb-2">{count}</div>
+                            <div className="text-sm font-medium text-gray-600">{getStatusText(status)}</div>
+                        </div>
+                    );
+                })}
+            </div>
+        </div>
+    );
+}
+
+export default AdminAppointments;
