@@ -385,3 +385,19 @@ body {
   @apply shadow-2xl shadow-gray-200/60;
   transform: translateY(-2px);
 }
+
+/* Fade-in Animation for Form Steps */
+@keyframes fadeInStep {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeInStep 0.5s ease-out forwards;
+}
