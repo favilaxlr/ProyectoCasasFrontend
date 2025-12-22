@@ -4,12 +4,14 @@ import { useNavigate, useParams } from 'react-router';
 import { createPropertyRequest, getPropertyRequest, updatePropertyRequest } from '../api/properties';
 import PropertyGallery from '../components/PropertyGallery';
 import ImageUploader from '../components/ImageUploader';
+import LocationPicker from '../components/LocationPicker';
 
 function PropertyFormPage() {
     const { register, handleSubmit, setValue, formState: { errors } } = useForm();
     const [images, setImages] = useState([]);
     const [loading, setLoading] = useState(false);
     const [property, setProperty] = useState(null);
+    const [coordinates, setCoordinates] = useState(null);
     const navigate = useNavigate();
     const { id } = useParams();
     const isEditing = !!id;
@@ -26,11 +28,18 @@ function PropertyFormPage() {
             const propertyData = res.data;
             setProperty(propertyData);
             
+            // Cargar coordenadas si existen
+            if (propertyData.address?.coordinates) {
+                setCoordinates(propertyData.address.coordinates);
+            }
+            
             // Llenar formulario con datos existentes
             Object.keys(propertyData).forEach(key => {
                 if (key === 'address') {
                     Object.keys(propertyData.address).forEach(addressKey => {
-                        setValue(`address.${addressKey}`, propertyData.address[addressKey]);
+                        if (addressKey !== 'coordinates') {
+                            setValue(`address.${addressKey}`, propertyData.address[addressKey]);
+                        }
                     });
                 } else if (key === 'price') {
                     Object.keys(propertyData.price).forEach(priceKey => {
@@ -66,6 +75,12 @@ function PropertyFormPage() {
                     formData.append(key, data[key]);
                 }
             });
+
+            // Agregar coordenadas si existen (convertir a números)
+            if (coordinates) {
+                formData.append('address.coordinates.lat', parseFloat(coordinates.lat));
+                formData.append('address.coordinates.lng', parseFloat(coordinates.lng));
+            }
 
             // Agregar imágenes
             images.forEach(image => {
@@ -143,9 +158,15 @@ function PropertyFormPage() {
 
                 {/* Dirección */}
                 <div className="bg-white p-6 rounded-lg shadow">
-                    <h2 className="text-xl font-semibold mb-4">Dirección</h2>
+                    <h2 className="text-xl font-semibold mb-4 text-[var(--charcoal)] flex items-center">
+                        <svg className="w-5 h-5 mr-2 text-[var(--gold-accent)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                        Dirección y Ubicación
+                    </h2>
                     
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                         <div>
                             <label className="block text-sm font-medium mb-2">Calle</label>
                             <input
@@ -177,6 +198,19 @@ function PropertyFormPage() {
                                 className="w-full border border-gray-300 rounded px-3 py-2"
                             />
                         </div>
+                    </div>
+
+                    {/* Selector de ubicación en el mapa */}
+                    <div className="mt-6">
+                        <label className="block text-sm font-medium mb-3 text-[var(--charcoal)]">
+                            📍 Ubicación en el Mapa
+                        </label>
+                        <LocationPicker
+                            initialPosition={coordinates}
+                            onLocationSelect={(location) => {
+                                setCoordinates(location.coordinates);
+                            }}
+                        />
                     </div>
                 </div>
 

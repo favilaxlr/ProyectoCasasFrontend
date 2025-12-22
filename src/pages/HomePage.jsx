@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useAuth } from '../context/AuthContext'
 import { getAllPropertiesRequest } from '../api/properties'
 import PropertyCard from '../components/PropertyCard'
+import InteractiveMap from '../components/InteractiveMap'
 
 function HomePage() {
   const { user } = useAuth()
@@ -9,6 +10,7 @@ function HomePage() {
   const [selectedMarket, setSelectedMarket] = useState('Dallas')
   const [sortOption, setSortOption] = useState('price-low')
   const [selectedProperty, setSelectedProperty] = useState(null)
+  const [mapStyle, setMapStyle] = useState('osm') // 'osm' o 'satellite'
 
   useEffect(() => {
     loadProperties()
@@ -85,50 +87,38 @@ function HomePage() {
       {/* Main Split View */}
       <div className="flex-1 flex">
         {/* Map Panel - Left Side (70%) */}
-        <div className="w-[70%] relative map-placeholder">
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="text-center p-8">
-              <div className="w-32 h-32 mx-auto mb-8 bg-gradient-to-br from-[var(--gold-accent)] to-[var(--charcoal)] rounded-full flex items-center justify-center shadow-2xl animate-pulse-custom">
-                <svg className="w-16 h-16 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                </svg>
-              </div>
-              <h3 className="text-4xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent mb-4">
-                Mapa Interactivo
-              </h3>
-              <p className="text-gray-600 mb-8 text-xl font-medium">Explora propiedades por ubicación geográfica</p>
-              <div className="bg-white/95 backdrop-blur-md rounded-2xl p-8 shadow-2xl max-w-2xl mx-auto border border-white/30 hover:shadow-3xl transition-all duration-500">
-                <div className="flex items-center justify-center mb-6">
-                  <div className="w-8 h-8 bg-[var(--gold-accent)] rounded-full flex items-center justify-center mr-3">
-                    <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
-                    </svg>
-                  </div>
-                  <p className="text-lg font-bold text-gray-800">Marcadores de Propiedades</p>
-                </div>
-                <div className="flex flex-wrap gap-3 justify-center">
-                  {sortedProperties.slice(0, 5).map((property) => (
-                    <div 
-                      key={property._id}
-                      className="map-marker shadow-lg"
-                      onClick={() => setSelectedProperty(property)}
-                    >
-                      ${property.price?.toLocaleString() || 'N/A'}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
+        <div className="w-[70%] relative">
+          <InteractiveMap 
+            properties={sortedProperties}
+            selectedProperty={selectedProperty}
+            onPropertyClick={setSelectedProperty}
+            center={[32.7767, -96.7970]} // Dallas
+            zoom={11}
+            height="100%"
+            mapStyle={mapStyle}
+          />
           
           {/* Map Controls */}
-          <div className="absolute top-6 right-6 bg-white/95 backdrop-blur-md rounded-xl shadow-2xl border border-white/20">
+          <div className="absolute top-6 right-6 bg-white/95 backdrop-blur-md rounded-xl shadow-2xl border border-white/20 z-[1000]">
             <div className="flex">
-              <button className="px-6 py-3 text-sm font-medium border-r border-gray-200 hover:bg-[var(--gold-accent)] hover:text-white transition-all duration-300 rounded-l-xl">
+              <button 
+                onClick={() => setMapStyle('osm')}
+                className={`px-6 py-3 text-sm font-medium border-r border-gray-200 transition-all duration-300 rounded-l-xl ${
+                  mapStyle === 'osm' 
+                    ? 'bg-[var(--gold-accent)] text-white' 
+                    : 'hover:bg-[var(--gold-accent)] hover:text-white'
+                }`}
+              >
                 Mapa
               </button>
-              <button className="px-6 py-3 text-sm font-medium hover:bg-[var(--gold-accent)] hover:text-white transition-all duration-300 rounded-r-xl">
+              <button 
+                onClick={() => setMapStyle('satellite')}
+                className={`px-6 py-3 text-sm font-medium transition-all duration-300 rounded-r-xl ${
+                  mapStyle === 'satellite' 
+                    ? 'bg-[var(--gold-accent)] text-white' 
+                    : 'hover:bg-[var(--gold-accent)] hover:text-white'
+                }`}
+              >
                 Satélite
               </button>
             </div>

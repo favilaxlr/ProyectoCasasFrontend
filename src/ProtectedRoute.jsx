@@ -3,8 +3,6 @@ import {useAuth} from './context/AuthContext';
 
 function ProtectedRoute() {
     const {isLoading, isAuthenticated} = useAuth();
-    console.log("Loading:", isLoading);
-    console.log("isAuthenticated:", isAuthenticated);
 
     //si esta cargando la app los datos retona cargando en un h1
     if (isLoading){

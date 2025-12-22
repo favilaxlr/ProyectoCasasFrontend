@@ -77,8 +77,7 @@ export function PropertiesProvider({ children }) {
   // Función para actualizar una propiedad
   const updateProperty = async (id, property) => {
     try {
-      const res = await updatePropertyRequest(id, property);
-      console.log(res);
+      await updatePropertyRequest(id, property);
     } catch (error) {
       setErrors(error.response.data.message);
     }

@@ -27,12 +27,10 @@ export const AuthProvider = ({ children }) => {
             // Excluir el campo 'confirm' antes de enviar al backend
             const { confirm, ...userData } = user;
             const res = await registerRequest(userData);
-            //console.log(res.data);
             setUser(res.data);
             setIsAuthenticated(true);
             setIsLoading(false);
         } catch (error) {
-            //console.log(error)
             //si existe un error al registrar el usuario
             //guardamos el error en la variable error
             setErrors(error.response.data.message);
@@ -42,7 +40,12 @@ export const AuthProvider = ({ children }) => {
     const signIn = async (user) => {
         try {
             const res = await loginRequest(user);
-            //console.log(res);                         // = <-- Asignacion
+            
+            // Verificar que la respuesta exista
+            if (!res || !res.data) {
+                throw new Error('No se recibió respuesta del servidor');
+            }
+            
             // Verificar roles
             if (res.data.role?.role === 'admin') {
                 setIsAdmin(true);
@@ -51,10 +54,22 @@ export const AuthProvider = ({ children }) => {
             } 
             setUser(res.data);
             setIsAuthenticated(true);
-            setIsLoading(false)
+            setIsLoading(false);
         } catch (error) {
-            //console.log(error);
-            setErrors(error.response.data.message);
+            console.error('Error en signIn:', error);
+            
+            // Manejar diferentes tipos de errores
+            if (error.code === 'ERR_NETWORK' || error.message === 'Network Error') {
+                setErrors(['No se puede conectar al servidor. Verifica que el backend esté corriendo.']);
+            } else if (error.response?.data?.message) {
+                setErrors(error.response.data.message);
+            } else if (error.message) {
+                setErrors([error.message]);
+            } else {
+                setErrors(['Error desconocido al iniciar sesión']);
+            }
+            
+            setIsLoading(false);
         }
     }; //fin de signIn
 

@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* Leaflet Map Styles */
+@import 'leaflet/dist/leaflet.css';
+
 :root {
   /* Paleta FR Family Investments */
   --gold-accent: #C8A452;    /* Gold Accent - botones primarios */
