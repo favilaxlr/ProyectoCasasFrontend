@@ -7,7 +7,7 @@ import ImageUploader from '../components/ImageUploader';
 import LocationPicker from '../components/LocationPicker';
 import { geocodeAddress } from '../utils/geocoding';
 import { toast } from 'react-toastify';
-import { IoHomeSharp, IoDocumentTextSharp, IoLocationSharp, IoSettingsSharp, IoCameraSharp, IoCheckmarkSharp, IoWarningSharp, IoCashSharp, IoBedSharp, IoWaterSharp, IoResizeSharp, IoCalendarSharp, IoCarSharp, IoPawSharp, IoRestaurantSharp, IoSparklesSharp, IoMapSharp, IoInformationCircleSharp, IoArrowBackSharp, IoArrowForwardSharp, IoSaveSharp, IoCloseSharp, IoBusinessSharp, IoHelpCircleSharp } from 'react-icons/io5';
+import { IoHomeSharp, IoDocumentTextSharp, IoLocationSharp, IoSettingsSharp, IoCameraSharp, IoCheckmarkSharp, IoCheckmarkCircleSharp, IoWarningSharp, IoCashSharp, IoBedSharp, IoWaterSharp, IoResizeSharp, IoCalendarSharp, IoCarSharp, IoPawSharp, IoRestaurantSharp, IoSparklesSharp, IoMapSharp, IoInformationCircleSharp, IoArrowBackSharp, IoArrowForwardSharp, IoSaveSharp, IoCloseSharp, IoBusinessSharp, IoHelpCircleSharp, IoKeySharp, IoCardSharp } from 'react-icons/io5';
 
 function PropertyFormPage() {
     const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm({
@@ -23,10 +23,11 @@ function PropertyFormPage() {
     const [loading, setLoading] = useState(false);
     const [property, setProperty] = useState(null);
     const [coordinates, setCoordinates] = useState(null);
-    const [currentStep, setCurrentStep] = useState(1);
+    const [currentStep, setCurrentStep] = useState(0); // Empieza en 0 para el selector de modalidad
     const [selectedAmenities, setSelectedAmenities] = useState([]);
     const [geocodingFromFields, setGeocodingFromFields] = useState(false);
     const [updatingFromMap, setUpdatingFromMap] = useState(false);
+    const [businessMode, setBusinessMode] = useState(null); // 'sale', 'rent', 'both'
     const navigate = useNavigate();
     const { id } = useParams();
     const isEditing = !!id;
@@ -46,15 +47,45 @@ function PropertyFormPage() {
     ];
 
     const steps = [
+        { number: 0, title: 'Modalidad de Negocio', icon: <IoBusinessSharp /> },
         { number: 1, title: 'Información Básica', icon: <IoDocumentTextSharp /> },
         { number: 2, title: 'Ubicación', icon: <IoLocationSharp /> },
-        { number: 3, title: 'Detalles', icon: <IoHomeSharp /> },
-        { number: 4, title: 'Imágenes', icon: <IoCameraSharp /> }
+        { number: 3, title: 'Detalles de la Propiedad', icon: <IoHomeSharp /> },
+        { number: 4, title: businessMode === 'sale' ? 'Información de Venta' : 
+                          businessMode === 'rent' ? 'Información de Renta' : 
+                          'Información de Venta y Renta', icon: <IoCashSharp /> },
+        { number: 5, title: 'Imágenes', icon: <IoCameraSharp /> }
+    ];
+
+    // Modalidades de negocio disponibles
+    const businessModes = [
+        {
+            value: 'sale',
+            title: 'Solo Venta',
+            description: 'Propiedad exclusivamente para venta',
+            icon: IoCardSharp,
+            gradient: 'from-blue-500 to-blue-600'
+        },
+        {
+            value: 'rent',
+            title: 'Solo Renta',
+            description: 'Propiedad exclusivamente para renta',
+            icon: IoKeySharp,
+            gradient: 'from-green-500 to-green-600'
+        },
+        {
+            value: 'both',
+            title: 'Venta y Renta',
+            description: 'Propiedad disponible para ambas opciones',
+            icon: IoBusinessSharp,
+            gradient: 'from-purple-500 to-purple-600'
+        }
     ];
 
     useEffect(() => {
         if (isEditing) {
             loadProperty();
+            setCurrentStep(1); // Saltar el paso 0 cuando se edita
         }
     }, [id]);
 
@@ -108,6 +139,25 @@ function PropertyFormPage() {
                 setSelectedAmenities(propertyData.amenities);
             }
             
+            // Cargar businessMode si existe, sino inferirlo de los datos de precio
+            if (propertyData.businessMode) {
+                setBusinessMode(propertyData.businessMode);
+            } else {
+                // Inferir de los datos de precio existentes
+                const hasSalePrice = propertyData.price?.sale;
+                const hasRentPrice = propertyData.price?.monthlyRent;
+                
+                if (hasSalePrice && hasRentPrice) {
+                    setBusinessMode('both');
+                } else if (hasSalePrice) {
+                    setBusinessMode('sale');
+                } else if (hasRentPrice) {
+                    setBusinessMode('rent');
+                } else {
+                    setBusinessMode('sale'); // Default
+                }
+            }
+            
             Object.keys(propertyData).forEach(key => {
                 if (key === 'address') {
                     Object.keys(propertyData.address).forEach(addressKey => {
@@ -123,7 +173,7 @@ function PropertyFormPage() {
                     Object.keys(propertyData.details).forEach(detailKey => {
                         setValue(`details.${detailKey}`, propertyData.details[detailKey]);
                     });
-                } else if (key !== 'amenities' && key !== 'images') {
+                } else if (key !== 'amenities' && key !== 'images' && key !== 'businessMode') {
                     setValue(key, propertyData[key]);
                 }
             });
@@ -149,8 +199,25 @@ function PropertyFormPage() {
             if (data.description) formData.append('description', data.description);
 
             if (data.price) {
-                if (data.price.sale) formData.append('price.sale', Number(data.price.sale));
+                // Campos de venta (si businessMode es 'sale' o 'both')
+                if (businessMode === 'sale' || businessMode === 'both') {
+                    if (data.price.sale) formData.append('price.sale', Number(data.price.sale));
+                    if (data.price.taxes) formData.append('price.taxes', Number(data.price.taxes));
+                    if (data.price.deedConditions) formData.append('price.deedConditions', data.price.deedConditions);
+                }
+                
+                // Campos de renta (si businessMode es 'rent' o 'both')
+                if (businessMode === 'rent' || businessMode === 'both') {
+                    if (data.price.monthlyRent) formData.append('price.monthlyRent', Number(data.price.monthlyRent));
+                    if (data.price.deposit) formData.append('price.deposit', Number(data.price.deposit));
+                    if (data.price.leaseDuration) formData.append('price.leaseDuration', Number(data.price.leaseDuration));
+                    if (data.price.maintenance) formData.append('price.maintenance', Number(data.price.maintenance));
+                    if (data.price.leaseConditions) formData.append('price.leaseConditions', data.price.leaseConditions);
+                }
             }
+            
+            // Agregar la modalidad de negocio al FormData
+            if (businessMode) formData.append('businessMode', businessMode);
 
             if (data.address) {
                 if (data.address.street) formData.append('address.street', data.address.street);
@@ -213,8 +280,14 @@ function PropertyFormPage() {
         const values = watch();
         
         switch(currentStep) {
+            case 0:
+                if (!businessMode) {
+                    toast.error('Por favor selecciona una modalidad de negocio');
+                    return false;
+                }
+                break;
             case 1:
-                if (!values.title || !values.description || !values.price?.sale) {
+                if (!values.title || !values.description) {
                     toast.error('Por favor completa todos los campos requeridos');
                     return false;
                 }
@@ -235,6 +308,27 @@ function PropertyFormPage() {
                 }
                 break;
             case 4:
+                // Validar precios según modalidad
+                if (businessMode === 'sale' && !values.price?.sale) {
+                    toast.error('Por favor ingresa el precio de venta');
+                    return false;
+                }
+                if (businessMode === 'rent' && (!values.price?.monthlyRent || !values.price?.deposit)) {
+                    toast.error('Por favor completa los datos de renta');
+                    return false;
+                }
+                if (businessMode === 'both') {
+                    if (!values.price?.sale) {
+                        toast.error('Por favor ingresa el precio de venta');
+                        return false;
+                    }
+                    if (!values.price?.monthlyRent || !values.price?.deposit) {
+                        toast.error('Por favor completa los datos de renta');
+                        return false;
+                    }
+                }
+                break;
+            case 5:
                 break;
         }
         return true;
@@ -248,7 +342,7 @@ function PropertyFormPage() {
     };
 
     const prevStep = () => {
-        if (currentStep > 1) {
+        if (currentStep > 0) {
             setCurrentStep(currentStep - 1);
         }
     };
@@ -278,7 +372,7 @@ function PropertyFormPage() {
                         <div className="absolute top-6 left-0 right-0 h-1 bg-gray-200 -z-10">
                             <div 
                                 className="h-full bg-[var(--gold-accent)] transition-all duration-500"
-                                style={{ width: `${((currentStep - 1) / (steps.length - 1)) * 100}%` }}
+                                style={{ width: `${(currentStep / (steps.length - 1)) * 100}%` }}
                             />
                         </div>
 
@@ -316,6 +410,91 @@ function PropertyFormPage() {
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <div className="bg-white rounded-2xl shadow-xl p-8 mb-6 min-h-[500px]">
                         
+                        {/* Paso 0: Selección de Modalidad de Negocio */}
+                        {currentStep === 0 && (
+                            <div className="animate-fade-in space-y-6">
+                                <div className="text-center mb-8">
+                                    <h2 className="text-3xl font-bold text-[var(--charcoal)] mb-2">
+                                        ¿Qué tipo de negocio deseas realizar?
+                                    </h2>
+                                    <p className="text-gray-600">
+                                        Selecciona la modalidad para continuar con el formulario
+                                    </p>
+                                </div>
+
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+                                    {businessModes.map((mode) => {
+                                        const Icon = mode.icon;
+                                        const isSelected = businessMode === mode.value;
+                                        
+                                        return (
+                                            <button
+                                                key={mode.value}
+                                                type="button"
+                                                onClick={() => {
+                                                    setBusinessMode(mode.value);
+                                                    setCurrentStep(1);
+                                                }}
+                                                className={`
+                                                    group relative overflow-hidden rounded-2xl p-8 
+                                                    border-4 transition-all duration-300 transform hover:scale-105
+                                                    ${isSelected 
+                                                        ? 'border-[var(--gold-accent)] shadow-2xl' 
+                                                        : 'border-gray-200 hover:border-gray-300 hover:shadow-xl'
+                                                    }
+                                                `}
+                                            >
+                                                <div className={`absolute inset-0 bg-gradient-to-br ${mode.gradient} opacity-10 group-hover:opacity-20 transition-opacity`}></div>
+                                                
+                                                <div className="relative z-10 flex flex-col items-center text-center space-y-4">
+                                                    <div className={`
+                                                        text-6xl p-6 rounded-full 
+                                                        bg-gradient-to-br ${mode.gradient}
+                                                        text-white shadow-lg
+                                                        group-hover:scale-110 transition-transform
+                                                        flex items-center justify-center
+                                                    `}>
+                                                        <Icon className="text-5xl" />
+                                                    </div>
+                                                    
+                                                    <h3 className="text-xl font-bold text-[var(--charcoal)]">
+                                                        {mode.title}
+                                                    </h3>
+                                                    
+                                                    <p className="text-sm text-gray-600 leading-relaxed">
+                                                        {mode.description}
+                                                    </p>
+                                                    
+                                                    {isSelected && (
+                                                        <div className="flex items-center text-[var(--gold-accent)] font-semibold">
+                                                            <IoCheckmarkCircleSharp className="text-2xl mr-2" />
+                                                            Seleccionado
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+
+                                <div className="bg-blue-50 border-l-4 border-blue-400 p-4 rounded-r-xl mt-8 max-w-3xl mx-auto">
+                                    <div className="flex">
+                                        <IoInformationCircleSharp className="text-2xl text-blue-600 mr-3 flex-shrink-0" />
+                                        <div>
+                                            <p className="text-sm font-medium text-blue-800 mb-2">
+                                                ℹ️ Información sobre las modalidades:
+                                            </p>
+                                            <ul className="text-xs text-blue-700 space-y-1">
+                                                <li>• <strong>Solo Venta:</strong> La propiedad se venderá definitivamente</li>
+                                                <li>• <strong>Solo Renta:</strong> La propiedad se alquilará por períodos</li>
+                                                <li>• <strong>Venta y Renta:</strong> La propiedad puede venderse o rentarse</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
                         {currentStep === 1 && (
                             <div className="animate-fade-in space-y-6">
                                 <div className="border-b pb-4 mb-6">
@@ -363,31 +542,6 @@ function PropertyFormPage() {
                                             <IoWarningSharp className="mr-1" /> {errors.description.message}
                                         </p>
                                     )}
-                                </div>
-
-                                <div className="grid grid-cols-1 gap-6">
-                                    <div>
-                                        <label className="block text-sm font-semibold mb-2 text-gray-700 flex items-center">
-                                            <IoCashSharp className="mr-2" /> Precio de Venta (USD) *
-                                        </label>
-                                        <input
-                                            type="number"
-                                            {...register('price.sale', { 
-                                                required: 'El precio es requerido',
-                                                min: { value: 1, message: 'Debe ser mayor a 0' }
-                                            })}
-                                            placeholder="250000"
-                                            className={`w-full border-2 rounded-xl px-4 py-3 transition-all focus:ring-2 focus:ring-[var(--gold-accent)] focus:border-[var(--gold-accent)] ${
-                                                errors.price?.sale ? 'border-red-500' : 'border-gray-200'
-                                            }`}
-                                        />
-                                        {errors.price?.sale && (
-                                            <p className="text-red-500 text-sm mt-1 flex items-center">
-                                                <IoWarningSharp className="mr-1" /> {errors.price.sale.message}
-                                            </p>
-                                        )}
-                                        <p className="text-xs text-gray-500 mt-1">Precio de venta de la propiedad</p>
-                                    </div>
                                 </div>
                             </div>
                         )}
@@ -685,7 +839,229 @@ function PropertyFormPage() {
                             </div>
                         )}
 
+                        {/* Paso 4: Información de Precios (Condicional según modalidad) */}
                         {currentStep === 4 && (
+                            <div className="animate-fade-in space-y-6">
+                                {!businessMode ? (
+                                    <div className="text-center py-16">
+                                        <IoWarningSharp className="text-6xl text-yellow-500 mx-auto mb-4" />
+                                        <h3 className="text-2xl font-bold text-[var(--charcoal)] mb-2">
+                                            Modalidad no seleccionada
+                                        </h3>
+                                        <p className="text-gray-600 mb-6">
+                                            Debes volver al paso 0 y seleccionar una modalidad de negocio
+                                        </p>
+                                        <button
+                                            type="button"
+                                            onClick={() => setCurrentStep(0)}
+                                            className="px-6 py-3 bg-[var(--gold-accent)] text-white rounded-xl font-medium hover:bg-[var(--charcoal)] transition-all inline-flex items-center"
+                                        >
+                                            <IoArrowBackSharp className="mr-2" />
+                                            Volver al Paso 0
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <>
+                                        <div className="border-b pb-4 mb-6">
+                                            <h2 className="text-2xl font-bold text-[var(--charcoal)] flex items-center">
+                                                <IoCashSharp className="mr-3" /> 
+                                                {businessMode === 'sale' && 'Información de Venta'}
+                                                {businessMode === 'rent' && 'Información de Renta'}
+                                                {businessMode === 'both' && 'Información de Venta y Renta'}
+                                            </h2>
+                                            <p className="text-gray-600 mt-1">
+                                                {businessMode === 'sale' && 'Precio y condiciones de venta'}
+                                                {businessMode === 'rent' && 'Precio y condiciones de renta'}
+                                                {businessMode === 'both' && 'Precios para ambas modalidades'}
+                                            </p>
+                                        </div>
+
+                                        {/* Badge indicador de modalidad */}
+                                        <div className="flex items-center justify-center mb-6">
+                                            <div className={`
+                                                inline-flex items-center px-6 py-3 rounded-full 
+                                                bg-gradient-to-r ${businessModes.find(m => m.value === businessMode)?.gradient}
+                                                text-white font-semibold shadow-lg
+                                            `}>
+                                                {businessModes.find(m => m.value === businessMode)?.icon}
+                                                <span className="ml-2">
+                                                    {businessModes.find(m => m.value === businessMode)?.title}
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        {/* Campos de VENTA (si businessMode es 'sale' o 'both') */}
+                                        {(businessMode === 'sale' || businessMode === 'both') && (
+                                    <div className="bg-blue-50 border-2 border-blue-200 rounded-2xl p-6 space-y-6">
+                                        <h3 className="text-xl font-bold text-blue-800 flex items-center">
+                                            <IoCardSharp className="mr-2" /> Datos de Venta
+                                        </h3>
+                                        
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                            <div>
+                                                <label className="block text-sm font-semibold mb-2 text-gray-700">
+                                                    Precio de Venta (USD) *
+                                                </label>
+                                                <input
+                                                    type="number"
+                                                    {...register('price.sale', { 
+                                                        required: businessMode !== 'rent' ? 'El precio de venta es requerido' : false,
+                                                        min: { value: 1, message: 'Debe ser mayor a 0' }
+                                                    })}
+                                                    placeholder="250000"
+                                                    className={`w-full border-2 rounded-xl px-4 py-3 transition-all focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                                                        errors.price?.sale ? 'border-red-500' : 'border-gray-300'
+                                                    }`}
+                                                />
+                                                {errors.price?.sale && (
+                                                    <p className="text-red-500 text-sm mt-1 flex items-center">
+                                                        <IoWarningSharp className="mr-1" /> {errors.price.sale.message}
+                                                    </p>
+                                                )}
+                                            </div>
+
+                                            <div>
+                                                <label className="block text-sm font-semibold mb-2 text-gray-700">
+                                                    Impuestos y Cargos Anuales (USD)
+                                                </label>
+                                                <input
+                                                    type="number"
+                                                    {...register('price.taxes')}
+                                                    placeholder="3000"
+                                                    className="w-full border-2 border-gray-300 rounded-xl px-4 py-3 transition-all focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                                />
+                                                <p className="text-xs text-gray-500 mt-1">Impuestos prediales, HOA, etc.</p>
+                                            </div>
+
+                                            <div className="md:col-span-2">
+                                                <label className="block text-sm font-semibold mb-2 text-gray-700">
+                                                    Condiciones de Escrituración
+                                                </label>
+                                                <textarea
+                                                    {...register('price.deedConditions')}
+                                                    rows="3"
+                                                    placeholder="Ej: Se requiere crédito hipotecario, acepta financiamiento..."
+                                                    className="w-full border-2 border-gray-300 rounded-xl px-4 py-3 transition-all focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* Campos de RENTA (si businessMode es 'rent' o 'both') */}
+                                {(businessMode === 'rent' || businessMode === 'both') && (
+                                    <div className="bg-green-50 border-2 border-green-200 rounded-2xl p-6 space-y-6">
+                                        <h3 className="text-xl font-bold text-green-800 flex items-center">
+                                            <IoKeySharp className="mr-2" /> Datos de Renta
+                                        </h3>
+                                        
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                            <div>
+                                                <label className="block text-sm font-semibold mb-2 text-gray-700">
+                                                    Renta Mensual (USD) *
+                                                </label>
+                                                <input
+                                                    type="number"
+                                                    {...register('price.monthlyRent', { 
+                                                        required: businessMode !== 'sale' ? 'La renta mensual es requerida' : false,
+                                                        min: { value: 1, message: 'Debe ser mayor a 0' }
+                                                    })}
+                                                    placeholder="1500"
+                                                    className={`w-full border-2 rounded-xl px-4 py-3 transition-all focus:ring-2 focus:ring-green-500 focus:border-green-500 ${
+                                                        errors.price?.monthlyRent ? 'border-red-500' : 'border-gray-300'
+                                                    }`}
+                                                />
+                                                {errors.price?.monthlyRent && (
+                                                    <p className="text-red-500 text-sm mt-1 flex items-center">
+                                                        <IoWarningSharp className="mr-1" /> {errors.price.monthlyRent.message}
+                                                    </p>
+                                                )}
+                                            </div>
+
+                                            <div>
+                                                <label className="block text-sm font-semibold mb-2 text-gray-700">
+                                                    Depósito de Garantía (USD) *
+                                                </label>
+                                                <input
+                                                    type="number"
+                                                    {...register('price.deposit', { 
+                                                        required: businessMode !== 'sale' ? 'El depósito es requerido' : false,
+                                                        min: { value: 0, message: 'Debe ser mayor o igual a 0' }
+                                                    })}
+                                                    placeholder="1500"
+                                                    className={`w-full border-2 rounded-xl px-4 py-3 transition-all focus:ring-2 focus:ring-green-500 focus:border-green-500 ${
+                                                        errors.price?.deposit ? 'border-red-500' : 'border-gray-300'
+                                                    }`}
+                                                />
+                                                {errors.price?.deposit && (
+                                                    <p className="text-red-500 text-sm mt-1 flex items-center">
+                                                        <IoWarningSharp className="mr-1" /> {errors.price.deposit.message}
+                                                    </p>
+                                                )}
+                                            </div>
+
+                                            <div>
+                                                <label className="block text-sm font-semibold mb-2 text-gray-700">
+                                                    Duración Mínima del Contrato (meses)
+                                                </label>
+                                                <input
+                                                    type="number"
+                                                    {...register('price.leaseDuration')}
+                                                    placeholder="12"
+                                                    className="w-full border-2 border-gray-300 rounded-xl px-4 py-3 transition-all focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                                                />
+                                            </div>
+
+                                            <div>
+                                                <label className="block text-sm font-semibold mb-2 text-gray-700">
+                                                    Mantenimiento Mensual (USD)
+                                                </label>
+                                                <input
+                                                    type="number"
+                                                    {...register('price.maintenance')}
+                                                    placeholder="150"
+                                                    className="w-full border-2 border-gray-300 rounded-xl px-4 py-3 transition-all focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                                                />
+                                                <p className="text-xs text-gray-500 mt-1">Cuota de mantenimiento, si aplica</p>
+                                            </div>
+
+                                            <div className="md:col-span-2">
+                                                <label className="block text-sm font-semibold mb-2 text-gray-700">
+                                                    Condiciones Adicionales de Renta
+                                                </label>
+                                                <textarea
+                                                    {...register('price.leaseConditions')}
+                                                    rows="3"
+                                                    placeholder="Ej: Se requiere aval, referencias laborales, sin mascotas..."
+                                                    className="w-full border-2 border-gray-300 rounded-xl px-4 py-3 transition-all focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* Información adicional para modalidad 'both' */}
+                                {businessMode === 'both' && (
+                                    <div className="bg-purple-50 border-l-4 border-purple-400 p-4 rounded-r-xl">
+                                        <div className="flex">
+                                            <IoInformationCircleSharp className="text-2xl text-purple-600 mr-3 flex-shrink-0" />
+                                            <div>
+                                                <p className="text-sm font-medium text-purple-800">
+                                                    Modalidad: Venta y Renta
+                                                </p>
+                                                <p className="text-xs text-purple-700 mt-1">
+                                                    Esta propiedad estará disponible para venta O renta. Los usuarios podrán elegir la modalidad que prefieran.
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+                                    </>
+                                )}
+                            </div>
+                        )}
+
+                        {currentStep === 5 && (
                             <div className="animate-fade-in space-y-6">
                                 <div className="border-b pb-4 mb-6">
                                     <h2 className="text-2xl font-bold text-[var(--charcoal)] flex items-center">
@@ -743,9 +1119,9 @@ function PropertyFormPage() {
                         <button
                             type="button"
                             onClick={prevStep}
-                            disabled={currentStep === 1}
+                            disabled={currentStep === 0}
                             className={`px-6 py-3 rounded-xl font-medium transition-all flex items-center ${
-                                currentStep === 1
+                                currentStep === 0
                                     ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
                                     : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                             }`}

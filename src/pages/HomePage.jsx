@@ -4,6 +4,7 @@ import { getAllPropertiesRequest } from '../api/properties'
 import PropertyCard from '../components/PropertyCard'
 import InteractiveMap from '../components/InteractiveMap'
 import ThemeToggle from '../components/ThemeToggle'
+import { IoLocationSharp, IoFunnelSharp, IoPersonCircleOutline } from 'react-icons/io5'
 
 function HomePage() {
   const { user } = useAuth()
@@ -34,29 +35,24 @@ function HomePage() {
 
   return (
     <div className="h-screen flex flex-col">
-      {/* Header */}
-      <div className="main-header px-8 py-4 flex justify-between items-center flex-shrink-0">
-        <div className="flex items-center space-x-8">
-          <h1 className="text-2xl font-bold text-[var(--gold-accent)]">
+      {/* Header Rediseñado - Más limpio y compacto */}
+      <div className="main-header px-6 py-3 flex justify-between items-center flex-shrink-0 border-b border-gray-700/30">
+        {/* Logo */}
+        <div className="flex items-center">
+          <h1 className="text-xl font-bold text-[var(--gold-accent)] tracking-wide">
             FR FAMILY INVESTMENTS
           </h1>
-          <nav className="flex space-x-6">
-            <button className="text-white hover:text-[var(--gold-accent)] transition-all duration-300 font-medium px-4 py-2 rounded-lg hover:bg-white/10">
-              Explorar
-            </button>
-            <button className="text-white hover:text-[var(--gold-accent)] transition-all duration-300 font-medium px-4 py-2 rounded-lg hover:bg-white/10">
-              Configuración
-            </button>
-          </nav>
         </div>
         
-        <div className="flex items-center space-x-6">
-          <div className="flex items-center space-x-2">
-            <span className="text-sm font-medium text-gray-300">Tu Mercado:</span>
+        {/* Controles centrales - Más compactos */}
+        <div className="flex items-center gap-4">
+          {/* Selector de Mercado con icono */}
+          <div className="flex items-center gap-2 bg-gray-800/50 px-3 py-2 rounded-lg border border-gray-600/50 hover:border-[var(--gold-accent)]/50 transition-all">
+            <IoLocationSharp className="text-[var(--gold-accent)] text-lg" />
             <select 
               value={selectedMarket} 
               onChange={(e) => setSelectedMarket(e.target.value)}
-              className="bg-gray-800/50 text-white px-4 py-2 rounded-lg border border-gray-600/50 hover:border-[var(--gold-accent)]/50 focus:border-[var(--gold-accent)] focus:outline-none transition-all backdrop-blur-sm"
+              className="bg-transparent text-white text-sm font-medium focus:outline-none cursor-pointer"
             >
               <option value="Dallas">Dallas</option>
               <option value="Houston">Houston</option>
@@ -64,22 +60,26 @@ function HomePage() {
             </select>
           </div>
           
-          <div className="flex items-center space-x-2">
-            <span className="text-sm font-medium text-gray-300">Ordenar por:</span>
+          {/* Selector de Ordenamiento con icono */}
+          <div className="flex items-center gap-2 bg-gray-800/50 px-3 py-2 rounded-lg border border-gray-600/50 hover:border-[var(--gold-accent)]/50 transition-all">
+            <IoFunnelSharp className="text-[var(--gold-accent)] text-lg" />
             <select 
               value={sortOption} 
               onChange={(e) => setSortOption(e.target.value)}
-              className="bg-gray-800/50 text-white px-4 py-2 rounded-lg border border-gray-600/50 hover:border-[var(--gold-accent)]/50 focus:border-[var(--gold-accent)] focus:outline-none transition-all backdrop-blur-sm"
+              className="bg-transparent text-white text-sm font-medium focus:outline-none cursor-pointer"
             >
-              <option value="price-low">Precio (menor a mayor)</option>
-              <option value="price-high">Precio (mayor a menor)</option>
+              <option value="price-low">$ Menor a Mayor</option>
+              <option value="price-high">$ Mayor a Menor</option>
             </select>
           </div>
-          
+
+          {/* Info del usuario - Más compacto */}
           {user && (
-            <div className="text-white text-right">
-              <div className="font-medium">{user.name}</div>
-              <div className="text-xs text-gray-300">ID: {user._id?.slice(-6)}</div>
+            <div className="flex items-center gap-2 bg-gray-800/50 px-3 py-2 rounded-lg border border-gray-600/50">
+              <IoPersonCircleOutline className="text-[var(--gold-accent)] text-xl" />
+              <div className="text-white">
+                <div className="text-sm font-medium">{user.name}</div>
+              </div>
             </div>
           )}
         </div>

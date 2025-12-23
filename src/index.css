@@ -3,6 +3,39 @@
 /* Leaflet Map Styles */
 @import 'leaflet/dist/leaflet.css';
 
+/* Custom House Icon Styles */
+.custom-house-icon {
+  background: transparent !important;
+  border: none !important;
+}
+
+/* Marker Cluster House Styles - Iconos de casitas en clusters */
+.marker-cluster-house {
+  background: transparent !important;
+  border: none !important;
+}
+
+.marker-cluster-house div {
+  background: transparent !important;
+}
+
+/* Animación al hacer hover sobre clusters de casitas */
+.marker-cluster-house:hover {
+  transform: scale(1.15);
+  transition: transform 0.2s ease;
+  cursor: pointer;
+}
+
+/* Mejorar la apariencia de los popups */
+.leaflet-popup-content-wrapper {
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+.leaflet-popup-tip {
+  box-shadow: 0 3px 14px rgba(0, 0, 0, 0.15);
+}
+
 :root {
   /* Paleta FR Family Investments */
   --gold-accent: #C8A452;    /* Gold Accent - botones primarios */

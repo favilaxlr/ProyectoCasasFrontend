@@ -17,7 +17,7 @@ function PropertyCard({ property, compact = false }) {
   if (compact) {
     return (
       <div className="card p-5 hover:shadow-xl transition-shadow">
-        <div className="flex space-x-4">
+        <div className="flex space-x-4 mb-3">
           {/* Imagen compacta */}
           <div className="flex-shrink-0">
             {mainImage ? (
@@ -77,65 +77,55 @@ function PropertyCard({ property, compact = false }) {
               <p className="text-xs text-yellow-600 truncate mb-1">Modificada por: {property.lastModifiedBy.username}</p>
             )}
             
-            <div className="flex items-center justify-between">
-              <div className="flex items-center text-sm text-gray-600 space-x-4 font-medium">
-                <span>{property.details?.bedrooms || 0} Beds</span>
-                <span>{property.details?.bathrooms || 0} Baths</span>
-                <span>{property.details?.area || 0} Sq. Ft.</span>
-              </div>
-              
-              {/* Botones para todos los usuarios */}
-              <div className="flex gap-1">
-                {/* Botón Ver Detalles - Visible para todos */}
-                <Tooltip title="Ver detalles">
-                  <Link
-                    to={'/properties/' + property._id}
-                    className='bg-blue-500 hover:bg-blue-600 text-white px-3 py-1.5 rounded text-xs inline-flex items-center font-semibold'
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    Ver detalles
-                  </Link>
-                </Tooltip>
-                
-                {/* Botones de admin/co-admin en modo compacto */}
-                {(isAdmin || isCoAdmin) && (
-                  <>
-                    <Tooltip title="Vista previa">
-                      <button
-                        className='bg-gray-500 hover:bg-gray-600 text-white p-1.5 rounded text-xs'
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setShowPreview(true);
-                        }}
-                      >
-                        <IoEyeSharp size={14} />
-                      </button>
-                    </Tooltip>
-                    <Tooltip title="Editar">
-                      <Link
-                        to={'/properties/' + property._id}
-                        className='bg-green-500 hover:bg-green-600 text-white p-1.5 rounded text-xs inline-flex items-center'
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        <IoPencilSharp size={14} />
-                      </Link>
-                    </Tooltip>
-                    <Tooltip title="Eliminar">
-                      <button
-                        className='bg-red-500 hover:bg-red-600 text-white p-1.5 rounded text-xs'
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          deleteProperty(property._id);
-                        }}
-                      >
-                        <IoTrashBinSharp size={14} />
-                      </button>
-                    </Tooltip>
-                  </>
-                )}
-              </div>
+            <div className="flex items-center text-sm text-gray-600 space-x-4 font-medium">
+              <span>{property.details?.bedrooms || 0} Beds</span>
+              <span>{property.details?.bathrooms || 0} Baths</span>
+              <span>{property.details?.area || 0} Sq. Ft.</span>
             </div>
           </div>
+        </div>
+
+        {/* Botones separados debajo - Mejor visibilidad */}
+        <div className="flex gap-2 pt-3 border-t border-gray-200">
+          {/* Botón Ver Detalles - Visible para todos */}
+          <Tooltip title="Ver detalles completos">
+            <Link
+              to={'/properties/' + property._id}
+              className='flex-1 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors flex items-center justify-center gap-2'
+              onClick={(e) => e.stopPropagation()}
+            >
+              <IoEyeSharp size={16} />
+              Ver detalles
+            </Link>
+          </Tooltip>
+          
+          {/* Botones de admin/co-admin */}
+          {(isAdmin || isCoAdmin) && (
+            <>
+              <Tooltip title="Editar propiedad">
+                <Link
+                  to={'/properties/' + property._id}
+                  className='bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors flex items-center justify-center gap-1'
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <IoPencilSharp size={16} />
+                  Editar
+                </Link>
+              </Tooltip>
+              <Tooltip title="Eliminar propiedad">
+                <button
+                  className='bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors flex items-center justify-center gap-1'
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    deleteProperty(property._id);
+                  }}
+                >
+                  <IoTrashBinSharp size={16} />
+                  Eliminar
+                </button>
+              </Tooltip>
+            </>
+          )}
         </div>
       </div>
     )

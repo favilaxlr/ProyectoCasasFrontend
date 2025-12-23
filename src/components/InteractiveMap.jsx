@@ -1,35 +1,47 @@
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
+import MarkerClusterGroup from 'react-leaflet-cluster';
 import { useEffect } from 'react';
 import { Link } from 'react-router';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import 'leaflet.markercluster/dist/MarkerCluster.css';
+import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
 
-// Fix para los iconos de Leaflet en React
-delete L.Icon.Default.prototype._getIconUrl;
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
-  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
-  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
-});
+// Icono personalizado de casita para propiedades disponibles
+const createHouseIcon = (color = '#4CAF50', isSelected = false) => {
+  const size = isSelected ? 40 : 32;
+  return L.divIcon({
+    className: 'custom-house-icon',
+    html: `
+      <div style="position: relative; width: ${size}px; height: ${size}px;">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" 
+             width="${size}" height="${size}" 
+             style="filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.3));">
+          <path fill="${color}" stroke="#fff" stroke-width="0.5"
+                d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+        </svg>
+        ${isSelected ? '<div style="position: absolute; top: -8px; right: -8px; width: 16px; height: 16px; background: #FFD700; border: 2px solid white; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.3);"></div>' : ''}
+      </div>
+    `,
+    iconSize: [size, size],
+    iconAnchor: [size / 2, size],
+    popupAnchor: [0, -size]
+  });
+};
 
-// Icono personalizado para propiedades
-const propertyIcon = new L.Icon({
-  iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
-  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
-  shadowSize: [41, 41]
-});
+// Función para obtener color según el estado
+const getIconColor = (status) => {
+  switch(status) {
+    case 'DISPONIBLE': return '#4CAF50'; // Verde
+    case 'EN_CONTRATO': return '#FF9800'; // Naranja
+    case 'VENDIDA': return '#F44336'; // Rojo
+    default: return '#9E9E9E'; // Gris
+  }
+};
 
-const selectedPropertyIcon = new L.Icon({
-  iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-gold.png',
-  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
-  iconSize: [30, 49],
-  iconAnchor: [15, 49],
-  popupAnchor: [1, -40],
-  shadowSize: [49, 49]
-});
+// Crear iconos según el estado de la propiedad
+const propertyIcon = (property) => createHouseIcon(getIconColor(property.status), false);
+const selectedPropertyIcon = (property) => createHouseIcon(getIconColor(property.status), true);
 
 // Componente para ajustar el centro del mapa
 function MapController({ center, zoom }) {
@@ -107,22 +119,86 @@ function InteractiveMap({
           zoom={selectedProperty ? 15 : zoom} 
         />
         
-        {validProperties.map((property) => {
-          const isSelected = selectedProperty?._id === property._id;
-          
-          return (
-            <Marker
-              key={property._id}
-              position={[property.address.coordinates.lat, property.address.coordinates.lng]}
-              icon={isSelected ? selectedPropertyIcon : propertyIcon}
-              eventHandlers={{
-                click: () => {
-                  if (onPropertyClick) {
-                    onPropertyClick(property);
-                  }
-                },
-              }}
-            >
+        {/* MarkerClusterGroup agrupa los marcadores automáticamente */}
+        <MarkerClusterGroup
+          chunkedLoading
+          maxClusterRadius={60}
+          spiderfyOnMaxZoom={true}
+          showCoverageOnHover={false}
+          zoomToBoundsOnClick={true}
+          iconCreateFunction={(cluster) => {
+            const count = cluster.getChildCount();
+            let size = 50;
+            
+            if (count > 10) {
+              size = 60;
+            }
+            if (count > 25) {
+              size = 70;
+            }
+            
+            return L.divIcon({
+              html: `
+                <div style="position: relative; width: ${size}px; height: ${size}px;">
+                  <!-- Icono de casa de fondo -->
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" 
+                       width="${size}" height="${size}" 
+                       style="filter: drop-shadow(0px 4px 8px rgba(0,0,0,0.4)); display: block;">
+                    <path fill="#C8A452" stroke="#fff" stroke-width="0.8"
+                          d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+                  </svg>
+                  <!-- Número de propiedades - Centrado en el área de la casa -->
+                  <div style="
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    padding-bottom: ${size * 0.15}px;
+                  ">
+                    <span style="
+                      color: white;
+                      font-weight: 900;
+                      font-size: ${size > 60 ? '24px' : size > 50 ? '20px' : '18px'};
+                      text-shadow: 
+                        -1px -1px 0 rgba(0,0,0,0.9),  
+                        1px -1px 0 rgba(0,0,0,0.9),
+                        -1px 1px 0 rgba(0,0,0,0.9),
+                        1px 1px 0 rgba(0,0,0,0.9),
+                        0 3px 6px rgba(0,0,0,0.9);
+                      font-family: Arial, sans-serif;
+                      line-height: 1;
+                    ">
+                      ${count}
+                    </span>
+                  </div>
+                </div>
+              `,
+              className: 'marker-cluster-house',
+              iconSize: L.point(size, size),
+              iconAnchor: [size / 2, size]
+            });
+          }}
+        >
+          {validProperties.map((property) => {
+            const isSelected = selectedProperty?._id === property._id;
+            
+            return (
+              <Marker
+                key={property._id}
+                position={[property.address.coordinates.lat, property.address.coordinates.lng]}
+                icon={isSelected ? selectedPropertyIcon(property) : propertyIcon(property)}
+                eventHandlers={{
+                  click: () => {
+                    if (onPropertyClick) {
+                      onPropertyClick(property);
+                    }
+                  },
+                }}
+              >
               <Popup maxWidth={300} minWidth={250}>
                 <div className="p-2">
                   {property.images?.[0]?.url && (
@@ -205,6 +281,7 @@ function InteractiveMap({
             </Marker>
           );
         })}
+        </MarkerClusterGroup>
       </MapContainer>
     </div>
   );
