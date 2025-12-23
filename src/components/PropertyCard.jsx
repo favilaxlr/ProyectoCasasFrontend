@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useProperties } from '../context/PropertyContext';
 import { useAuth } from '../context/AuthContext';
 import { Link } from 'react-router';
-import { IoTrashBinSharp, IoPencilSharp, IoLocationSharp, IoBedSharp, IoEyeSharp } from 'react-icons/io5';
+import { IoTrashBinSharp, IoPencilSharp, IoLocationSharp, IoBedSharp, IoEyeSharp, IoCardSharp, IoKeySharp, IoBusinessSharp } from 'react-icons/io5';
 import Tooltip from '@mui/material/Tooltip';
 import PropertyPreviewModal from './PropertyPreviewModal';
 
@@ -40,13 +40,51 @@ function PropertyCard({ property, compact = false }) {
           {/* Información compacta */}
           <div className="flex-1 min-w-0">
             <div className="flex justify-between items-start mb-2">
-              {/* Mostrar precio solo si está DISPONIBLE */}
-              {property.status === 'DISPONIBLE' ? (
-                <h3 className="text-2xl font-bold text-green-600 truncate">
-                  ${property.price?.sale?.toLocaleString()}
-                </h3>
-              ) : (
-                <div></div>
+              {/* Mostrar precio según modalidad y solo si está DISPONIBLE */}
+              {property.status === 'DISPONIBLE' && (
+                <div className="flex flex-col gap-1">
+                  {/* Badge de modalidad */}
+                  {property.businessMode && (
+                    <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold ${
+                      property.businessMode === 'sale' ? 'bg-blue-100 text-blue-800' :
+                      property.businessMode === 'rent' ? 'bg-green-100 text-green-800' :
+                      'bg-gradient-to-r from-purple-100 via-blue-100 to-green-100 text-purple-800'
+                    }`}>
+                      {property.businessMode === 'sale' && <><IoCardSharp className="mr-1" />Venta</>}
+                      {property.businessMode === 'rent' && <><IoKeySharp className="mr-1" />Renta</>}
+                      {property.businessMode === 'both' && <><IoBusinessSharp className="mr-1" />Renta/Venta</>}
+                    </span>
+                  )}
+                  
+                  {/* Para Renta/Venta, mostrar ambos precios en línea */}
+                  {property.businessMode === 'both' && property.price?.sale && property.price?.monthlyRent ? (
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <h3 className="text-lg font-bold text-blue-600">
+                        ${property.price.sale.toLocaleString()}
+                      </h3>
+                      <span className="text-gray-400 font-bold">/</span>
+                      <h3 className="text-lg font-bold text-green-600">
+                        ${property.price.monthlyRent.toLocaleString()}/mes
+                      </h3>
+                    </div>
+                  ) : (
+                    <>
+                      {/* Precio de venta (solo cuando NO es 'both') */}
+                      {(!property.businessMode || property.businessMode === 'sale') && property.price?.sale && (
+                        <h3 className="text-xl font-bold text-blue-600">
+                          ${property.price.sale.toLocaleString()}
+                        </h3>
+                      )}
+                      
+                      {/* Precio de renta (solo cuando NO es 'both') */}
+                      {property.businessMode === 'rent' && property.price?.monthlyRent && (
+                        <h3 className="text-xl font-bold text-green-600">
+                          ${property.price.monthlyRent.toLocaleString()}/mes
+                        </h3>
+                      )}
+                    </>
+                  )}
+                </div>
               )}
               
               {/* Estado siempre visible para todos */}

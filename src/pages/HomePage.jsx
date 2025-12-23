@@ -4,7 +4,7 @@ import { getAllPropertiesRequest } from '../api/properties'
 import PropertyCard from '../components/PropertyCard'
 import InteractiveMap from '../components/InteractiveMap'
 import ThemeToggle from '../components/ThemeToggle'
-import { IoLocationSharp, IoFunnelSharp, IoPersonCircleOutline } from 'react-icons/io5'
+import { IoLocationSharp, IoFunnelSharp, IoPersonCircleOutline, IoBusinessSharp, IoCardSharp, IoKeySharp } from 'react-icons/io5'
 
 function HomePage() {
   const { user } = useAuth()
@@ -13,6 +13,7 @@ function HomePage() {
   const [sortOption, setSortOption] = useState('price-low')
   const [selectedProperty, setSelectedProperty] = useState(null)
   const [mapStyle, setMapStyle] = useState('osm') // 'osm' o 'satellite'
+  const [operationType, setOperationType] = useState('all') // 'all', 'sale', 'rent', 'both'
 
   useEffect(() => {
     loadProperties()
@@ -27,7 +28,29 @@ function HomePage() {
     }
   }
 
-  const sortedProperties = [...properties].sort((a, b) => {
+  // Filtrar por tipo de operación
+  const filteredProperties = properties.filter(property => {
+    if (operationType === 'all') return true
+    
+    // Si filtramos por 'Venta', mostrar propiedades 'sale' y 'both'
+    if (operationType === 'sale') {
+      return !property.businessMode || property.businessMode === 'sale' || property.businessMode === 'both'
+    }
+    
+    // Si filtramos por 'Renta', mostrar propiedades 'rent' y 'both'
+    if (operationType === 'rent') {
+      return property.businessMode === 'rent' || property.businessMode === 'both'
+    }
+    
+    // Si filtramos específicamente por 'Renta/Venta'
+    if (operationType === 'both') {
+      return property.businessMode === 'both'
+    }
+    
+    return true
+  })
+
+  const sortedProperties = [...filteredProperties].sort((a, b) => {
     if (sortOption === 'price-low') return (a.price?.sale || 0) - (b.price?.sale || 0)
     if (sortOption === 'price-high') return (b.price?.sale || 0) - (a.price?.sale || 0)
     return 0
@@ -60,6 +83,21 @@ function HomePage() {
             </select>
           </div>
           
+          {/* Filtro de Tipo de Operación */}
+          <div className="flex items-center gap-2 bg-gray-800/50 px-3 py-2 rounded-lg border border-gray-600/50 hover:border-[var(--gold-accent)]/50 transition-all">
+            <IoBusinessSharp className="text-[var(--gold-accent)] text-lg" />
+            <select 
+              value={operationType} 
+              onChange={(e) => setOperationType(e.target.value)}
+              className="bg-transparent text-white text-sm font-medium focus:outline-none cursor-pointer"
+            >
+              <option value="all">Todos</option>
+              <option value="sale">Venta</option>
+              <option value="rent">Renta</option>
+              <option value="both">Renta/Venta</option>
+            </select>
+          </div>
+
           {/* Selector de Ordenamiento con icono */}
           <div className="flex items-center gap-2 bg-gray-800/50 px-3 py-2 rounded-lg border border-gray-600/50 hover:border-[var(--gold-accent)]/50 transition-all">
             <IoFunnelSharp className="text-[var(--gold-accent)] text-lg" />

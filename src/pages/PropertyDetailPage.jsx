@@ -6,7 +6,7 @@ import PropertyStatus from '../components/PropertyStatus';
 import ReviewsSection from '../components/ReviewsSection';
 import { useAuth } from '../context/AuthContext';
 import { toast } from 'react-toastify';
-import { IoLocationSharp, IoBedSharp, IoCarSharp, IoHomeSharp, IoCalendarSharp, IoPawSharp, IoCheckmarkCircleSharp, IoCloseCircleSharp, IoPencilSharp, IoTimeSharp, IoSwapHorizontalSharp } from 'react-icons/io5';
+import { IoLocationSharp, IoBedSharp, IoCarSharp, IoHomeSharp, IoCalendarSharp, IoPawSharp, IoCheckmarkCircleSharp, IoCloseCircleSharp, IoPencilSharp, IoTimeSharp, IoSwapHorizontalSharp, IoCashSharp, IoKeySharp, IoBusinessSharp, IoCardSharp, IoDocumentTextSharp } from 'react-icons/io5';
 
 function PropertyDetailPage() {
     const { id } = useParams();
@@ -136,12 +136,134 @@ function PropertyDetailPage() {
 
                 {/* Información principal */}
                 <div className="bg-white p-6 rounded-lg shadow-lg h-fit">
-                    <div className="text-center mb-6">
-                        <p className="text-3xl font-bold text-green-600 mb-2">
-                            ${property.price?.sale?.toLocaleString()}
-                        </p>
-                        <p className="text-gray-600">Precio de Venta</p>
-                    </div>
+                    {/* Badge de Modalidad de Negocio */}
+                    {property.businessMode && (
+                        <div className="mb-4 text-center">
+                            <span className={`inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold ${
+                                property.businessMode === 'sale' ? 'bg-blue-100 text-blue-800' :
+                                property.businessMode === 'rent' ? 'bg-green-100 text-green-800' :
+                                'bg-gradient-to-r from-purple-100 via-blue-100 to-green-100 text-purple-800'
+                            }`}>
+                                {property.businessMode === 'sale' && (
+                                    <>
+                                        <IoCardSharp className="mr-2" />
+                                        Venta
+                                    </>
+                                )}
+                                {property.businessMode === 'rent' && (
+                                    <>
+                                        <IoKeySharp className="mr-2" />
+                                        Renta
+                                    </>
+                                )}
+                                {property.businessMode === 'both' && (
+                                    <>
+                                        <IoBusinessSharp className="mr-2" />
+                                        Renta/Venta
+                                    </>
+                                )}
+                            </span>
+                        </div>
+                    )}
+
+                    {/* Información de VENTA (si businessMode es 'sale' o 'both') */}
+                    {(!property.businessMode || property.businessMode === 'sale' || property.businessMode === 'both') && property.price?.sale && (
+                        <div className={`${property.businessMode === 'both' ? 'border-b-2 border-gray-200 pb-4 mb-4' : ''}`}>
+                            <div className="bg-blue-50 p-4 rounded-lg mb-4">
+                                <div className="flex items-center justify-center mb-2">
+                                    <IoCardSharp className="text-blue-600 text-2xl mr-2" />
+                                    <h3 className="text-lg font-bold text-blue-800">Información de Venta</h3>
+                                </div>
+                                <div className="text-center">
+                                    <p className="text-3xl font-bold text-blue-600 mb-1">
+                                        ${property.price.sale.toLocaleString()}
+                                    </p>
+                                    <p className="text-sm text-gray-600">Precio de Venta</p>
+                                </div>
+                            </div>
+
+                            {/* Información adicional de venta */}
+                            {(property.price.taxes || property.price.deedConditions) && (
+                                <div className="bg-blue-50 p-3 rounded-lg mb-4 text-sm">
+                                    {property.price.taxes && (
+                                        <div className="mb-2">
+                                            <span className="font-semibold text-blue-800">Impuestos anuales:</span>
+                                            <span className="text-gray-700 ml-2">${property.price.taxes.toLocaleString()}</span>
+                                        </div>
+                                    )}
+                                    {property.price.deedConditions && (
+                                        <div>
+                                            <span className="font-semibold text-blue-800 block mb-1">Condiciones:</span>
+                                            <p className="text-gray-700 text-xs whitespace-pre-line">{property.price.deedConditions}</p>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                        </div>
+                    )}
+
+                    {/* Información de RENTA (si businessMode es 'rent' o 'both') */}
+                    {(property.businessMode === 'rent' || property.businessMode === 'both') && property.price?.monthlyRent && (
+                        <div>
+                            <div className="bg-green-50 p-4 rounded-lg mb-4">
+                                <div className="flex items-center justify-center mb-2">
+                                    <IoKeySharp className="text-green-600 text-2xl mr-2" />
+                                    <h3 className="text-lg font-bold text-green-800">Información de Renta</h3>
+                                </div>
+                                <div className="text-center mb-3">
+                                    <p className="text-3xl font-bold text-green-600 mb-1">
+                                        ${property.price.monthlyRent.toLocaleString()}/mes
+                                    </p>
+                                    <p className="text-sm text-gray-600">Renta Mensual</p>
+                                </div>
+                                
+                                {/* Detalles de renta */}
+                                <div className="space-y-2 text-sm">
+                                    {property.price.deposit !== undefined && (
+                                        <div className="flex justify-between items-center bg-white p-2 rounded">
+                                            <span className="text-gray-600">Depósito:</span>
+                                            <span className="font-semibold text-green-700">${property.price.deposit.toLocaleString()}</span>
+                                        </div>
+                                    )}
+                                    {property.price.leaseDuration && (
+                                        <div className="flex justify-between items-center bg-white p-2 rounded">
+                                            <span className="text-gray-600">Contrato mínimo:</span>
+                                            <span className="font-semibold text-green-700">{property.price.leaseDuration} meses</span>
+                                        </div>
+                                    )}
+                                    {property.price.maintenance && (
+                                        <div className="flex justify-between items-center bg-white p-2 rounded">
+                                            <span className="text-gray-600">Mantenimiento:</span>
+                                            <span className="font-semibold text-green-700">${property.price.maintenance.toLocaleString()}/mes</span>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+
+                            {/* Condiciones de renta */}
+                            {property.price.leaseConditions && (
+                                <div className="bg-green-50 p-3 rounded-lg mb-4 text-sm">
+                                    <span className="font-semibold text-green-800 block mb-1">Condiciones de Renta:</span>
+                                    <p className="text-gray-700 text-xs whitespace-pre-line">{property.price.leaseConditions}</p>
+                                </div>
+                            )}
+                        </div>
+                    )}
+
+                    {/* Mensaje informativo para modalidad Renta/Venta */}
+                    {property.businessMode === 'both' && (
+                        <div className="bg-gradient-to-r from-purple-50 via-blue-50 to-green-50 border-l-4 border-purple-400 p-3 rounded-r-lg mb-4">
+                            <div className="flex items-start">
+                                <IoBusinessSharp className="text-purple-600 text-xl mr-2 mt-0.5 flex-shrink-0" />
+                                <div>
+                                    <p className="text-sm font-semibold text-purple-800">Renta/Venta</p>
+                                    <p className="text-xs text-purple-700 mt-1">
+                                        Esta propiedad está disponible tanto para venta como para renta. Puedes elegir la opción que mejor se adapte a tus necesidades.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    )}
 
                     {/* Información del creador - Solo admin/co-admin */}
                     {(isAdmin || isCoAdmin) && property.createdBy && (

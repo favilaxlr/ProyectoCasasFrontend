@@ -61,24 +61,24 @@ function PropertyFormPage() {
     const businessModes = [
         {
             value: 'sale',
-            title: 'Solo Venta',
+            title: 'Venta',
             description: 'Propiedad exclusivamente para venta',
             icon: IoCardSharp,
             gradient: 'from-blue-500 to-blue-600'
         },
         {
             value: 'rent',
-            title: 'Solo Renta',
+            title: 'Renta',
             description: 'Propiedad exclusivamente para renta',
             icon: IoKeySharp,
             gradient: 'from-green-500 to-green-600'
         },
         {
             value: 'both',
-            title: 'Venta y Renta',
-            description: 'Propiedad disponible para ambas opciones',
+            title: 'Renta/Venta',
+            description: 'Propiedad disponible para renta o venta',
             icon: IoBusinessSharp,
-            gradient: 'from-purple-500 to-purple-600'
+            gradient: 'from-purple-500 via-blue-500 to-green-500'
         }
     ];
 
@@ -485,9 +485,9 @@ function PropertyFormPage() {
                                                 ℹ️ Información sobre las modalidades:
                                             </p>
                                             <ul className="text-xs text-blue-700 space-y-1">
-                                                <li>• <strong>Solo Venta:</strong> La propiedad se venderá definitivamente</li>
-                                                <li>• <strong>Solo Renta:</strong> La propiedad se alquilará por períodos</li>
-                                                <li>• <strong>Venta y Renta:</strong> La propiedad puede venderse o rentarse</li>
+                                                <li>• <strong>Venta:</strong> La propiedad se venderá definitivamente</li>
+                                                <li>• <strong>Renta:</strong> La propiedad se alquilará por períodos</li>
+                                                <li>• <strong>Renta/Venta:</strong> El cliente podrá elegir entre rentar o comprar</li>
                                             </ul>
                                         </div>
                                     </div>
