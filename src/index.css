@@ -91,6 +91,14 @@ footer a { text-decoration: none }
 /* Smooth transitions when theme changes */
 body, .form-container, .input-field, .card, footer { transition: background .25s ease, color .25s ease, border-color .25s ease, box-shadow .25s ease; }
 
+/* Full Width - Eliminar restricciones de ancho */
+html, body, #root {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
 
 body {
   background: var(--light-gray);
@@ -384,20 +392,4 @@ body {
 .card:hover {
   @apply shadow-2xl shadow-gray-200/60;
   transform: translateY(-2px);
-}
-
-/* Fade-in Animation for Form Steps */
-@keyframes fadeInStep {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.animate-fade-in {
-  animation: fadeInStep 0.5s ease-out forwards;
 }

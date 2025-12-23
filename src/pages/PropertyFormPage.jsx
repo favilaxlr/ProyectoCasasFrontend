@@ -5,6 +5,7 @@ import { createPropertyRequest, getPropertyRequest, updatePropertyRequest } from
 import PropertyGallery from '../components/PropertyGallery';
 import ImageUploader from '../components/ImageUploader';
 import LocationPicker from '../components/LocationPicker';
+import { geocodeAddress } from '../utils/geocoding';
 import { toast } from 'react-toastify';
 import { IoHomeSharp, IoDocumentTextSharp, IoLocationSharp, IoSettingsSharp, IoCameraSharp, IoCheckmarkSharp, IoWarningSharp, IoCashSharp, IoBedSharp, IoWaterSharp, IoResizeSharp, IoCalendarSharp, IoCarSharp, IoPawSharp, IoRestaurantSharp, IoSparklesSharp, IoMapSharp, IoInformationCircleSharp, IoArrowBackSharp, IoArrowForwardSharp, IoSaveSharp, IoCloseSharp, IoBusinessSharp, IoHelpCircleSharp } from 'react-icons/io5';
 
@@ -24,6 +25,8 @@ function PropertyFormPage() {
     const [coordinates, setCoordinates] = useState(null);
     const [currentStep, setCurrentStep] = useState(1);
     const [selectedAmenities, setSelectedAmenities] = useState([]);
+    const [geocodingFromFields, setGeocodingFromFields] = useState(false);
+    const [updatingFromMap, setUpdatingFromMap] = useState(false);
     const navigate = useNavigate();
     const { id } = useParams();
     const isEditing = !!id;
@@ -54,6 +57,42 @@ function PropertyFormPage() {
             loadProperty();
         }
     }, [id]);
+
+    // Observar cambios en los campos de dirección y geocodificar automáticamente
+    const street = watch('address.street');
+    const city = watch('address.city');
+    const state = watch('address.state');
+    const zipCode = watch('address.zipCode');
+
+    useEffect(() => {
+        // No geocodificar si la actualización viene del mapa o si ya está geocodificando
+        if (!street || !city || geocodingFromFields || updatingFromMap) return;
+
+        const geocodeTimeout = setTimeout(async () => {
+            try {
+                // Construir dirección completa
+                const fullAddress = [street, city, state, zipCode]
+                    .filter(Boolean)
+                    .join(', ');
+
+                if (fullAddress.length < 10) return; // Dirección muy corta
+
+                setGeocodingFromFields(true);
+                const result = await geocodeAddress(fullAddress);
+                
+                if (result && result.lat && result.lng) {
+                    setCoordinates({ lat: result.lat, lng: result.lng });
+                }
+            } catch (error) {
+                console.error('Error geocodificando dirección:', error);
+            } finally {
+                // Esperar 1 segundo antes de permitir otra geocodificación
+                setTimeout(() => setGeocodingFromFields(false), 1000);
+            }
+        }, 1500); // Esperar 1.5 segundos después de que el usuario deje de escribir
+
+        return () => clearTimeout(geocodeTimeout);
+    }, [street, city, state, zipCode, updatingFromMap]);
 
     const loadProperty = async () => {
         try {
@@ -428,8 +467,54 @@ function PropertyFormPage() {
                                     <div className="border-2 border-gray-200 rounded-xl overflow-hidden">
                                         <LocationPicker
                                             initialPosition={coordinates}
+                                            address={[street, city, state, zipCode].filter(Boolean).join(', ')}
                                             onLocationSelect={(location) => {
+                                                // Marcar que la actualización viene del mapa
+                                                setUpdatingFromMap(true);
+                                                
                                                 setCoordinates(location.coordinates);
+                                                
+                                                // Solo autocompletar campos si están vacíos
+                                                // Esto permite que el usuario escriba su dirección exacta
+                                                // y solo ajuste las coordenadas en el mapa sin que se sobrescriba
+                                                const currentStreet = watch('address.street');
+                                                const currentCity = watch('address.city');
+                                                const currentState = watch('address.state');
+                                                const currentZipCode = watch('address.zipCode');
+                                                
+                                                // Autocompletar campos de dirección SOLO si existen detalles Y los campos están vacíos
+                                                if (location.addressDetails) {
+                                                    const addr = location.addressDetails;
+                                                    
+                                                    // Calle y número - solo si está vacío
+                                                    if (!currentStreet || currentStreet.trim() === '') {
+                                                        const street = [
+                                                            addr.house_number,
+                                                            addr.road || addr.street || addr.highway
+                                                        ].filter(Boolean).join(' ');
+                                                        if (street) setValue('address.street', street);
+                                                    }
+                                                    
+                                                    // Ciudad - solo si está vacía
+                                                    if (!currentCity || currentCity.trim() === '') {
+                                                        const city = addr.city || addr.town || addr.village || addr.municipality;
+                                                        if (city) setValue('address.city', city);
+                                                    }
+                                                    
+                                                    // Estado - solo si está vacío
+                                                    if (!currentState || currentState.trim() === '') {
+                                                        const state = addr.state || addr.province;
+                                                        if (state) setValue('address.state', state);
+                                                    }
+                                                    
+                                                    // Código postal - solo si está vacío
+                                                    if (!currentZipCode || currentZipCode.trim() === '') {
+                                                        if (addr.postcode) setValue('address.zipCode', addr.postcode);
+                                                    }
+                                                }
+                                                
+                                                // Resetear la bandera después de 2 segundos
+                                                setTimeout(() => setUpdatingFromMap(false), 2000);
                                             }}
                                         />
                                     </div>

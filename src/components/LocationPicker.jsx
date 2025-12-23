@@ -1,8 +1,8 @@
 import { useState, useRef, useEffect } from 'react';
-import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, useMapEvents, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import { geocodeAddress, searchLocations } from '../utils/geocoding';
+import { geocodeAddress, searchLocations, reverseGeocode } from '../utils/geocoding';
 import { IoCloseSharp, IoSearchSharp } from 'react-icons/io5';
 
 // Fix para iconos
@@ -23,6 +23,19 @@ function MapClickHandler({ onLocationSelect }) {
   return null;
 }
 
+// Componente para centrar el mapa cuando cambien las coordenadas
+function MapCenterUpdater({ center }) {
+  const map = useMap();
+  
+  useEffect(() => {
+    if (center && center.lat && center.lng) {
+      map.setView([center.lat, center.lng], map.getZoom());
+    }
+  }, [center, map]);
+  
+  return null;
+}
+
 /**
  * Componente para seleccionar ubicación en el mapa
  * Útil para formularios de creación/edición de propiedades
@@ -39,6 +52,20 @@ function LocationPicker({
   const [showResults, setShowResults] = useState(false);
   const searchTimeoutRef = useRef(null);
   const resultsRef = useRef(null);
+
+  // Actualizar posición cuando cambien las coordenadas externas
+  useEffect(() => {
+    if (initialPosition && initialPosition.lat && initialPosition.lng) {
+      setPosition(initialPosition);
+    }
+  }, [initialPosition]);
+
+  // Actualizar searchQuery cuando cambie la dirección externa
+  useEffect(() => {
+    if (address && address.trim() !== '') {
+      setSearchQuery(address);
+    }
+  }, [address]);
 
   // Autocompletado en tiempo real
   useEffect(() => {
@@ -99,20 +126,45 @@ function LocationPicker({
     if (onLocationSelect) {
       onLocationSelect({
         coordinates: newPos,
-        address: location.display_name || location.address
+        address: location.display_name || location.address,
+        addressDetails: location.address // Detalles estructurados de la dirección
       });
     }
   };
 
-  const handleMapClick = (latlng) => {
+  const handleMapClick = async (latlng) => {
     const newPos = { lat: latlng.lat, lng: latlng.lng };
     setPosition(newPos);
     
-    if (onLocationSelect) {
-      onLocationSelect({
-        coordinates: newPos,
-        address: `${latlng.lat.toFixed(6)}, ${latlng.lng.toFixed(6)}`
-      });
+    // Hacer geocodificación inversa para obtener la dirección
+    try {
+      const addressData = await reverseGeocode(latlng.lat, latlng.lng);
+      if (addressData && addressData.address) {
+        setSearchQuery(addressData.display_name);
+        
+        if (onLocationSelect) {
+          onLocationSelect({
+            coordinates: newPos,
+            address: addressData.display_name,
+            addressDetails: addressData.address
+          });
+        }
+      } else {
+        if (onLocationSelect) {
+          onLocationSelect({
+            coordinates: newPos,
+            address: `${latlng.lat.toFixed(6)}, ${latlng.lng.toFixed(6)}`
+          });
+        }
+      }
+    } catch (error) {
+      console.error('Error al obtener dirección:', error);
+      if (onLocationSelect) {
+        onLocationSelect({
+          coordinates: newPos,
+          address: `${latlng.lat.toFixed(6)}, ${latlng.lng.toFixed(6)}`
+        });
+      }
     }
   };
 
@@ -125,7 +177,7 @@ function LocationPicker({
   return (
     <div className="space-y-4">
       {/* Buscador de direcciones mejorado */}
-      <div className="relative z-20">
+      <div className="relative" style={{ zIndex: 1000 }}>
         <div className="relative">
           <IoSearchSharp className="absolute left-3 top-3.5 text-gray-400" size={20} />
           <input
@@ -134,44 +186,50 @@ function LocationPicker({
             onChange={(e) => setSearchQuery(e.target.value)}
             onFocus={() => searchResults.length > 0 && setShowResults(true)}
             placeholder="Ej: 123 Main St, Dallas, TX"
-            className="w-full pl-10 pr-10 py-2.5 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-[var(--gold-accent)] transition-colors bg-white"
+            className="w-full pl-10 pr-10 py-2.5 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-[var(--gold-accent)] transition-colors bg-white relative z-10"
           />
           {searchQuery && (
             <button
               onClick={clearSearch}
-              className="absolute right-3 top-3.5 text-gray-400 hover:text-gray-600"
+              className="absolute right-3 top-3.5 text-gray-400 hover:text-gray-600 z-20"
             >
               <IoCloseSharp size={20} />
             </button>
           )}
         </div>
 
-        {/* Resultados de búsqueda con mejor estilo */}
+        {/* Resultados de búsqueda con mejor estilo y z-index más alto */}
         {showResults && searchResults.length > 0 && (
           <div 
             ref={resultsRef}
-            className="absolute z-50 w-full mt-2 bg-white border-2 border-[var(--gold-accent)] rounded-lg shadow-xl max-h-72 overflow-y-auto"
+            className="absolute w-full mt-2 bg-white border-2 border-[var(--gold-accent)] rounded-lg shadow-2xl max-h-80 overflow-y-auto"
+            style={{ zIndex: 9999 }}
           >
-            <div className="sticky top-0 bg-gradient-to-r from-[var(--gold-accent)]/10 to-transparent p-2 border-b border-gray-100">
-              <p className="text-xs text-gray-500 font-medium px-2">
-                {searchResults.length} resultado{searchResults.length !== 1 ? 's' : ''} encontrado{searchResults.length !== 1 ? 's' : ''}
+            <div className="sticky top-0 bg-gradient-to-r from-[var(--gold-accent)]/10 to-transparent p-3 border-b border-gray-100 z-10">
+              <p className="text-xs text-gray-600 font-semibold px-2">
+                ✨ {searchResults.length} ubicación{searchResults.length !== 1 ? 'es' : ''} encontrada{searchResults.length !== 1 ? 's' : ''}
               </p>
             </div>
             {searchResults.map((result, index) => (
               <button
                 key={index}
                 onClick={() => handleSelectLocation(result)}
-                className="w-full text-left px-4 py-3 hover:bg-[var(--gold-accent)]/5 border-b border-gray-100 last:border-b-0 transition-colors duration-150 group"
+                className="w-full text-left px-5 py-4 hover:bg-gradient-to-r hover:from-[var(--gold-accent)]/10 hover:to-transparent border-b border-gray-100 last:border-b-0 transition-all duration-200 group"
               >
                 <div className="flex items-start gap-3">
-                  <div className="text-[var(--gold-accent)] mt-0.5">📍</div>
+                  <div className="text-2xl group-hover:scale-110 transition-transform duration-200">📍</div>
                   <div className="flex-1 min-w-0">
-                    <p className="font-medium text-sm text-gray-800 group-hover:text-[var(--gold-accent)] transition-colors truncate">
+                    <p className="font-semibold text-sm text-gray-900 group-hover:text-[var(--gold-accent)] transition-colors line-clamp-2 mb-1">
                       {result.display_name}
                     </p>
-                    <p className="text-xs text-gray-500 mt-1 font-mono">
-                      {result.lat.toFixed(6)}, {result.lng.toFixed(6)}
-                    </p>
+                    <div className="flex items-center gap-2 text-xs text-gray-500 mt-1">
+                      <span className="font-mono bg-gray-100 px-2 py-0.5 rounded">
+                        📐 {result.lat.toFixed(6)}, {result.lng.toFixed(6)}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="text-[var(--gold-accent)] opacity-0 group-hover:opacity-100 transition-opacity">
+                    →
                   </div>
                 </div>
               </button>
@@ -179,12 +237,15 @@ function LocationPicker({
           </div>
         )}
 
-        {/* Indicador de carga */}
+        {/* Indicador de carga mejorado */}
         {loading && (
-          <div className="absolute z-50 w-full mt-2 bg-white border-2 border-gray-200 rounded-lg shadow-lg p-3">
-            <div className="flex items-center gap-2 text-gray-600">
-              <div className="w-4 h-4 border-2 border-[var(--gold-accent)] border-t-transparent rounded-full animate-spin"></div>
-              <span className="text-sm">Buscando ubicaciones...</span>
+          <div 
+            className="absolute w-full mt-2 bg-white border-2 border-[var(--gold-accent)]/30 rounded-lg shadow-xl p-4"
+            style={{ zIndex: 9999 }}
+          >
+            <div className="flex items-center gap-3 text-gray-700">
+              <div className="w-5 h-5 border-3 border-[var(--gold-accent)] border-t-transparent rounded-full animate-spin"></div>
+              <span className="text-sm font-medium">🔍 Buscando ubicaciones...</span>
             </div>
           </div>
         )}
@@ -203,6 +264,7 @@ function LocationPicker({
           />
           
           <MapClickHandler onLocationSelect={handleMapClick} />
+          <MapCenterUpdater center={position} />
           
           {position && (
             <Marker position={[position.lat, position.lng]} />

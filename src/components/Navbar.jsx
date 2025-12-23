@@ -16,7 +16,7 @@ function Navbar() {
             return <NavbarUser/>
     
   return (
-    <nav className="navbar my-3 flex justify-between items-center py-6 px-10 rounded-xl shadow-2xl backdrop-blur-sm">
+    <nav className="navbar my-3 mx-3 flex justify-between items-center py-6 px-10 rounded-xl shadow-2xl backdrop-blur-sm">
       <Link to='/' className="hover:scale-105 transition-transform duration-300">
         <Logo size="medium" />
       </Link>

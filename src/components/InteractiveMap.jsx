@@ -86,12 +86,13 @@ function InteractiveMap({
   };
 
   return (
-    <div style={{ height, width: '100%', borderRadius: '8px', overflow: 'hidden' }}>
+    <div style={{ height: '100%', width: '100%', position: 'relative' }}>
       <MapContainer 
         center={center} 
         zoom={zoom} 
-        style={{ height: '100%', width: '100%' }}
+        style={{ height: '100%', width: '100%', position: 'absolute', top: 0, left: 0 }}
         scrollWheelZoom={true}
+        zoomControl={true}
       >
         <TileLayer
           attribution={tileConfig.attribution}

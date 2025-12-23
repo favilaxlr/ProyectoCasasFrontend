@@ -9,7 +9,7 @@ function NavbarUser() {
   const {user, logOut} = useAuth();
   const navigate = useNavigate();
   return (
-    <nav className="navbar my-3 flex justify-between items-center py-5 px-10 rounded-lg shadow-lg bg-gradient-to-r from-gray-900 to-gray-800">
+    <nav className="navbar my-3 mx-3 flex justify-between items-center py-5 px-10 rounded-lg shadow-lg bg-gradient-to-r from-gray-900 to-gray-800">
        <Link to='/' className="hover:scale-105 transition-transform duration-300">
          <Logo size="medium" />
        </Link>

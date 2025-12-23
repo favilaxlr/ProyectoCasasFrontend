@@ -49,7 +49,7 @@ function App() {
       <PropertiesProvider>
         <AppointmentsProvider>
           <BrowserRouter>
-            <main className='container mx-auto px-10'>
+            <main className='w-full'>
               <Navbar/>
               <ToastContainer
                 position='top-right'
