@@ -49,9 +49,14 @@ export const AuthProvider = ({ children }) => {
             // Verificar roles
             if (res.data.role?.role === 'admin') {
                 setIsAdmin(true);
+                setIsCoAdmin(false);
             } else if (res.data.role?.role === 'co-admin') {
+                setIsAdmin(false);
                 setIsCoAdmin(true);
-            } 
+            } else {
+                setIsAdmin(false);
+                setIsCoAdmin(false);
+            }
             setUser(res.data);
             setIsAuthenticated(true);
             setIsLoading(false);
@@ -107,10 +112,16 @@ export const AuthProvider = ({ children }) => {
                 setUser(res.data);
                 setIsLoading(false);
                 
-                if (res.data.role === 'admin') {
+                // Verificar roles correctamente
+                if (res.data.role?.role === 'admin') {
                     setIsAdmin(true);
-                } else if (res.data.role === 'co-admin') {
+                    setIsCoAdmin(false);
+                } else if (res.data.role?.role === 'co-admin') {
+                    setIsAdmin(false);
                     setIsCoAdmin(true);
+                } else {
+                    setIsAdmin(false);
+                    setIsCoAdmin(false);
                 }
 
             } catch (error) {
@@ -137,6 +148,14 @@ export const AuthProvider = ({ children }) => {
         setIsLoading(true);
     }
 
+    // Función para actualizar datos del usuario
+    const updateUserData = (newData) => {
+        setUser(prevUser => ({
+            ...prevUser,
+            ...newData
+        }));
+    }
+
     return (
         <AuthContext.Provider value={{
             logOut,
@@ -147,7 +166,8 @@ export const AuthProvider = ({ children }) => {
             errors,
             isLoading,
             isAdmin,
-            isCoAdmin
+            isCoAdmin,
+            updateUserData
         }}>
             {children}
         </AuthContext.Provider>

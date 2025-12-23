@@ -3,6 +3,7 @@ import { useAuth } from '../context/AuthContext'
 import { getAllPropertiesRequest } from '../api/properties'
 import PropertyCard from '../components/PropertyCard'
 import InteractiveMap from '../components/InteractiveMap'
+import ThemeToggle from '../components/ThemeToggle'
 
 function HomePage() {
   const { user } = useAuth()
@@ -26,15 +27,15 @@ function HomePage() {
   }
 
   const sortedProperties = [...properties].sort((a, b) => {
-    if (sortOption === 'price-low') return a.price - b.price
-    if (sortOption === 'price-high') return b.price - a.price
+    if (sortOption === 'price-low') return (a.price?.sale || 0) - (b.price?.sale || 0)
+    if (sortOption === 'price-high') return (b.price?.sale || 0) - (a.price?.sale || 0)
     return 0
   })
 
   return (
     <div className="h-screen flex flex-col">
       {/* Header */}
-      <div className="main-header px-8 py-4 flex justify-between items-center">
+      <div className="main-header px-8 py-4 flex justify-between items-center flex-shrink-0">
         <div className="flex items-center space-x-8">
           <h1 className="text-2xl font-bold text-[var(--gold-accent)]">
             FR FAMILY INVESTMENTS
@@ -85,9 +86,9 @@ function HomePage() {
       </div>
 
       {/* Main Split View */}
-      <div className="flex-1 flex">
+      <div className="flex-1 flex overflow-hidden">
         {/* Map Panel - Left Side (70%) */}
-        <div className="w-[70%] relative">
+        <div className="w-[70%] relative h-full">
           <InteractiveMap 
             properties={sortedProperties}
             selectedProperty={selectedProperty}
@@ -126,7 +127,7 @@ function HomePage() {
         </div>
 
         {/* Properties Panel - Right Side (30%) */}
-        <div className="w-[30%] property-list">
+        <div className="w-[30%] property-list overflow-y-auto h-full">
           <div className="p-4">
             <div className="flex justify-between items-center mb-4 pb-2 border-b border-gray-200">
               <h2 className="text-lg font-semibold text-[var(--charcoal)]">

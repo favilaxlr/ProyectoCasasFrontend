@@ -7,10 +7,10 @@ import { IoPersonAdd, IoLogIn } from 'react-icons/io5';
 import Tooltip from '@mui/material/Tooltip';
 
 function Navbar() {
-    const { isAuthenticated, isAdmin} = useAuth();
+    const { isAuthenticated, isAdmin, isCoAdmin} = useAuth();
     
-    if (isAuthenticated && isAdmin)
-        return <NavbarAdmin /> //. /addproducts /updateProduct
+    if (isAuthenticated && (isAdmin || isCoAdmin))
+        return <NavbarAdmin />
     else 
         if (isAuthenticated)
             return <NavbarUser/>

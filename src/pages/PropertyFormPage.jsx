@@ -6,6 +6,7 @@ import PropertyGallery from '../components/PropertyGallery';
 import ImageUploader from '../components/ImageUploader';
 import LocationPicker from '../components/LocationPicker';
 import { toast } from 'react-toastify';
+import { IoHomeSharp, IoDocumentTextSharp, IoLocationSharp, IoSettingsSharp, IoCameraSharp, IoCheckmarkSharp, IoWarningSharp, IoCashSharp, IoBedSharp, IoWaterSharp, IoResizeSharp, IoCalendarSharp, IoCarSharp, IoPawSharp, IoRestaurantSharp, IoSparklesSharp, IoMapSharp, IoInformationCircleSharp, IoArrowBackSharp, IoArrowForwardSharp, IoSaveSharp, IoCloseSharp, IoBusinessSharp, IoHelpCircleSharp } from 'react-icons/io5';
 
 function PropertyFormPage() {
     const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm({
@@ -29,23 +30,23 @@ function PropertyFormPage() {
 
     // Comodidades predefinidas comunes
     const availableAmenities = [
-        { id: 'pool', label: 'Piscina', icon: '🏊' },
-        { id: 'gym', label: 'Gimnasio', icon: '💪' },
-        { id: 'security', label: 'Seguridad 24/7', icon: '🔒' },
-        { id: 'garden', label: 'Jardín', icon: '🌳' },
-        { id: 'balcony', label: 'Balcón', icon: '🏞️' },
-        { id: 'laundry', label: 'Lavandería', icon: '🧺' },
-        { id: 'ac', label: 'Aire Acondicionado', icon: '❄️' },
-        { id: 'heating', label: 'Calefacción', icon: '🔥' },
-        { id: 'internet', label: 'Internet', icon: '📶' },
-        { id: 'elevator', label: 'Elevador', icon: '🛗' },
+        { id: 'pool', label: 'Piscina', icon: <IoWaterSharp /> },
+        { id: 'gym', label: 'Gimnasio', icon: <IoSettingsSharp /> },
+        { id: 'security', label: 'Seguridad 24/7', icon: <IoWarningSharp /> },
+        { id: 'garden', label: 'Jardín', icon: <IoSparklesSharp /> },
+        { id: 'balcony', label: 'Balcón', icon: <IoHomeSharp /> },
+        { id: 'laundry', label: 'Lavandería', icon: <IoSettingsSharp /> },
+        { id: 'ac', label: 'Aire Acondicionado', icon: <IoSettingsSharp /> },
+        { id: 'heating', label: 'Calefacción', icon: <IoSettingsSharp /> },
+        { id: 'internet', label: 'Internet', icon: <IoSettingsSharp /> },
+        { id: 'elevator', label: 'Elevador', icon: <IoSettingsSharp /> },
     ];
 
     const steps = [
-        { number: 1, title: 'Información Básica', icon: '📝' },
-        { number: 2, title: 'Ubicación', icon: '📍' },
-        { number: 3, title: 'Detalles', icon: '🏠' },
-        { number: 4, title: 'Imágenes', icon: '📷' }
+        { number: 1, title: 'Información Básica', icon: <IoDocumentTextSharp /> },
+        { number: 2, title: 'Ubicación', icon: <IoLocationSharp /> },
+        { number: 3, title: 'Detalles', icon: <IoHomeSharp /> },
+        { number: 4, title: 'Imágenes', icon: <IoCameraSharp /> }
     ];
 
     useEffect(() => {
@@ -60,17 +61,14 @@ function PropertyFormPage() {
             const propertyData = res.data;
             setProperty(propertyData);
             
-            // Cargar coordenadas si existen
             if (propertyData.address?.coordinates) {
                 setCoordinates(propertyData.address.coordinates);
             }
 
-            // Cargar amenidades
             if (propertyData.amenities) {
                 setSelectedAmenities(propertyData.amenities);
             }
             
-            // Llenar formulario con datos existentes
             Object.keys(propertyData).forEach(key => {
                 if (key === 'address') {
                     Object.keys(propertyData.address).forEach(addressKey => {
@@ -108,17 +106,13 @@ function PropertyFormPage() {
         try {
             const formData = new FormData();
             
-            // Procesar datos básicos (title, description)
             if (data.title) formData.append('title', data.title);
             if (data.description) formData.append('description', data.description);
 
-            // Procesar precio
             if (data.price) {
-                if (data.price.rent) formData.append('price.rent', data.price.rent);
-                if (data.price.deposit) formData.append('price.deposit', data.price.deposit);
+                if (data.price.sale) formData.append('price.sale', Number(data.price.sale));
             }
 
-            // Procesar dirección
             if (data.address) {
                 if (data.address.street) formData.append('address.street', data.address.street);
                 if (data.address.city) formData.append('address.city', data.address.city);
@@ -126,40 +120,36 @@ function PropertyFormPage() {
                 if (data.address.zipCode) formData.append('address.zipCode', data.address.zipCode);
             }
 
-            // Agregar coordenadas si existen
             if (coordinates) {
                 formData.append('address.coordinates.lat', coordinates.lat);
                 formData.append('address.coordinates.lng', coordinates.lng);
             }
 
-            // Procesar detalles
             if (data.details) {
                 if (data.details.propertyType) formData.append('details.propertyType', data.details.propertyType);
-                if (data.details.bedrooms !== undefined) formData.append('details.bedrooms', data.details.bedrooms);
-                if (data.details.bathrooms !== undefined) formData.append('details.bathrooms', data.details.bathrooms);
-                if (data.details.squareFeet) formData.append('details.squareFeet', data.details.squareFeet);
-                if (data.details.yearBuilt) formData.append('details.yearBuilt', data.details.yearBuilt);
+                if (data.details.bedrooms !== undefined) formData.append('details.bedrooms', Number(data.details.bedrooms));
+                if (data.details.bathrooms !== undefined) formData.append('details.bathrooms', Number(data.details.bathrooms));
+                if (data.details.squareFeet) formData.append('details.squareFeet', Number(data.details.squareFeet));
+                if (data.details.yearBuilt) formData.append('details.yearBuilt', Number(data.details.yearBuilt));
                 formData.append('details.parking', data.details.parking || false);
                 formData.append('details.petFriendly', data.details.petFriendly || false);
                 formData.append('details.furnished', data.details.furnished || false);
             }
 
-            // Agregar amenidades seleccionadas
             selectedAmenities.forEach(amenity => {
                 formData.append('amenities', amenity);
             });
 
-            // Agregar imágenes
             images.forEach(image => {
                 formData.append('images', image);
             });
 
             if (isEditing) {
                 await updatePropertyRequest(id, formData);
-                toast.success('✅ Propiedad actualizada exitosamente');
+                toast.success('Propiedad actualizada exitosamente');
             } else {
                 await createPropertyRequest(formData);
-                toast.success('✅ Propiedad creada exitosamente');
+                toast.success('Propiedad creada exitosamente');
             }
             
             navigate('/admin/properties');
@@ -170,14 +160,13 @@ function PropertyFormPage() {
                     ? error.response.data.message.join(', ') 
                     : error.response.data.message)
                 : 'Error al guardar la propiedad';
-            toast.error(`❌ ${errorMsg}`);
+            toast.error(errorMsg);
         } finally {
             setLoading(false);
         }
     };
 
-    const handleImageChange = (e) => {
-        const files = Array.from(e.target.files);
+    const handleImageChange = (files) => {
         setImages(files);
     };
 
@@ -185,20 +174,20 @@ function PropertyFormPage() {
         const values = watch();
         
         switch(currentStep) {
-            case 1: // Información básica
-                if (!values.title || !values.description || !values.price?.rent) {
+            case 1:
+                if (!values.title || !values.description || !values.price?.sale) {
                     toast.error('Por favor completa todos los campos requeridos');
                     return false;
                 }
                 break;
-            case 2: // Ubicación
+            case 2:
                 if (!values.address?.street || !values.address?.city || 
                     !values.address?.state || !values.address?.zipCode) {
                     toast.error('Por favor completa la dirección completa');
                     return false;
                 }
                 break;
-            case 3: // Detalles
+            case 3:
                 if (!values.details?.propertyType || 
                     values.details?.bedrooms === undefined || 
                     values.details?.bathrooms === undefined) {
@@ -206,7 +195,7 @@ function PropertyFormPage() {
                     return false;
                 }
                 break;
-            case 4: // Imágenes - opcional
+            case 4:
                 break;
         }
         return true;
@@ -234,18 +223,19 @@ function PropertyFormPage() {
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-8 px-4">
             <div className="max-w-5xl mx-auto">
-                {/* Header */}
                 <div className="animate-slide-in-left mb-8 text-center">
-                    <h1 className="text-4xl font-bold text-[var(--charcoal)] mb-2">
-                        {isEditing ? '✏️ Editar Propiedad' : '🏡 Nueva Propiedad'}
+                    <h1 className="text-4xl font-bold text-[var(--charcoal)] mb-2 flex items-center justify-center">
+                        {isEditing ? (
+                            <><IoSettingsSharp className="mr-3" /> Editar Propiedad</>
+                        ) : (
+                            <><IoHomeSharp className="mr-3" /> Nueva Propiedad</>
+                        )}
                     </h1>
                     <p className="text-gray-600">Complete los campos del formulario paso a paso</p>
                 </div>
 
-                {/* Progress Steps */}
                 <div className="bg-white rounded-2xl shadow-lg p-6 mb-6">
                     <div className="flex items-center justify-between relative">
-                        {/* Progress Line */}
                         <div className="absolute top-6 left-0 right-0 h-1 bg-gray-200 -z-10">
                             <div 
                                 className="h-full bg-[var(--gold-accent)] transition-all duration-500"
@@ -272,7 +262,7 @@ function PropertyFormPage() {
                                         : 'bg-white border-gray-300 text-gray-400'
                                     }
                                 `}>
-                                    {currentStep > step.number ? '✓' : step.icon}
+                                    {currentStep > step.number ? <IoCheckmarkSharp /> : step.icon}
                                 </div>
                                 <span className={`mt-2 text-xs md:text-sm font-medium transition-colors ${
                                     currentStep === step.number ? 'text-[var(--charcoal)]' : 'text-gray-500'
@@ -284,16 +274,14 @@ function PropertyFormPage() {
                     </div>
                 </div>
 
-                {/* Form */}
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <div className="bg-white rounded-2xl shadow-xl p-8 mb-6 min-h-[500px]">
                         
-                        {/* Step 1: Información Básica */}
                         {currentStep === 1 && (
                             <div className="animate-fade-in space-y-6">
                                 <div className="border-b pb-4 mb-6">
                                     <h2 className="text-2xl font-bold text-[var(--charcoal)] flex items-center">
-                                        📝 Información Básica
+                                        <IoDocumentTextSharp className="mr-3" /> Información Básica
                                     </h2>
                                     <p className="text-gray-600 mt-1">Datos principales de la propiedad</p>
                                 </div>
@@ -311,7 +299,7 @@ function PropertyFormPage() {
                                     />
                                     {errors.title && (
                                         <p className="text-red-500 text-sm mt-1 flex items-center">
-                                            ⚠️ {errors.title.message}
+                                            <IoWarningSharp className="mr-1" /> {errors.title.message}
                                         </p>
                                     )}
                                 </div>
@@ -333,56 +321,43 @@ function PropertyFormPage() {
                                     />
                                     {errors.description && (
                                         <p className="text-red-500 text-sm mt-1 flex items-center">
-                                            ⚠️ {errors.description.message}
+                                            <IoWarningSharp className="mr-1" /> {errors.description.message}
                                         </p>
                                     )}
                                 </div>
 
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div className="grid grid-cols-1 gap-6">
                                     <div>
-                                        <label className="block text-sm font-semibold mb-2 text-gray-700">
-                                            💰 Precio de Renta (USD) *
+                                        <label className="block text-sm font-semibold mb-2 text-gray-700 flex items-center">
+                                            <IoCashSharp className="mr-2" /> Precio de Venta (USD) *
                                         </label>
                                         <input
                                             type="number"
-                                            {...register('price.rent', { 
+                                            {...register('price.sale', { 
                                                 required: 'El precio es requerido',
                                                 min: { value: 1, message: 'Debe ser mayor a 0' }
                                             })}
-                                            placeholder="1000"
+                                            placeholder="250000"
                                             className={`w-full border-2 rounded-xl px-4 py-3 transition-all focus:ring-2 focus:ring-[var(--gold-accent)] focus:border-[var(--gold-accent)] ${
-                                                errors.price?.rent ? 'border-red-500' : 'border-gray-200'
+                                                errors.price?.sale ? 'border-red-500' : 'border-gray-200'
                                             }`}
                                         />
-                                        {errors.price?.rent && (
-                                            <p className="text-red-500 text-sm mt-1">⚠️ {errors.price.rent.message}</p>
+                                        {errors.price?.sale && (
+                                            <p className="text-red-500 text-sm mt-1 flex items-center">
+                                                <IoWarningSharp className="mr-1" /> {errors.price.sale.message}
+                                            </p>
                                         )}
-                                    </div>
-
-                                    <div>
-                                        <label className="block text-sm font-semibold mb-2 text-gray-700">
-                                            🏦 Depósito (USD)
-                                        </label>
-                                        <input
-                                            type="number"
-                                            {...register('price.deposit', {
-                                                min: { value: 0, message: 'No puede ser negativo' }
-                                            })}
-                                            placeholder="500"
-                                            className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 transition-all focus:ring-2 focus:ring-[var(--gold-accent)] focus:border-[var(--gold-accent)]"
-                                        />
-                                        <p className="text-xs text-gray-500 mt-1">Opcional - Depósito de garantía</p>
+                                        <p className="text-xs text-gray-500 mt-1">Precio de venta de la propiedad</p>
                                     </div>
                                 </div>
                             </div>
                         )}
 
-                        {/* Step 2: Ubicación */}
                         {currentStep === 2 && (
                             <div className="animate-fade-in space-y-6">
                                 <div className="border-b pb-4 mb-6">
                                     <h2 className="text-2xl font-bold text-[var(--charcoal)] flex items-center">
-                                        📍 Ubicación
+                                        <IoLocationSharp className="mr-3" /> Ubicación
                                     </h2>
                                     <p className="text-gray-600 mt-1">Dirección completa de la propiedad</p>
                                 </div>
@@ -400,7 +375,9 @@ function PropertyFormPage() {
                                             }`}
                                         />
                                         {errors.address?.street && (
-                                            <p className="text-red-500 text-sm mt-1">⚠️ {errors.address.street.message}</p>
+                                            <p className="text-red-500 text-sm mt-1 flex items-center">
+                                                <IoWarningSharp className="mr-1" /> {errors.address.street.message}
+                                            </p>
                                         )}
                                     </div>
 
@@ -415,9 +392,6 @@ function PropertyFormPage() {
                                                 errors.address?.city ? 'border-red-500' : 'border-gray-200'
                                             }`}
                                         />
-                                        {errors.address?.city && (
-                                            <p className="text-red-500 text-sm mt-1">⚠️ {errors.address.city.message}</p>
-                                        )}
                                     </div>
 
                                     <div>
@@ -431,9 +405,6 @@ function PropertyFormPage() {
                                                 errors.address?.state ? 'border-red-500' : 'border-gray-200'
                                             }`}
                                         />
-                                        {errors.address?.state && (
-                                            <p className="text-red-500 text-sm mt-1">⚠️ {errors.address.state.message}</p>
-                                        )}
                                     </div>
 
                                     <div>
@@ -447,16 +418,12 @@ function PropertyFormPage() {
                                                 errors.address?.zipCode ? 'border-red-500' : 'border-gray-200'
                                             }`}
                                         />
-                                        {errors.address?.zipCode && (
-                                            <p className="text-red-500 text-sm mt-1">⚠️ {errors.address.zipCode.message}</p>
-                                        )}
                                     </div>
                                 </div>
 
-                                {/* Mapa */}
                                 <div className="mt-6">
-                                    <label className="block text-sm font-semibold mb-3 text-gray-700">
-                                        🗺️ Ubicación en el Mapa
+                                    <label className="flex items-center text-sm font-semibold mb-3 text-gray-700">
+                                        <IoMapSharp className="mr-2" /> Ubicación en el Mapa
                                     </label>
                                     <div className="border-2 border-gray-200 rounded-xl overflow-hidden">
                                         <LocationPicker
@@ -466,19 +433,18 @@ function PropertyFormPage() {
                                             }}
                                         />
                                     </div>
-                                    <p className="text-xs text-gray-500 mt-2">
-                                        💡 Haz clic en el mapa para seleccionar la ubicación exacta
+                                    <p className="text-xs text-gray-500 mt-2 flex items-center">
+                                        <IoInformationCircleSharp className="mr-1" /> Haz clic en el mapa para seleccionar la ubicación exacta
                                     </p>
                                 </div>
                             </div>
                         )}
 
-                        {/* Step 3: Detalles */}
                         {currentStep === 3 && (
                             <div className="animate-fade-in space-y-6">
                                 <div className="border-b pb-4 mb-6">
                                     <h2 className="text-2xl font-bold text-[var(--charcoal)] flex items-center">
-                                        🏠 Detalles de la Propiedad
+                                        <IoHomeSharp className="mr-3" /> Detalles de la Propiedad
                                     </h2>
                                     <p className="text-gray-600 mt-1">Características y especificaciones</p>
                                 </div>
@@ -489,10 +455,10 @@ function PropertyFormPage() {
                                     </label>
                                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                                         {[
-                                            { value: 'house', label: 'Casa', icon: '🏠' },
-                                            { value: 'apartment', label: 'Apartamento', icon: '🏢' },
-                                            { value: 'condo', label: 'Condominio', icon: '🏘️' },
-                                            { value: 'townhouse', label: 'Casa Adosada', icon: '🏡' }
+                                            { value: 'house', label: 'Casa', icon: <IoHomeSharp /> },
+                                            { value: 'apartment', label: 'Apartamento', icon: <IoBusinessSharp /> },
+                                            { value: 'condo', label: 'Condominio', icon: <IoBusinessSharp /> },
+                                            { value: 'townhouse', label: 'Casa Adosada', icon: <IoHomeSharp /> }
                                         ].map((type) => (
                                             <label
                                                 key={type.value}
@@ -508,20 +474,17 @@ function PropertyFormPage() {
                                                     value={type.value}
                                                     className="hidden"
                                                 />
-                                                <div className="text-3xl mb-2">{type.icon}</div>
+                                                <div className="text-3xl mb-2 flex justify-center">{type.icon}</div>
                                                 <div className="text-sm font-medium">{type.label}</div>
                                             </label>
                                         ))}
                                     </div>
-                                    {errors.details?.propertyType && (
-                                        <p className="text-red-500 text-sm mt-2">⚠️ Selecciona un tipo de propiedad</p>
-                                    )}
                                 </div>
 
                                 <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
                                     <div>
-                                        <label className="block text-sm font-semibold mb-2 text-gray-700">
-                                            🛏️ Habitaciones *
+                                        <label className="flex items-center text-sm font-semibold mb-2 text-gray-700">
+                                            <IoBedSharp className="mr-2" /> Habitaciones *
                                         </label>
                                         <input
                                             type="number"
@@ -530,15 +493,13 @@ function PropertyFormPage() {
                                                 min: { value: 0, message: 'Mínimo 0' }
                                             })}
                                             placeholder="3"
-                                            className={`w-full border-2 rounded-xl px-4 py-3 transition-all focus:ring-2 focus:ring-[var(--gold-accent)] focus:border-[var(--gold-accent)] ${
-                                                errors.details?.bedrooms ? 'border-red-500' : 'border-gray-200'
-                                            }`}
+                                            className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 transition-all focus:ring-2 focus:ring-[var(--gold-accent)] focus:border-[var(--gold-accent)]"
                                         />
                                     </div>
 
                                     <div>
-                                        <label className="block text-sm font-semibold mb-2 text-gray-700">
-                                            🚿 Baños *
+                                        <label className="flex items-center text-sm font-semibold mb-2 text-gray-700">
+                                            <IoWaterSharp className="mr-2" /> Baños *
                                         </label>
                                         <input
                                             type="number"
@@ -548,36 +509,29 @@ function PropertyFormPage() {
                                                 min: { value: 0, message: 'Mínimo 0' }
                                             })}
                                             placeholder="2"
-                                            className={`w-full border-2 rounded-xl px-4 py-3 transition-all focus:ring-2 focus:ring-[var(--gold-accent)] focus:border-[var(--gold-accent)] ${
-                                                errors.details?.bathrooms ? 'border-red-500' : 'border-gray-200'
-                                            }`}
+                                            className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 transition-all focus:ring-2 focus:ring-[var(--gold-accent)] focus:border-[var(--gold-accent)]"
                                         />
                                     </div>
 
                                     <div>
-                                        <label className="block text-sm font-semibold mb-2 text-gray-700">
-                                            📐 Pies Cuadrados
+                                        <label className="flex items-center text-sm font-semibold mb-2 text-gray-700">
+                                            <IoResizeSharp className="mr-2" /> Pies Cuadrados
                                         </label>
                                         <input
                                             type="number"
-                                            {...register('details.squareFeet', {
-                                                min: { value: 0, message: 'Mínimo 0' }
-                                            })}
+                                            {...register('details.squareFeet')}
                                             placeholder="1500"
                                             className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 transition-all focus:ring-2 focus:ring-[var(--gold-accent)] focus:border-[var(--gold-accent)]"
                                         />
                                     </div>
 
                                     <div>
-                                        <label className="block text-sm font-semibold mb-2 text-gray-700">
-                                            📅 Año Construcción
+                                        <label className="flex items-center text-sm font-semibold mb-2 text-gray-700">
+                                            <IoCalendarSharp className="mr-2" /> Año Construcción
                                         </label>
                                         <input
                                             type="number"
-                                            {...register('details.yearBuilt', {
-                                                min: { value: 1800, message: 'Año inválido' },
-                                                max: { value: new Date().getFullYear() + 2, message: 'Año inválido' }
-                                            })}
+                                            {...register('details.yearBuilt')}
                                             placeholder="2020"
                                             className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 transition-all focus:ring-2 focus:ring-[var(--gold-accent)] focus:border-[var(--gold-accent)]"
                                         />
@@ -586,7 +540,7 @@ function PropertyFormPage() {
 
                                 <div>
                                     <label className="block text-sm font-semibold mb-3 text-gray-700">
-                                        ✨ Características Especiales
+                                        Características Especiales
                                     </label>
                                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                         <label className="flex items-center p-4 border-2 border-gray-200 rounded-xl cursor-pointer hover:border-[var(--gold-accent)] transition-all">
@@ -595,7 +549,8 @@ function PropertyFormPage() {
                                                 {...register('details.parking')}
                                                 className="w-5 h-5 text-[var(--gold-accent)] rounded focus:ring-[var(--gold-accent)]"
                                             />
-                                            <span className="ml-3 text-sm font-medium">🚗 Estacionamiento</span>
+                                            <IoCarSharp className="ml-3 mr-2" />
+                                            <span className="text-sm font-medium">Estacionamiento</span>
                                         </label>
 
                                         <label className="flex items-center p-4 border-2 border-gray-200 rounded-xl cursor-pointer hover:border-[var(--gold-accent)] transition-all">
@@ -604,7 +559,8 @@ function PropertyFormPage() {
                                                 {...register('details.petFriendly')}
                                                 className="w-5 h-5 text-[var(--gold-accent)] rounded focus:ring-[var(--gold-accent)]"
                                             />
-                                            <span className="ml-3 text-sm font-medium">🐕 Acepta Mascotas</span>
+                                            <IoPawSharp className="ml-3 mr-2" />
+                                            <span className="text-sm font-medium">Acepta Mascotas</span>
                                         </label>
 
                                         <label className="flex items-center p-4 border-2 border-gray-200 rounded-xl cursor-pointer hover:border-[var(--gold-accent)] transition-all">
@@ -613,14 +569,15 @@ function PropertyFormPage() {
                                                 {...register('details.furnished')}
                                                 className="w-5 h-5 text-[var(--gold-accent)] rounded focus:ring-[var(--gold-accent)]"
                                             />
-                                            <span className="ml-3 text-sm font-medium">🛋️ Amueblado</span>
+                                            <IoRestaurantSharp className="ml-3 mr-2" />
+                                            <span className="text-sm font-medium">Amueblado</span>
                                         </label>
                                     </div>
                                 </div>
 
                                 <div>
                                     <label className="block text-sm font-semibold mb-3 text-gray-700">
-                                        🎯 Comodidades
+                                        Comodidades
                                     </label>
                                     <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
                                         {availableAmenities.map((amenity) => (
@@ -634,29 +591,24 @@ function PropertyFormPage() {
                                                         : 'border-gray-200 hover:border-gray-300'
                                                 }`}
                                             >
-                                                <div className="text-2xl mb-1">{amenity.icon}</div>
+                                                <div className="text-2xl mb-1 flex justify-center">{amenity.icon}</div>
                                                 <div className="text-xs font-medium">{amenity.label}</div>
                                             </button>
                                         ))}
                                     </div>
-                                    <p className="text-xs text-gray-500 mt-2">
-                                        💡 Selecciona todas las que apliquen
-                                    </p>
                                 </div>
                             </div>
                         )}
 
-                        {/* Step 4: Imágenes */}
                         {currentStep === 4 && (
                             <div className="animate-fade-in space-y-6">
                                 <div className="border-b pb-4 mb-6">
                                     <h2 className="text-2xl font-bold text-[var(--charcoal)] flex items-center">
-                                        📷 Imágenes de la Propiedad
+                                        <IoCameraSharp className="mr-3" /> Imágenes de la Propiedad
                                     </h2>
                                     <p className="text-gray-600 mt-1">Las imágenes ayudan a atraer más interesados</p>
                                 </div>
 
-                                {/* Mostrar galería existente si estamos editando */}
                                 {isEditing && property && (
                                     <div className="mb-6">
                                         <h3 className="text-lg font-semibold mb-3 text-gray-700">Imágenes Actuales</h3>
@@ -668,59 +620,32 @@ function PropertyFormPage() {
                                     </div>
                                 )}
                                 
-                                {/* Subir nuevas imágenes */}
-                                <div className="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center hover:border-[var(--gold-accent)] transition-all">
+                                <div>
                                     {isEditing ? (
                                         <ImageUploader 
                                             propertyId={id}
                                             onImagesUploaded={loadProperty}
                                         />
                                     ) : (
-                                        <div>
-                                            <div className="text-6xl mb-4">📸</div>
-                                            <label className="cursor-pointer inline-block">
-                                                <input
-                                                    type="file"
-                                                    multiple
-                                                    accept="image/*"
-                                                    onChange={handleImageChange}
-                                                    className="hidden"
-                                                />
-                                                <span className="px-6 py-3 bg-[var(--gold-accent)] text-white rounded-xl hover:bg-[var(--charcoal)] transition-all inline-block font-medium">
-                                                    Seleccionar Imágenes
-                                                </span>
-                                            </label>
-                                            {images.length > 0 && (
-                                                <div className="mt-4">
-                                                    <p className="text-green-600 font-medium">
-                                                        ✓ {images.length} imagen{images.length > 1 ? 'es' : ''} seleccionada{images.length > 1 ? 's' : ''}
-                                                    </p>
-                                                    <div className="mt-3 flex flex-wrap gap-2 justify-center">
-                                                        {images.map((img, idx) => (
-                                                            <div key={idx} className="text-xs bg-gray-100 px-3 py-1 rounded-full">
-                                                                {img.name}
-                                                            </div>
-                                                        ))}
-                                                    </div>
-                                                </div>
-                                            )}
-                                            <p className="text-sm text-gray-500 mt-4">
-                                                Formatos: JPG, PNG, WEBP • Máximo 10 imágenes
-                                            </p>
-                                        </div>
+                                        <ImageUploader 
+                                            onChange={handleImageChange}
+                                        />
                                     )}
                                 </div>
 
-                                <div className="bg-blue-50 border-l-4 border-blue-400 p-4 rounded-r-xl">
+                                <div className="bg-blue-50 border-l-4 border-blue-400 p-4 rounded-r-xl mt-4">
                                     <div className="flex">
-                                        <div className="text-2xl mr-3">💡</div>
+                                        <div className="mr-3">
+                                            <IoHelpCircleSharp className="text-2xl text-blue-600" />
+                                        </div>
                                         <div>
                                             <p className="text-sm font-medium text-blue-800">Consejos para mejores imágenes:</p>
                                             <ul className="text-xs text-blue-700 mt-2 space-y-1">
-                                                <li>✓ Usa buena iluminación natural</li>
-                                                <li>✓ Muestra diferentes ángulos de cada habitación</li>
-                                                <li>✓ Incluye áreas exteriores si las hay</li>
-                                                <li>✓ La primera imagen será la principal</li>
+                                                <li>• Usa buena iluminación natural</li>
+                                                <li>• Muestra diferentes ángulos de cada habitación</li>
+                                                <li>• Incluye áreas exteriores si las hay</li>
+                                                <li>• Usa los botones para reordenar las imágenes</li>
+                                                <li>• Marca con la estrella la imagen que quieres que aparezca primero</li>
                                             </ul>
                                         </div>
                                     </div>
@@ -729,7 +654,6 @@ function PropertyFormPage() {
                         )}
                     </div>
 
-                    {/* Navigation Buttons */}
                     <div className="flex justify-between items-center mt-8">
                         <button
                             type="button"
@@ -741,9 +665,7 @@ function PropertyFormPage() {
                                     : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                             }`}
                         >
-                            <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                            </svg>
+                            <IoArrowBackSharp className="mr-2" />
                             Anterior
                         </button>
 
@@ -751,8 +673,9 @@ function PropertyFormPage() {
                             <button
                                 type="button"
                                 onClick={() => navigate('/admin/properties')}
-                                className="px-6 py-3 bg-gray-200 text-gray-700 rounded-xl font-medium hover:bg-gray-300 transition-all"
+                                className="px-6 py-3 bg-gray-200 text-gray-700 rounded-xl font-medium hover:bg-gray-300 transition-all flex items-center"
                             >
+                                <IoCloseSharp className="mr-2" />
                                 Cancelar
                             </button>
 
@@ -763,9 +686,7 @@ function PropertyFormPage() {
                                     className="px-8 py-3 bg-[var(--gold-accent)] text-white rounded-xl font-medium hover:bg-[var(--charcoal)] transition-all flex items-center shadow-lg"
                                 >
                                     Siguiente
-                                    <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                                    </svg>
+                                    <IoArrowForwardSharp className="ml-2" />
                                 </button>
                             ) : (
                                 <button
@@ -780,9 +701,7 @@ function PropertyFormPage() {
                                         </>
                                     ) : (
                                         <>
-                                            <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                            </svg>
+                                            <IoSaveSharp className="mr-2" />
                                             {isEditing ? 'Actualizar Propiedad' : 'Crear Propiedad'}
                                         </>
                                     )}

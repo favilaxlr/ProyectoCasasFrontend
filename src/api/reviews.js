@@ -22,6 +22,9 @@ export const getPendingReviewsRequest = () =>
 export const moderateReviewRequest = (reviewId, data) => 
     axios.put(`/reviews/${reviewId}/moderate`, data);
 
+export const deleteReviewRequest = (reviewId) => 
+    axios.delete(`/reviews/${reviewId}`);
+
 // APIs solo para admin
 export const toggleFeaturedReviewRequest = (reviewId) => 
     axios.put(`/reviews/${reviewId}/featured`);

@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router';
-import { getPropertiesRequest, deletePropertyRequest } from '../api/properties';
+import { getPropertiesRequest, deletePropertyRequest, changePropertyStatusRequest } from '../api/properties';
+import { toast } from 'react-toastify';
+import { IoSwapHorizontalSharp } from 'react-icons/io5';
 
 function PropertiesPage() {
     const [properties, setProperties] = useState([]);
@@ -32,12 +34,25 @@ function PropertiesPage() {
         }
     };
 
+    const handleStatusChange = async (propertyId, newStatus) => {
+        if (!newStatus) return;
+
+        try {
+            await changePropertyStatusRequest(propertyId, newStatus, '');
+            toast.success('Estado actualizado correctamente');
+            loadProperties(); // Recargar lista
+        } catch (error) {
+            console.error('Error al cambiar estado:', error);
+            toast.error('Error al cambiar el estado');
+        }
+    };
+
     if (loading) return <div className="flex justify-center p-8">Cargando...</div>;
 
     return (
         <div className="page-container max-w-7xl mx-auto p-6">
             <div className="flex justify-between items-center mb-6 animate-slide-in-left">
-                <h1 className="text-3xl font-bold text-[var(--charcoal)]">Mis Propiedades</h1>
+                <h1 className="text-3xl font-bold text-[var(--charcoal)]">Propiedades</h1>
                 <Link
                     to="/admin/add-property"
                     className="btn-secondary-animated"
@@ -87,41 +102,106 @@ function PropertiesPage() {
                             <div className="p-4">
                                 <h3 className="text-lg font-semibold mb-2">{property.title}</h3>
                                 <p className="text-gray-600 text-sm mb-2 line-clamp-2">{property.description}</p>
+
+                                {property.createdBy?.username && (
+                                    <p className="text-xs text-gray-500 mb-1">Subida por: {property.createdBy.username}</p>
+                                )}
+
+                                {property.lastModifiedBy?.username && (
+                                    <p className="text-xs text-yellow-700 mb-2">Modificada por: {property.lastModifiedBy.username}</p>
+                                )}
                                 
-                                <div className="flex justify-between items-center mb-2">
+                                <div className="flex justify-between items-center mb-3">
                                     <span className="text-xl font-bold text-green-600">
-                                        ${property.price?.rent?.toLocaleString()}/mes
+                                        ${property.price?.sale?.toLocaleString()}
                                     </span>
-                                    <span className={`px-2 py-1 rounded text-xs ${
-                                        property.availability?.isAvailable 
-                                            ? 'bg-green-100 text-green-800' 
-                                            : 'bg-red-100 text-red-800'
-                                    }`}>
-                                        {property.availability?.isAvailable ? 'Disponible' : 'No disponible'}
-                                    </span>
+                                    <select
+                                        value={property.status}
+                                        onChange={(e) => handleStatusChange(property._id, e.target.value)}
+                                        className={`px-2 py-1 rounded text-xs font-semibold cursor-pointer transition-all ${
+                                            property.status === 'DISPONIBLE' ? 'bg-green-100 text-green-800 border border-green-300 hover:bg-green-200' :
+                                            property.status === 'EN_CONTRATO' ? 'bg-orange-100 text-orange-800 border border-orange-300 hover:bg-orange-200' :
+                                            property.status === 'VENDIDA' ? 'bg-red-100 text-red-800 border border-red-300 hover:bg-red-200' :
+                                            'bg-gray-100 text-gray-800'
+                                        }`}
+                                    >
+                                        <option value="DISPONIBLE">Disponible</option>
+                                        <option value="EN_CONTRATO">En Contrato</option>
+                                        <option value="VENDIDA">Vendida</option>
+                                    </select>
                                 </div>
 
-                                <div className="text-sm text-gray-600 mb-3">
-                                    <p>{property.details?.bedrooms} hab • {property.details?.bathrooms} baños</p>
-                                    <p>{property.address?.city}, {property.address?.state}</p>
+                                <div className="text-sm text-gray-600 mb-3 space-y-1">
+                                    <div className="flex justify-between">
+                                        <span>Habitaciones:</span>
+                                        <span className="font-semibold">{property.details?.bedrooms || 0}</span>
+                                    </div>
+                                    <div className="flex justify-between">
+                                        <span>Baños:</span>
+                                        <span className="font-semibold">{property.details?.bathrooms || 0}</span>
+                                    </div>
+                                    <div className="flex justify-between">
+                                        <span>Tipo:</span>
+                                        <span className="font-semibold">
+                                            {property.details?.propertyType === 'house' ? 'Casa' :
+                                             property.details?.propertyType === 'apartment' ? 'Apartamento' :
+                                             property.details?.propertyType === 'condo' ? 'Condominio' :
+                                             property.details?.propertyType === 'townhouse' ? 'Casa Adosada' :
+                                             property.details?.propertyType || 'N/A'}
+                                        </span>
+                                    </div>
+                                    {property.details?.squareFeet && (
+                                        <div className="flex justify-between">
+                                            <span>Área:</span>
+                                            <span className="font-semibold">{property.details.squareFeet.toLocaleString()} pies²</span>
+                                        </div>
+                                    )}
+                                    {property.price?.deposit && (
+                                        <div className="flex justify-between">
+                                            <span>Depósito:</span>
+                                            <span className="font-semibold">${property.price.deposit.toLocaleString()}</span>
+                                        </div>
+                                    )}
+                                    <div className="text-xs text-gray-500 mt-2">
+                                        {property.address?.street}, {property.address?.city}, {property.address?.state}
+                                    </div>
+                                </div>
+
+                                {/* Características adicionales */}
+                                <div className="flex flex-wrap gap-1 mb-3">
+                                    {property.details?.parking && (
+                                        <span className="bg-green-100 text-green-800 px-2 py-1 rounded text-xs">
+                                            Estacionamiento
+                                        </span>
+                                    )}
+                                    {property.details?.petFriendly && (
+                                        <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs">
+                                            Pet-friendly
+                                        </span>
+                                    )}
+                                    {property.details?.furnished && (
+                                        <span className="bg-purple-100 text-purple-800 px-2 py-1 rounded text-xs">
+                                            Amueblado
+                                        </span>
+                                    )}
                                 </div>
 
                                 <div className="flex gap-2">
                                     <Link
                                         to={`/properties/${property._id}`}
-                                        className="flex-1 bg-blue-600 text-white text-center py-2 rounded hover:bg-blue-700"
+                                        className="flex-1 bg-blue-600 text-white text-center py-2 rounded hover:bg-blue-700 text-sm"
                                     >
                                         Ver
                                     </Link>
                                     <Link
                                         to={`/admin/properties/edit/${property._id}`}
-                                        className="flex-1 bg-yellow-600 text-white text-center py-2 rounded hover:bg-yellow-700"
+                                        className="flex-1 bg-yellow-600 text-white text-center py-2 rounded hover:bg-yellow-700 text-sm"
                                     >
                                         Editar
                                     </Link>
                                     <button
                                         onClick={() => handleDelete(property._id)}
-                                        className="flex-1 bg-red-600 text-white py-2 rounded hover:bg-red-700"
+                                        className="flex-1 bg-red-600 text-white py-2 rounded hover:bg-red-700 text-sm"
                                     >
                                         Eliminar
                                     </button>

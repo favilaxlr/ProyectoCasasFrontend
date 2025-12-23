@@ -11,6 +11,12 @@ export const registerSchema = z.object({
         error: (email) => email.input === undefined ? "Email es requerido"
                                                     : "Formato de email invalido"
     }),
+    
+    phone: z
+        .string('Teléfono requerido')
+        .min(10, 'El teléfono debe tener al menos 10 dígitos')
+        .regex(/^[+]?[0-9\s\-\(\)]+$/, 'El teléfono debe contener solo números, espacios, guiones, paréntesis y el signo +'),
+        
     password: z
         .string('Contraseña requerida')
         .min(6, 'El password debe tener al menos 6 caracteres')

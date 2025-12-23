@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate, Link } from "react-router";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { registerSchema } from '../schemas/registerSchema';
-import { IoPersonAdd, IoLogIn, IoEyeSharp, IoEyeOffSharp, IoMailSharp, IoLockClosedSharp, IoPersonSharp } from "react-icons/io5"
+import { IoPersonAdd, IoLogIn, IoEyeSharp, IoEyeOffSharp, IoMailSharp, IoLockClosedSharp, IoPersonSharp, IoCallSharp, IoPhonePortraitSharp } from "react-icons/io5"
 
 function RegisterPage() {
   const { signUp, isAuthenticated, errors: registerErrors } = useAuth();
@@ -118,6 +118,32 @@ function RegisterPage() {
               )}
             </div>
 
+            {/* Phone Field */}
+            <div className="space-y-2">
+              <label className="text-sm font-semibold text-[var(--charcoal)] flex items-center">
+                <IoCallSharp className="w-4 h-4 mr-2 text-[var(--gold-accent)]" />
+                Teléfono
+              </label>
+              <div className="relative group">
+                <input
+                  type="tel"
+                  className={`w-full px-4 py-3 bg-gray-50 border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--gold-accent)] focus:border-transparent transition-all duration-300 group-hover:bg-gray-100 ${
+                    errors.phone ? 'border-red-500 bg-red-50' : 'border-gray-200'
+                  }`}
+                  placeholder="+1 (555) 123-4567"
+                  {...register("phone")}
+                />
+                <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                  <IoCallSharp className={`w-5 h-5 transition-colors duration-300 ${
+                    errors.phone ? 'text-red-500' : 'text-gray-400 group-focus-within:text-[var(--gold-accent)]'
+                  }`} />
+                </div>
+              </div>
+              {errors.phone && (
+                <p className="text-red-500 text-sm mt-1 animate-fade-in">{errors.phone.message}</p>
+              )}
+            </div>
+
             {/* Password Field */}
             <div className="space-y-2">
               <label className="text-sm font-semibold text-[var(--charcoal)] flex items-center">
@@ -204,6 +230,12 @@ function RegisterPage() {
 
           {/* Login Link */}
           <div className="text-center pt-6 border-t border-gray-100">
+            <div className="bg-blue-50 p-4 rounded-lg mb-4">
+              <p className="text-xs text-blue-700 flex items-start">
+                <IoPhonePortraitSharp className="mr-2 mt-0.5 flex-shrink-0" />
+                Al registrarse en FR Family Investments, acepta recibir notificaciones por SMS sobre nuevas propiedades disponibles en Dallas. Estas notificaciones se envían automáticamente a todos los usuarios registrados.
+              </p>
+            </div>
             <p className="text-gray-600 mb-4">¿Ya tienes una cuenta?</p>
             <Link
               to='/login'

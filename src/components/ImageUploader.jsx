@@ -1,32 +1,91 @@
 import { useState, useRef } from 'react';
 import { addImagesRequest } from '../api/properties';
+import { IoCloseCircle, IoStarSharp, IoStar, IoArrowBack, IoArrowForward } from 'react-icons/io5';
 
-function ImageUploader({ propertyId, onImagesUploaded }) {
+function ImageUploader({ propertyId, onImagesUploaded, initialImages = [], onChange }) {
     const [uploading, setUploading] = useState(false);
     const [dragOver, setDragOver] = useState(false);
+    const [previewImages, setPreviewImages] = useState(initialImages);
+    const [mainImageIndex, setMainImageIndex] = useState(0);
     const fileInputRef = useRef(null);
 
     const handleFileSelect = async (files) => {
         if (!files || files.length === 0) return;
 
-        const formData = new FormData();
-        Array.from(files).forEach(file => {
-            formData.append('images', file);
-        });
+        // Crear URLs de vista previa para los archivos seleccionados
+        const newPreviews = Array.from(files).map((file, index) => ({
+            file,
+            url: URL.createObjectURL(file),
+            isMain: previewImages.length === 0 && index === 0
+        }));
 
-        setUploading(true);
-        try {
-            await addImagesRequest(propertyId, formData);
-            onImagesUploaded && onImagesUploaded();
-            if (fileInputRef.current) {
-                fileInputRef.current.value = '';
-            }
-        } catch (error) {
-            console.error('Error al subir imágenes:', error);
-            alert('Error al subir imágenes');
-        } finally {
-            setUploading(false);
+        const updatedImages = [...previewImages, ...newPreviews];
+        setPreviewImages(updatedImages);
+
+        // Si hay una función onChange, llamarla con los archivos
+        if (onChange) {
+            onChange(updatedImages.map(img => img.file).filter(Boolean));
         }
+
+        // Si hay propertyId, subir directamente
+        if (propertyId) {
+            const formData = new FormData();
+            Array.from(files).forEach(file => {
+                formData.append('images', file);
+            });
+
+            setUploading(true);
+            try {
+                await addImagesRequest(propertyId, formData);
+                onImagesUploaded && onImagesUploaded();
+                if (fileInputRef.current) {
+                    fileInputRef.current.value = '';
+                }
+            } catch (error) {
+                console.error('Error al subir imágenes:', error);
+                alert('Error al subir imágenes');
+            } finally {
+                setUploading(false);
+            }
+        }
+    };
+
+    const removeImage = (index) => {
+        const newImages = previewImages.filter((_, i) => i !== index);
+        setPreviewImages(newImages);
+        
+        // Ajustar índice de imagen principal si es necesario
+        if (mainImageIndex >= newImages.length) {
+            setMainImageIndex(Math.max(0, newImages.length - 1));
+        }
+
+        if (onChange) {
+            onChange(newImages.map(img => img.file).filter(Boolean));
+        }
+    };
+
+    const moveImage = (fromIndex, toIndex) => {
+        const newImages = [...previewImages];
+        const [movedImage] = newImages.splice(fromIndex, 1);
+        newImages.splice(toIndex, 0, movedImage);
+        setPreviewImages(newImages);
+
+        // Actualizar el índice de la imagen principal
+        if (mainImageIndex === fromIndex) {
+            setMainImageIndex(toIndex);
+        } else if (fromIndex < mainImageIndex && toIndex >= mainImageIndex) {
+            setMainImageIndex(mainImageIndex - 1);
+        } else if (fromIndex > mainImageIndex && toIndex <= mainImageIndex) {
+            setMainImageIndex(mainImageIndex + 1);
+        }
+
+        if (onChange) {
+            onChange(newImages.map(img => img.file).filter(Boolean));
+        }
+    };
+
+    const setAsMainImage = (index) => {
+        setMainImageIndex(index);
     };
 
     const handleDrop = (e) => {
@@ -48,8 +107,122 @@ function ImageUploader({ propertyId, onImagesUploaded }) {
 
     return (
         <div className="space-y-4">
-            <h3 className="text-lg font-semibold">Agregar Imágenes</h3>
+            <h3 className="text-lg font-semibold">
+                {propertyId ? 'Agregar Imágenes' : 'Subir Imágenes'}
+            </h3>
             
+            {/* Vista previa de imágenes */}
+            {previewImages.length > 0 && (
+                <div className="space-y-4">
+                    <div className="bg-gray-50 p-4 rounded-lg">
+                        <div className="flex items-center justify-between mb-3">
+                            <p className="text-sm font-semibold text-gray-700">
+                                Vista Previa ({previewImages.length} imagen{previewImages.length !== 1 ? 'es' : ''})
+                            </p>
+                            <p className="text-xs text-gray-500">
+                                <IoStarSharp className="inline text-yellow-500" /> = Imagen principal
+                            </p>
+                        </div>
+                        
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                            {previewImages.map((image, index) => (
+                                <div
+                                    key={index}
+                                    className={`relative group rounded-lg overflow-hidden border-2 ${
+                                        index === mainImageIndex 
+                                            ? 'border-yellow-500 shadow-lg' 
+                                            : 'border-gray-200'
+                                    }`}
+                                >
+                                    {/* Imagen */}
+                                    <div className="aspect-square bg-gray-100">
+                                        <img
+                                            src={image.url}
+                                            alt={`Preview ${index + 1}`}
+                                            className="w-full h-full object-cover"
+                                            onError={(e) => {
+                                                console.error('Error loading image:', image.url);
+                                                e.target.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="100" height="100"%3E%3Crect fill="%23ddd" width="100" height="100"/%3E%3Ctext fill="%23999" x="50%25" y="50%25" text-anchor="middle" dy=".3em"%3EError%3C/text%3E%3C/svg%3E';
+                                            }}
+                                        />
+                                    </div>
+
+                                    {/* Overlay con controles */}
+                                    <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all duration-200 flex items-center justify-center">
+                                        <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex gap-2">
+                                            {/* Botón para mover a la izquierda */}
+                                            {index > 0 && (
+                                                <button
+                                                    type="button"
+                                                    onClick={() => moveImage(index, index - 1)}
+                                                    className="p-2 bg-white rounded-full hover:bg-gray-100"
+                                                    title="Mover a la izquierda"
+                                                >
+                                                    <IoArrowBack size={16} />
+                                                </button>
+                                            )}
+
+                                            {/* Botón para establecer como principal */}
+                                            <button
+                                                type="button"
+                                                onClick={() => setAsMainImage(index)}
+                                                className={`p-2 rounded-full ${
+                                                    index === mainImageIndex
+                                                        ? 'bg-yellow-500 text-white'
+                                                        : 'bg-white hover:bg-gray-100'
+                                                }`}
+                                                title="Establecer como imagen principal"
+                                            >
+                                                {index === mainImageIndex ? (
+                                                    <IoStarSharp size={16} />
+                                                ) : (
+                                                    <IoStar size={16} />
+                                                )}
+                                            </button>
+
+                                            {/* Botón para mover a la derecha */}
+                                            {index < previewImages.length - 1 && (
+                                                <button
+                                                    type="button"
+                                                    onClick={() => moveImage(index, index + 1)}
+                                                    className="p-2 bg-white rounded-full hover:bg-gray-100"
+                                                    title="Mover a la derecha"
+                                                >
+                                                    <IoArrowForward size={16} />
+                                                </button>
+                                            )}
+
+                                            {/* Botón para eliminar */}
+                                            <button
+                                                type="button"
+                                                onClick={() => removeImage(index)}
+                                                className="p-2 bg-red-500 text-white rounded-full hover:bg-red-600"
+                                                title="Eliminar imagen"
+                                            >
+                                                <IoCloseCircle size={16} />
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    {/* Indicador de imagen principal */}
+                                    {index === mainImageIndex && (
+                                        <div className="absolute top-2 right-2 bg-yellow-500 text-white px-2 py-1 rounded-full text-xs font-semibold flex items-center gap-1">
+                                            <IoStarSharp size={12} />
+                                            Principal
+                                        </div>
+                                    )}
+
+                                    {/* Número de orden */}
+                                    <div className="absolute bottom-2 left-2 bg-black bg-opacity-70 text-white px-2 py-1 rounded text-xs font-semibold">
+                                        {index + 1}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            )}
+
             {/* Zona de arrastrar y soltar */}
             <div
                 className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${

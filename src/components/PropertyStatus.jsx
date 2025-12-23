@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { IoCheckmarkCircleSharp, IoWarningSharp, IoCloseCircleSharp } from 'react-icons/io5';
 
-function PropertyStatus({ property, onStatusChange, showChangeButton = false }) {
+function PropertyStatus({ property, onStatusChange, showChangeButton = false, variant = 'badge' }) {
     const [showModal, setShowModal] = useState(false);
     const [newStatus, setNewStatus] = useState('');
     const [reason, setReason] = useState('');
@@ -13,18 +14,27 @@ function PropertyStatus({ property, onStatusChange, showChangeButton = false }) 
     const statusConfig = {
         'DISPONIBLE': {
             label: 'Disponible',
-            className: 'status-disponible',
-            bgColor: 'bg-green-500'
+            icon: <IoCheckmarkCircleSharp />,
+            bgColor: 'bg-green-100',
+            textColor: 'text-green-800',
+            borderColor: 'border-green-500',
+            dotColor: 'bg-green-500'
         },
         'EN_CONTRATO': {
             label: 'En Contrato',
-            className: 'status-en-contrato',
-            bgColor: 'bg-orange-500'
+            icon: <IoWarningSharp />,
+            bgColor: 'bg-orange-100',
+            textColor: 'text-orange-800',
+            borderColor: 'border-orange-500',
+            dotColor: 'bg-orange-500'
         },
         'VENDIDA': {
             label: 'Vendida',
-            className: 'status-vendida',
-            bgColor: 'bg-red-500'
+            icon: <IoCloseCircleSharp />,
+            bgColor: 'bg-red-100',
+            textColor: 'text-red-800',
+            borderColor: 'border-red-500',
+            dotColor: 'bg-red-500'
         }
     };
 
@@ -46,16 +56,46 @@ function PropertyStatus({ property, onStatusChange, showChangeButton = false }) 
 
     const currentConfig = statusConfig[property.status] || statusConfig['DISPONIBLE'];
 
+    // Badge version (pequeño)
+    if (variant === 'badge') {
+        return (
+            <span className={`inline-flex items-center gap-2 px-3 py-1 rounded-full font-semibold text-sm ${currentConfig.bgColor} ${currentConfig.textColor}`}>
+                <span className={`w-2 h-2 rounded-full ${currentConfig.dotColor}`}></span>
+                {currentConfig.label}
+            </span>
+        );
+    }
+
+    // Large version (para headers)
+    if (variant === 'large') {
+        return (
+            <div className={`flex items-center gap-3 px-5 py-3 rounded-xl font-semibold text-lg ${currentConfig.bgColor} ${currentConfig.textColor} border-l-4 ${currentConfig.borderColor}`}>
+                <span className="text-2xl">{currentConfig.icon}</span>
+                {currentConfig.label}
+            </div>
+        );
+    }
+
+    // Dot version (para mapas)
+    if (variant === 'dot') {
+        return (
+            <div className={`w-3 h-3 rounded-full ${currentConfig.dotColor} shadow-lg`} title={currentConfig.label} />
+        );
+    }
+
+    // Default - flex version
     return (
         <div className="flex items-center gap-2">
-            <span className={`inline-flex px-3 py-1 text-sm font-semibold rounded-full text-white ${currentConfig.bgColor}`}>
+            <span className={`inline-flex items-center gap-2 px-3 py-1 rounded-full font-semibold text-sm ${currentConfig.bgColor} ${currentConfig.textColor}`}>
+                <span className={`w-2 h-2 rounded-full ${currentConfig.dotColor}`}></span>
                 {currentConfig.label}
             </span>
             
             {canChangeStatus && (
                 <button
                     onClick={() => setShowModal(true)}
-                    className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                    className="text-white px-3 py-1 rounded font-medium text-sm transition-all hover:opacity-90"
+                    style={{ backgroundColor: '#C8A452' }}
                 >
                     Cambiar Estado
                 </button>
@@ -64,31 +104,33 @@ function PropertyStatus({ property, onStatusChange, showChangeButton = false }) 
             {/* Modal para cambiar estado */}
             {showModal && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                    <div className="bg-white rounded-lg p-6 w-96 max-w-90vw">
-                        <h3 className="text-lg font-semibold mb-4">Cambiar Estado de Propiedad</h3>
+                    <div className="bg-white rounded-lg p-6 w-96 max-w-90vw shadow-xl">
+                        <h3 className="text-lg font-semibold mb-4" style={{ color: '#1F1F1F' }}>Cambiar Estado de Propiedad</h3>
                         
                         <div className="space-y-4">
                             <div>
-                                <label className="block text-sm font-medium mb-2">Nuevo Estado</label>
+                                <label className="block text-sm font-medium mb-2" style={{ color: '#3C3C3C' }}>Nuevo Estado</label>
                                 <select
                                     value={newStatus}
                                     onChange={(e) => setNewStatus(e.target.value)}
-                                    className="w-full border border-gray-300 rounded px-3 py-2"
+                                    className="w-full border-2 border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2"
+                                    style={{ borderColor: '#ddd' }}
                                 >
                                     <option value="">Seleccionar...</option>
-                                    <option value="DISPONIBLE">Disponible</option>
-                                    <option value="EN_CONTRATO">En Contrato</option>
-                                    <option value="VENDIDA">Vendida</option>
+                                    <option value="DISPONIBLE">✅ Disponible</option>
+                                    <option value="EN_CONTRATO">⚠️ En Contrato</option>
+                                    <option value="VENDIDA">❌ Vendida</option>
                                 </select>
                             </div>
                             
                             <div>
-                                <label className="block text-sm font-medium mb-2">Motivo del Cambio</label>
+                                <label className="block text-sm font-medium mb-2" style={{ color: '#3C3C3C' }}>Motivo del Cambio</label>
                                 <textarea
                                     value={reason}
                                     onChange={(e) => setReason(e.target.value)}
                                     placeholder="Explica el motivo del cambio de estado..."
-                                    className="w-full border border-gray-300 rounded px-3 py-2 h-20"
+                                    className="w-full border-2 border-gray-300 rounded px-3 py-2 h-20 focus:outline-none focus:ring-2"
+                                    style={{ borderColor: '#ddd' }}
                                 />
                             </div>
                         </div>
@@ -97,7 +139,8 @@ function PropertyStatus({ property, onStatusChange, showChangeButton = false }) 
                             <button
                                 onClick={handleStatusChange}
                                 disabled={!newStatus || !reason.trim() || loading}
-                                className="btn-primary disabled:opacity-50"
+                                className="text-white px-4 py-2 rounded font-medium transition-all hover:opacity-90 disabled:opacity-50"
+                                style={{ backgroundColor: '#C8A452' }}
                             >
                                 {loading ? 'Cambiando...' : 'Cambiar Estado'}
                             </button>
@@ -107,7 +150,8 @@ function PropertyStatus({ property, onStatusChange, showChangeButton = false }) 
                                     setNewStatus('');
                                     setReason('');
                                 }}
-                                className="btn-secondary"
+                                className="px-4 py-2 rounded font-medium border-2 border-gray-300 transition-all hover:bg-gray-50"
+                                style={{ color: '#3C3C3C', borderColor: '#ddd' }}
                             >
                                 Cancelar
                             </button>

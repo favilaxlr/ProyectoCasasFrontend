@@ -21,6 +21,7 @@ import PropertyFormPage from './pages/PropertyFormPage';
 import UsersManagementPage from './pages/UsersManagementPage';
 import AdminAppointmentsPage from './pages/AdminAppointmentsPage';
 import MyAppointmentsPage from './pages/MyAppointmentsPage';
+import NotificationsPage from './pages/NotificationsPage';
 
 function App() {
   const [toastTheme, setToastTheme] = useState('light');
@@ -74,6 +75,7 @@ function App() {
                   <Route path='/admin/add-property' element={<PropertyFormPage/>} />
                   <Route path='/admin/properties/edit/:id' element={<PropertyFormPage/>} />
                   <Route path='/admin/appointments' element={<AdminAppointmentsPage />} />
+                  <Route path='/admin/notifications' element={<NotificationsPage />} />
                 </Route>
 
                 {/* Rutas solo para Admin */}

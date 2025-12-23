@@ -87,7 +87,7 @@ function MapWithStyleSelector({
                   <h3 className="font-bold">{property.title}</h3>
                   <p className="text-sm">{property.address.city}</p>
                   <p className="text-lg font-bold text-[var(--gold-accent)]">
-                    ${property.price.rent?.toLocaleString()}/mes
+                    ${property.price.sale?.toLocaleString()}
                   </p>
                 </div>
               </Popup>

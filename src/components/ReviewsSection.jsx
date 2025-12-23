@@ -1,24 +1,27 @@
 import { useState, useEffect } from 'react';
-import { getPropertyReviewsRequest, voteHelpfulRequest } from '../api/reviews';
 import { useAuth } from '../context/AuthContext';
+import { getPropertyReviewsRequest, createReviewRequest, deleteReviewRequest } from '../api/reviews';
+import { toast } from 'react-toastify';
+import { IoStar, IoStarOutline, IoTrashBinSharp, IoPersonSharp } from 'react-icons/io5';
 
 function ReviewsSection({ propertyId }) {
+    const { isAuthenticated, isAdmin, isCoAdmin, user } = useAuth();
     const [reviews, setReviews] = useState([]);
-    const [stats, setStats] = useState({ averageRating: 0, totalReviews: 0 });
     const [loading, setLoading] = useState(true);
-    const [page, setPage] = useState(1);
-    const [sortBy, setSortBy] = useState('createdAt');
-    const { isAuthenticated } = useAuth();
+    const [showForm, setShowForm] = useState(false);
+    const [rating, setRating] = useState(0);
+    const [hoverRating, setHoverRating] = useState(0);
+    const [comment, setComment] = useState('');
+    const [submitting, setSubmitting] = useState(false);
 
     useEffect(() => {
         loadReviews();
-    }, [propertyId, page, sortBy]);
+    }, [propertyId]);
 
     const loadReviews = async () => {
         try {
-            const response = await getPropertyReviewsRequest(propertyId, { page, sortBy });
-            setReviews(response.data.reviews);
-            setStats(response.data.stats);
+            const res = await getPropertyReviewsRequest(propertyId);
+            setReviews(res.data.reviews || []);
         } catch (error) {
             console.error('Error loading reviews:', error);
         } finally {
@@ -26,165 +29,195 @@ function ReviewsSection({ propertyId }) {
         }
     };
 
-    const handleVoteHelpful = async (reviewId) => {
-        if (!isAuthenticated) return;
+    const handleSubmit = async (e) => {
+        e.preventDefault();
         
+        if (rating === 0) {
+            toast.error('Por favor selecciona una calificación');
+            return;
+        }
+
+        if (!comment.trim()) {
+            toast.error('Por favor escribe un comentario');
+            return;
+        }
+
+        setSubmitting(true);
         try {
-            await voteHelpfulRequest(reviewId);
-            loadReviews(); // Recargar para actualizar conteos
+            const formData = new FormData();
+            formData.append('propertyId', propertyId);
+            formData.append('rating', rating);
+            formData.append('comment', comment);
+
+            await createReviewRequest(formData);
+            toast.success('Reseña enviada correctamente');
+            setRating(0);
+            setComment('');
+            setShowForm(false);
+            loadReviews();
         } catch (error) {
-            console.error('Error voting helpful:', error);
+            console.error('Error submitting review:', error);
+            toast.error(error.response?.data?.message?.[0] || 'Error al enviar la reseña');
+        } finally {
+            setSubmitting(false);
         }
     };
 
-    const renderStars = (rating) => {
-        return Array.from({ length: 5 }, (_, i) => (
-            <span key={i} className={`text-lg ${i < rating ? 'text-yellow-400' : 'text-gray-300'}`}>
-                ★
-            </span>
-        ));
+    const handleDelete = async (reviewId) => {
+        if (!window.confirm('¿Estás seguro de eliminar esta reseña?')) return;
+
+        try {
+            await deleteReviewRequest(reviewId);
+            toast.success('Reseña eliminada');
+            loadReviews();
+        } catch (error) {
+            console.error('Error deleting review:', error);
+            toast.error('Error al eliminar la reseña');
+        }
     };
 
-    const formatDate = (dateString) => {
-        return new Date(dateString).toLocaleDateString('es-ES', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
-        });
+    const renderStars = (currentRating, interactive = false) => {
+        return (
+            <div className="flex gap-1">
+                {[1, 2, 3, 4, 5].map((star) => (
+                    <button
+                        key={star}
+                        type="button"
+                        disabled={!interactive}
+                        onClick={() => interactive && setRating(star)}
+                        onMouseEnter={() => interactive && setHoverRating(star)}
+                        onMouseLeave={() => interactive && setHoverRating(0)}
+                        className={`${interactive ? 'cursor-pointer hover:scale-110' : 'cursor-default'} transition-transform`}
+                    >
+                        {star <= (interactive ? (hoverRating || rating) : currentRating) ? (
+                            <IoStar className="text-yellow-400" size={interactive ? 32 : 20} />
+                        ) : (
+                            <IoStarOutline className="text-gray-300" size={interactive ? 32 : 20} />
+                        )}
+                    </button>
+                ))}
+            </div>
+        );
     };
 
-    if (loading) return <div className="text-center py-8">Cargando reseñas...</div>;
+    const averageRating = reviews.length > 0
+        ? (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1)
+        : 0;
 
     return (
-        <div className="space-y-6">
-            {/* Estadísticas generales */}
-            <div className="bg-white p-6 rounded-lg shadow">
-                <h3 className="text-xl font-semibold mb-4">Reseñas y Calificaciones</h3>
+        <div className="bg-white p-6 rounded-lg shadow-lg">
+            <div className="flex justify-between items-center mb-6">
+                <div>
+                    <h3 className="text-2xl font-bold mb-2">Reseñas de los Visitantes</h3>
+                    {reviews.length > 0 && (
+                        <div className="flex items-center gap-3">
+                            <div className="flex items-center gap-1">
+                                {renderStars(Math.round(averageRating))}
+                            </div>
+                            <span className="text-xl font-semibold">{averageRating}</span>
+                            <span className="text-gray-600">({reviews.length} {reviews.length === 1 ? 'reseña' : 'reseñas'})</span>
+                        </div>
+                    )}
+                </div>
                 
-                <div className="flex items-center gap-4 mb-4">
-                    <div className="text-3xl font-bold text-gray-800">
-                        {stats.averageRating.toFixed(1)}
-                    </div>
-                    <div>
-                        <div className="flex items-center">
-                            {renderStars(Math.round(stats.averageRating))}
-                        </div>
-                        <div className="text-sm text-gray-600">
-                            {stats.totalReviews} reseña{stats.totalReviews !== 1 ? 's' : ''}
-                        </div>
-                    </div>
-                </div>
-
-                {/* Controles de ordenamiento */}
-                <div className="flex gap-2 mb-4">
-                    <select
-                        value={sortBy}
-                        onChange={(e) => setSortBy(e.target.value)}
-                        className="border border-gray-300 rounded px-3 py-1 text-sm"
+                {isAuthenticated && !isAdmin && !isCoAdmin && (
+                    <button
+                        onClick={() => setShowForm(!showForm)}
+                        className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-semibold transition-all"
                     >
-                        <option value="createdAt">Más recientes</option>
-                        <option value="rating">Mayor calificación</option>
-                        <option value="helpfulCount">Más útiles</option>
-                    </select>
-                </div>
+                        {showForm ? 'Cancelar' : 'Escribir Reseña'}
+                    </button>
+                )}
             </div>
+
+            {/* Formulario para crear reseña */}
+            {showForm && isAuthenticated && !isAdmin && !isCoAdmin && (
+                <form onSubmit={handleSubmit} className="bg-gray-50 p-6 rounded-lg mb-6 border-2 border-blue-200">
+                    <h4 className="text-lg font-semibold mb-4">Tu Calificación</h4>
+                    
+                    <div className="mb-4">
+                        <label className="block text-sm font-medium mb-2">Calificación:</label>
+                        {renderStars(rating, true)}
+                    </div>
+
+                    <div className="mb-4">
+                        <label className="block text-sm font-medium mb-2">Comentario:</label>
+                        <textarea
+                            value={comment}
+                            onChange={(e) => setComment(e.target.value)}
+                            className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            rows="4"
+                            placeholder="Comparte tu experiencia con esta propiedad..."
+                            required
+                        />
+                    </div>
+
+                    <button
+                        type="submit"
+                        disabled={submitting}
+                        className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-semibold transition-all disabled:opacity-50"
+                    >
+                        {submitting ? 'Enviando...' : 'Publicar Reseña'}
+                    </button>
+                </form>
+            )}
+
+            {/* Mensaje para no registrados */}
+            {!isAuthenticated && (
+                <div className="bg-blue-50 border border-blue-200 p-4 rounded-lg mb-6 text-center">
+                    <p className="text-gray-700">
+                        <span className="font-semibold">¿Quieres dejar una reseña?</span> Por favor{' '}
+                        <a href="/login" className="text-blue-600 hover:underline font-semibold">inicia sesión</a> o{' '}
+                        <a href="/register" className="text-blue-600 hover:underline font-semibold">regístrate</a>
+                    </p>
+                </div>
+            )}
 
             {/* Lista de reseñas */}
             <div className="space-y-4">
-                {reviews.length === 0 ? (
+                {loading ? (
+                    <p className="text-center text-gray-500">Cargando reseñas...</p>
+                ) : reviews.length === 0 ? (
                     <div className="text-center py-8 text-gray-500">
-                        No hay reseñas para esta propiedad aún.
+                        <p className="text-lg">No hay reseñas aún</p>
+                        <p className="text-sm">¡Sé el primero en compartir tu experiencia!</p>
                     </div>
                 ) : (
                     reviews.map((review) => (
-                        <div key={review._id} className={`bg-white p-6 rounded-lg shadow ${review.featured ? 'border-l-4 border-yellow-400' : ''}`}>
-                            {review.featured && (
-                                <div className="mb-2">
-                                    <span className="bg-yellow-100 text-yellow-800 text-xs font-semibold px-2 py-1 rounded">
-                                        Reseña Destacada
-                                    </span>
-                                </div>
-                            )}
-                            
-                            <div className="flex items-start justify-between mb-3">
-                                <div>
-                                    <div className="flex items-center gap-2 mb-1">
-                                        <span className="font-semibold">{review.user?.username}</span>
-                                        <div className="flex items-center">
+                        <div key={review._id} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                            <div className="flex justify-between items-start mb-2">
+                                <div className="flex items-center gap-3">
+                                    <div className="bg-blue-100 rounded-full p-2">
+                                        <IoPersonSharp className="text-blue-600" size={24} />
+                                    </div>
+                                    <div>
+                                        <p className="font-semibold">{review.user?.username || 'Usuario'}</p>
+                                        <div className="flex items-center gap-2">
                                             {renderStars(review.rating)}
+                                            <span className="text-sm text-gray-500">
+                                                {new Date(review.createdAt).toLocaleDateString('es-MX', {
+                                                    year: 'numeric',
+                                                    month: 'long',
+                                                    day: 'numeric'
+                                                })}
+                                            </span>
                                         </div>
                                     </div>
-                                    <div className="text-sm text-gray-500">
-                                        {formatDate(review.createdAt)}
-                                    </div>
                                 </div>
-                            </div>
 
-                            <p className="text-gray-700 mb-4">{review.comment}</p>
-
-                            {/* Subcategorías si existen */}
-                            {review.subcategories && Object.keys(review.subcategories).length > 0 && (
-                                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4 text-sm">
-                                    {review.subcategories.location && (
-                                        <div>
-                                            <span className="text-gray-600">Ubicación:</span>
-                                            <div className="flex">{renderStars(review.subcategories.location)}</div>
-                                        </div>
-                                    )}
-                                    {review.subcategories.condition && (
-                                        <div>
-                                            <span className="text-gray-600">Estado:</span>
-                                            <div className="flex">{renderStars(review.subcategories.condition)}</div>
-                                        </div>
-                                    )}
-                                    {review.subcategories.value && (
-                                        <div>
-                                            <span className="text-gray-600">Precio/Calidad:</span>
-                                            <div className="flex">{renderStars(review.subcategories.value)}</div>
-                                        </div>
-                                    )}
-                                    {review.subcategories.service && (
-                                        <div>
-                                            <span className="text-gray-600">Atención:</span>
-                                            <div className="flex">{renderStars(review.subcategories.service)}</div>
-                                        </div>
-                                    )}
-                                </div>
-                            )}
-
-                            {/* Imágenes de la reseña */}
-                            {review.images && review.images.length > 0 && (
-                                <div className="flex gap-2 mb-4">
-                                    {review.images.map((image, index) => (
-                                        <img
-                                            key={index}
-                                            src={image.url}
-                                            alt={`Reseña ${index + 1}`}
-                                            className="w-20 h-20 object-cover rounded cursor-pointer hover:opacity-75"
-                                        />
-                                    ))}
-                                </div>
-                            )}
-
-                            {/* Botón de voto útil */}
-                            <div className="flex items-center justify-between">
-                                <div>
-                                    {review.recommendation !== undefined && (
-                                        <span className={`text-sm ${review.recommendation ? 'text-green-600' : 'text-red-600'}`}>
-                                            {review.recommendation ? '✓ Recomendada' : '✗ No recomendada'}
-                                        </span>
-                                    )}
-                                </div>
-                                
-                                {isAuthenticated && (
+                                {/* Botón de eliminar para admin/co-admin */}
+                                {(isAdmin || isCoAdmin) && (
                                     <button
-                                        onClick={() => handleVoteHelpful(review._id)}
-                                        className="flex items-center gap-1 text-sm text-gray-600 hover:text-blue-600"
+                                        onClick={() => handleDelete(review._id)}
+                                        className="text-red-600 hover:bg-red-50 p-2 rounded-lg transition-all"
+                                        title="Eliminar reseña"
                                     >
-                                        👍 Útil ({review.helpfulCount})
+                                        <IoTrashBinSharp size={20} />
                                     </button>
                                 )}
                             </div>
+
+                            <p className="text-gray-700 mt-3">{review.comment}</p>
                         </div>
                     ))
                 )}

@@ -1,5 +1,6 @@
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import { useEffect } from 'react';
+import { Link } from 'react-router';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
@@ -66,6 +67,24 @@ function InteractiveMap({
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
   };
 
+  const getStatusColor = (status) => {
+    switch(status) {
+      case 'DISPONIBLE': return 'text-green-600';
+      case 'EN_CONTRATO': return 'text-yellow-600';
+      case 'VENDIDA': return 'text-red-600';
+      default: return 'text-gray-600';
+    }
+  };
+
+  const getStatusLabel = (status) => {
+    switch(status) {
+      case 'DISPONIBLE': return 'Disponible';
+      case 'EN_CONTRATO': return 'En Contrato';
+      case 'VENDIDA': return 'Vendida';
+      default: return status;
+    }
+  };
+
   return (
     <div style={{ height, width: '100%', borderRadius: '8px', overflow: 'hidden' }}>
       <MapContainer 
@@ -103,30 +122,82 @@ function InteractiveMap({
                 },
               }}
             >
-              <Popup>
-                <div className="p-2 min-w-[200px]">
+              <Popup maxWidth={300} minWidth={250}>
+                <div className="p-2">
                   {property.images?.[0]?.url && (
                     <img 
                       src={property.images[0].url} 
                       alt={property.title}
-                      className="w-full h-32 object-cover rounded mb-2"
+                      className="w-full h-32 object-cover rounded mb-3"
                     />
                   )}
-                  <h3 className="font-bold text-lg mb-1">{property.title}</h3>
-                  <p className="text-sm text-gray-600 mb-2">
-                    {property.address.street}, {property.address.city}
-                  </p>
-                  <div className="flex justify-between items-center">
-                    <span className="text-lg font-bold text-[var(--gold-accent)]">
-                      ${property.price.rent?.toLocaleString()}/mes
+                  
+                  <div className="flex justify-between items-start mb-2">
+                    <h3 className="font-bold text-lg leading-tight">{property.title}</h3>
+                    <span className={`text-xs font-semibold ${getStatusColor(property.status)}`}>
+                      {getStatusLabel(property.status)}
                     </span>
                   </div>
-                  <div className="flex gap-2 mt-2 text-xs text-gray-600">
-                    <span>🛏️ {property.details.bedrooms}</span>
-                    <span>🚿 {property.details.bathrooms}</span>
-                    {property.details.squareFeet && (
-                      <span>📏 {property.details.squareFeet} sq ft</span>
+                  
+                  <p className="text-sm text-gray-600 mb-3">
+                    {property.address.street}, {property.address.city}, {property.address.state}
+                  </p>
+                  
+                  <div className="mb-3">
+                    <span className="text-xl font-bold text-green-600">
+                      ${property.price.rent?.toLocaleString()}
+                    </span>
+                    <span className="text-sm text-gray-500">/mes</span>
+                    {property.price?.deposit && (
+                      <p className="text-xs text-gray-500">
+                        Depósito: ${property.price.deposit.toLocaleString()}
+                      </p>
                     )}
+                  </div>
+                  
+                  <div className="grid grid-cols-3 gap-2 mb-3 text-xs text-gray-600">
+                    <div className="text-center">
+                      <div className="font-semibold">{property.details.bedrooms}</div>
+                      <div>Habitaciones</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="font-semibold">{property.details.bathrooms}</div>
+                      <div>Baños</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="font-semibold">
+                        {property.details.squareFeet ? `${property.details.squareFeet}` : 'N/A'}
+                      </div>
+                      <div>Pies²</div>
+                    </div>
+                  </div>
+                  
+                  {/* Características adicionales */}
+                  <div className="flex flex-wrap gap-1 mb-3">
+                    {property.details?.parking && (
+                      <span className="bg-green-100 text-green-800 px-2 py-1 rounded text-xs">
+                        Estacionamiento
+                      </span>
+                    )}
+                    {property.details?.petFriendly && (
+                      <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs">
+                        Pet-friendly
+                      </span>
+                    )}
+                    {property.details?.furnished && (
+                      <span className="bg-purple-100 text-purple-800 px-2 py-1 rounded text-xs">
+                        Amueblado
+                      </span>
+                    )}
+                  </div>
+                  
+                  <div className="text-center">
+                    <Link 
+                      to={`/properties/${property._id}`}
+                      className="inline-block bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded text-sm font-medium transition-colors"
+                    >
+                      Ver detalles completos
+                    </Link>
                   </div>
                 </div>
               </Popup>
