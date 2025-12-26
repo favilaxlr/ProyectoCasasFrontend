@@ -27,13 +27,15 @@ export const AuthProvider = ({ children }) => {
             // Excluir el campo 'confirm' antes de enviar al backend
             const { confirm, ...userData } = user;
             const res = await registerRequest(userData);
-            setUser(res.data);
-            setIsAuthenticated(true);
-            setIsLoading(false);
+            
+            // No autenticar automáticamente, el usuario debe verificar primero
+            // Retornar el email para redirigir a la página de verificación
+            return { success: true, email: res.data.email };
         } catch (error) {
             //si existe un error al registrar el usuario
             //guardamos el error en la variable error
             setErrors(error.response.data.message);
+            return { success: false };
         }
     }; //fin de signup
 
@@ -60,8 +62,18 @@ export const AuthProvider = ({ children }) => {
             setUser(res.data);
             setIsAuthenticated(true);
             setIsLoading(false);
+            return { success: true };
         } catch (error) {
             console.error('Error en signIn:', error);
+            
+            // Verificar si el usuario necesita verificación
+            if (error.response?.data?.needsVerification) {
+                return { 
+                    success: false, 
+                    needsVerification: true,
+                    email: user.email 
+                };
+            }
             
             // Manejar diferentes tipos de errores
             if (error.code === 'ERR_NETWORK' || error.message === 'Network Error') {
@@ -75,6 +87,7 @@ export const AuthProvider = ({ children }) => {
             }
             
             setIsLoading(false);
+            return { success: false };
         }
     }; //fin de signIn
 

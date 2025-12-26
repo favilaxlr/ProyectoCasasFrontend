@@ -1,14 +1,16 @@
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { useAuth } from '../context/AuthContext';
 import { useEffect, useState } from 'react';
 import { useNavigate, Link } from "react-router";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { registerSchema } from '../schemas/registerSchema';
 import { IoPersonAdd, IoLogIn, IoEyeSharp, IoEyeOffSharp, IoMailSharp, IoLockClosedSharp, IoPersonSharp, IoCallSharp, IoPhonePortraitSharp } from "react-icons/io5"
+import PhoneInput from 'react-phone-number-input';
+import 'react-phone-number-input/style.css';
 
 function RegisterPage() {
   const { signUp, isAuthenticated, errors: registerErrors } = useAuth();
-  const { register, handleSubmit, formState: { errors } } = useForm({
+  const { register, handleSubmit, formState: { errors }, control } = useForm({
     resolver: zodResolver(registerSchema)
   });
   const navigate = useNavigate();
@@ -32,7 +34,11 @@ function RegisterPage() {
   const onSubmit = handleSubmit(async (values) => {
     setIsLoading(true);
     try {
-      await signUp(values);
+      const result = await signUp(values);
+      if (result.success) {
+        // Redirigir a la página de verificación con el email
+        navigate('/verify', { state: { email: result.email } });
+      }
     } finally {
       setIsLoading(false);
     }
@@ -124,20 +130,25 @@ function RegisterPage() {
                 <IoCallSharp className="w-4 h-4 mr-2 text-[var(--gold-accent)]" />
                 Teléfono
               </label>
-              <div className="relative group">
-                <input
-                  type="tel"
-                  className={`w-full px-4 py-3 bg-gray-50 border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--gold-accent)] focus:border-transparent transition-all duration-300 group-hover:bg-gray-100 ${
-                    errors.phone ? 'border-red-500 bg-red-50' : 'border-gray-200'
-                  }`}
-                  placeholder="+1 (555) 123-4567"
-                  {...register("phone")}
+              <div className="phone-input-wrapper">
+                <Controller
+                  name="phone"
+                  control={control}
+                  defaultValue=""
+                  render={({ field: { onChange, value } }) => (
+                    <PhoneInput
+                      international
+                      countryCallingCodeEditable={false}
+                      defaultCountry="US"
+                      value={value || ''}
+                      onChange={onChange}
+                      className={`phone-input-custom ${
+                        errors.phone ? 'phone-input-error' : ''
+                      }`}
+                      placeholder="Selecciona país y número"
+                    />
+                  )}
                 />
-                <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                  <IoCallSharp className={`w-5 h-5 transition-colors duration-300 ${
-                    errors.phone ? 'text-red-500' : 'text-gray-400 group-focus-within:text-[var(--gold-accent)]'
-                  }`} />
-                </div>
               </div>
               {errors.phone && (
                 <p className="text-red-500 text-sm mt-1 animate-fade-in">{errors.phone.message}</p>

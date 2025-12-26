@@ -14,8 +14,12 @@ export const registerSchema = z.object({
     
     phone: z
         .string('Teléfono requerido')
-        .min(10, 'El teléfono debe tener al menos 10 dígitos')
-        .regex(/^[+]?[0-9\s\-\(\)]+$/, 'El teléfono debe contener solo números, espacios, guiones, paréntesis y el signo +'),
+        .min(1, 'El teléfono es requerido')
+        .refine((value) => {
+            // Validar formato internacional E.164 (+[codigo_pais][numero])
+            const phoneRegex = /^\+[1-9]\d{1,14}$/;
+            return phoneRegex.test(value);
+        }, 'Por favor selecciona un país y ingresa un número válido'),
         
     password: z
         .string('Contraseña requerida')

@@ -30,7 +30,11 @@ function LoginPage() {
   const onSubmit = handleSubmit(async (values) => {
     setIsLoading(true);
     try {
-      await signIn(values);
+      const result = await signIn(values);
+      if (result && result.needsVerification) {
+        // Redirigir a la página de verificación
+        navigate('/verify', { state: { email: result.email } });
+      }
     } finally {
       setIsLoading(false);
     }

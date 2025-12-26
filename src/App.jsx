@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route} from 'react-router';
 import { useEffect, useState } from 'react';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
+import VerificationPage from './pages/VerificationPage';
 import { AuthProvider } from './context/AuthContext';
 import HomePage from './pages/HomePage';
 import ProfilePage from './pages/ProfilePage'
@@ -62,6 +63,7 @@ function App() {
                 <Route path='/' element={<HomePage/>} />
                 <Route path='/login' element={<LoginPage />} />
                 <Route path='/register' element={<RegisterPage/>} />
+                <Route path='/verify' element={<VerificationPage/>} />
 
                 {/* Rutas públicas para propiedades */}
                 <Route path='/properties' element={<AllPropertiesPage/>} />
