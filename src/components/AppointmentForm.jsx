@@ -219,8 +219,8 @@ function AppointmentForm({ propertyId, onSuccess }) {
                     <div>
                         <h5 className="font-semibold text-green-800 mb-1">Confirmación por SMS</h5>
                         <p className="text-sm text-green-700">
-                            Recibirás un SMS de confirmación en tu teléfono <strong>{user?.phone}</strong>.
-                            Responde <strong>"YES"</strong> para confirmar tu cita o cualquier otra respuesta para cancelar.
+                            Recibirás un SMS con un enlace de confirmación en tu teléfono <strong>{user?.phone}</strong>.
+                            Haz clic en el enlace para confirmar tu cita.
                         </p>
                     </div>
                 </div>

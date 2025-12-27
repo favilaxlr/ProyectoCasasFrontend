@@ -1,7 +1,6 @@
 import {Link, useNavigate} from 'react-router';
 import { useAuth } from '../context/AuthContext';
 import Logo from './Logo';
-import ThemeToggle from './ThemeToggle';
 import { IoPerson, IoChevronDownSharp, IoBagOutline, IoLogOutOutline, IoCartOutline} from 'react-icons/io5'
 import {Menu, MenuButton, MenuItem, MenuItems} from '@headlessui/react';
 
@@ -14,9 +13,6 @@ function NavbarUser() {
          <Logo size="medium" />
        </Link>
        <ul className="flex gap-x-4 items-center">
-        <li>
-          <ThemeToggle />
-        </li>
         <li>
         <Menu>
         <MenuButton className="inline-flex items-center gap-2 rounded-md px-3 py-1.5 text-sm/6 font-semibold text-white hover:bg-white/10 transition-all">

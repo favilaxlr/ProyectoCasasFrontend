@@ -12,18 +12,29 @@ function NotificationsPage() {
 
     useEffect(() => {
         loadData();
+        
+        // Auto-refresh cada 30 segundos
+        const interval = setInterval(() => {
+            loadData();
+        }, 30000);
+        
+        return () => clearInterval(interval);
     }, []);
 
-    const loadData = async () => {
+    const loadData = async (showToast = false) => {
         try {
             setLoading(true);
             const [statsRes, historyRes] = await Promise.all([
                 getNotificationStatsRequest(),
-                getNotificationHistoryRequest(1, 10)
+                getNotificationHistoryRequest(1, 20) // Aumentado a 20 para ver más historial
             ]);
             
             setStats(statsRes.data);
             setHistory(historyRes.data.notifications);
+            
+            if (showToast) {
+                toast.success('Datos actualizados');
+            }
         } catch (error) {
             console.error('Error loading data:', error);
             toast.error('Error al cargar datos de notificaciones');
@@ -38,7 +49,7 @@ function NotificationsPage() {
             const response = await resendFailedNotificationsRequest(notificationId);
             
             toast.success(`Reenvío completado: ${response.data.result.resent} mensajes enviados`);
-            loadData(); // Recargar datos
+            await loadData(true); // Recargar datos con toast
         } catch (error) {
             console.error('Error resending:', error);
             toast.error('Error al reenviar notificaciones');
@@ -93,7 +104,7 @@ function NotificationsPage() {
                     <p className="text-gray-600 mt-2">Sistema de notificaciones masivas por SMS</p>
                 </div>
                 <button
-                    onClick={loadData}
+                    onClick={() => loadData(true)}
                     className="text-white px-6 py-3 rounded-lg hover:opacity-90 flex items-center font-semibold transition-all"
                     style={{ backgroundColor: '#C8A452' }}
                 >
@@ -340,9 +351,10 @@ function NotificationsPage() {
                         <h4 className="font-semibold mb-2">Funcionamiento:</h4>
                         <ul className="space-y-1">
                             <li>• Envío automático al publicar propiedades</li>
-                            <li>• Notificación a TODOS los usuarios registrados</li>
+                            <li>• Notificación a TODOS los usuarios registrados y verificados</li>
                             <li>• Procesamiento en lotes de 50 mensajes</li>
                             <li>• Reintentos automáticos para fallos</li>
+                            <li>• Auto-actualización cada 30 segundos</li>
                         </ul>
                     </div>
                     <div>
@@ -351,7 +363,8 @@ function NotificationsPage() {
                             <li>• Intervalo entre lotes: 1 segundo</li>
                             <li>• Máximo 3 reintentos por número</li>
                             <li>• Tiempo límite: 10 minutos</li>
-                            <li>• Sin opción de desactivación para usuarios</li>
+                            <li>• Los administradores no reciben SMS</li>
+                            <li>• Historial muestra últimas 20 notificaciones</li>
                         </ul>
                     </div>
                 </div>

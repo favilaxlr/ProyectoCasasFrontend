@@ -1,5 +1,3 @@
-import ThemeToggle from './ThemeToggle';
-
 export default function Footer() {
   return (
     <footer className="mt-12 border-t border-gray-200/40 py-8">
@@ -49,7 +47,6 @@ export default function Footer() {
         </div>
 
         <div className="flex items-center gap-4">
-          <ThemeToggle />
           <div className="text-sm text-gray-500">© {new Date().getFullYear()} FR Family Investments</div>
         </div>
       </div>

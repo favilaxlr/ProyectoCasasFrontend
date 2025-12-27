@@ -3,7 +3,6 @@ import { useAuth } from '../context/AuthContext'
 import { getAllPropertiesRequest } from '../api/properties'
 import PropertyCard from '../components/PropertyCard'
 import InteractiveMap from '../components/InteractiveMap'
-import ThemeToggle from '../components/ThemeToggle'
 import { IoLocationSharp, IoFunnelSharp, IoPersonCircleOutline, IoBusinessSharp, IoCardSharp, IoKeySharp } from 'react-icons/io5'
 
 function HomePage() {
@@ -59,7 +58,7 @@ function HomePage() {
   return (
     <div className="h-screen flex flex-col">
       {/* Header Rediseñado - Más limpio y compacto */}
-      <div className="main-header px-6 py-3 flex justify-between items-center flex-shrink-0 border-b border-gray-700/30">
+      <div className="main-header px-6 py-3 flex justify-between items-center flex-shrink-0 border-b border-gray-200 bg-white/95 backdrop-blur-sm shadow-sm">
         {/* Logo */}
         <div className="flex items-center">
           <h1 className="text-xl font-bold text-[var(--gold-accent)] tracking-wide">
@@ -70,52 +69,52 @@ function HomePage() {
         {/* Controles centrales - Más compactos */}
         <div className="flex items-center gap-4">
           {/* Selector de Mercado con icono */}
-          <div className="flex items-center gap-2 bg-gray-800/50 px-3 py-2 rounded-lg border border-gray-600/50 hover:border-[var(--gold-accent)]/50 transition-all">
+          <div className="flex items-center gap-2 bg-white/90 px-3 py-2 rounded-lg border border-gray-300 hover:border-[var(--gold-accent)] transition-all shadow-sm">
             <IoLocationSharp className="text-[var(--gold-accent)] text-lg" />
             <select 
               value={selectedMarket} 
               onChange={(e) => setSelectedMarket(e.target.value)}
-              className="bg-transparent text-white text-sm font-medium focus:outline-none cursor-pointer"
+              className="bg-transparent text-gray-900 text-sm font-medium focus:outline-none cursor-pointer"
             >
-              <option value="Dallas">Dallas</option>
-              <option value="Houston">Houston</option>
-              <option value="Austin">Austin</option>
+              <option value="Dallas" className="bg-white text-gray-900">Dallas</option>
+              <option value="Houston" className="bg-white text-gray-900">Houston</option>
+              <option value="Austin" className="bg-white text-gray-900">Austin</option>
             </select>
           </div>
           
           {/* Filtro de Tipo de Operación */}
-          <div className="flex items-center gap-2 bg-gray-800/50 px-3 py-2 rounded-lg border border-gray-600/50 hover:border-[var(--gold-accent)]/50 transition-all">
+          <div className="flex items-center gap-2 bg-white/90 px-3 py-2 rounded-lg border border-gray-300 hover:border-[var(--gold-accent)] transition-all shadow-sm">
             <IoBusinessSharp className="text-[var(--gold-accent)] text-lg" />
             <select 
               value={operationType} 
               onChange={(e) => setOperationType(e.target.value)}
-              className="bg-transparent text-white text-sm font-medium focus:outline-none cursor-pointer"
+              className="bg-transparent text-gray-900 text-sm font-medium focus:outline-none cursor-pointer"
             >
-              <option value="all">Todos</option>
-              <option value="sale">Venta</option>
-              <option value="rent">Renta</option>
-              <option value="both">Renta/Venta</option>
+              <option value="all" className="bg-white text-gray-900">Todos</option>
+              <option value="sale" className="bg-white text-gray-900">Venta</option>
+              <option value="rent" className="bg-white text-gray-900">Renta</option>
+              <option value="both" className="bg-white text-gray-900">Renta/Venta</option>
             </select>
           </div>
 
           {/* Selector de Ordenamiento con icono */}
-          <div className="flex items-center gap-2 bg-gray-800/50 px-3 py-2 rounded-lg border border-gray-600/50 hover:border-[var(--gold-accent)]/50 transition-all">
+          <div className="flex items-center gap-2 bg-white/90 px-3 py-2 rounded-lg border border-gray-300 hover:border-[var(--gold-accent)] transition-all shadow-sm">
             <IoFunnelSharp className="text-[var(--gold-accent)] text-lg" />
             <select 
               value={sortOption} 
               onChange={(e) => setSortOption(e.target.value)}
-              className="bg-transparent text-white text-sm font-medium focus:outline-none cursor-pointer"
+              className="bg-transparent text-gray-900 text-sm font-medium focus:outline-none cursor-pointer"
             >
-              <option value="price-low">$ Menor a Mayor</option>
-              <option value="price-high">$ Mayor a Menor</option>
+              <option value="price-low" className="bg-white text-gray-900">$ Menor a Mayor</option>
+              <option value="price-high" className="bg-white text-gray-900">$ Mayor a Menor</option>
             </select>
           </div>
 
           {/* Info del usuario - Más compacto */}
           {user && (
-            <div className="flex items-center gap-2 bg-gray-800/50 px-3 py-2 rounded-lg border border-gray-600/50">
+            <div className="flex items-center gap-2 bg-white/90 px-3 py-2 rounded-lg border border-gray-300 shadow-sm">
               <IoPersonCircleOutline className="text-[var(--gold-accent)] text-xl" />
-              <div className="text-white">
+              <div className="text-gray-900">
                 <div className="text-sm font-medium">{user.name}</div>
               </div>
             </div>

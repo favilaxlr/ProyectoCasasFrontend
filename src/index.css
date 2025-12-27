@@ -54,25 +54,6 @@
   --info: #2196F3;           /* Información */
 }
 
-/* Dark mode overrides: apply by adding class 'dark' to <html> or <body> */
-.dark {
-  --gold-accent: #D4AF37;      /* Oro más brillante para dark mode */
-  --charcoal: #F5F5F5;         /* Texto claro con alta opacidad */
-  --soft-black: #0b1220;       /* Fondo oscuro */
-  --clean-white: #0b1220;      /* Fondo oscuro principal */
-  --light-gray: #1a2332;       /* Fondo secundario más claro */
-  --text-primary: #FFFFFF;     /* Texto principal blanco puro */
-  --text-secondary: #E0E0E0;   /* Texto secundario */
-  --text-muted: #B0B0B0;       /* Texto atenuado pero legible */
-  --border-color: #2d3748;     /* Bordes visibles */
-  --input-bg: #1a2332;         /* Fondo inputs */
-}
-
-.dark body {
-  background: var(--light-gray);
-  color: var(--text-primary);
-}
-
 /* Footer specific styling */
 footer {
   background: transparent;
@@ -100,13 +81,6 @@ footer a { text-decoration: none }
 .social-btn.instagram:hover { background: radial-gradient(circle at 30% 30%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%); color: #fff }
 .social-btn.tiktok:hover { background: linear-gradient(180deg,#69C9D0,#EE1D52); color: #fff }
 
-/* Dark mode social buttons */
-.dark .social-btn {
-  background: rgba(255,255,255,0.15);
-  color: var(--text-primary);
-  box-shadow: 0 6px 12px rgba(0,0,0,0.3);
-}
-
 /* Add subtle float animation on load */
 @keyframes floatUp {
   0% { transform: translateY(0) }
@@ -115,64 +89,7 @@ footer a { text-decoration: none }
 }
 .social-btn.animate { animation: floatUp 3s ease-in-out infinite; }
 
-/* Improve form contrast in dark mode */
-.dark .form-container {
-  background: rgba(26, 35, 50, 0.95);
-  border: 1px solid rgba(255,255,255,0.15);
-  color: var(--text-primary);
-}
-
-.dark .input-field {
-  background: var(--input-bg);
-  border: 1px solid var(--border-color);
-  color: var(--text-primary);
-}
-
-.dark .input-field::placeholder { color: var(--text-muted); }
-.dark textarea.input-field { color: var(--text-primary); }
-
-.dark .card { 
-  background: rgba(26, 35, 50, 0.95); 
-  border: 1px solid rgba(255,255,255,0.1); 
-  color: var(--text-primary);
-}
-
-/* Mejor contraste para labels en dark mode */
-.dark label {
-  color: var(--text-primary);
-}
-
-/* Selectores y dropdowns en dark mode */
-.dark select,
-.dark .market-selector,
-.dark .sort-selector {
-  background: var(--input-bg);
-  border: 1px solid var(--border-color);
-  color: var(--text-primary);
-}
-
-.dark select option {
-  background: var(--input-bg);
-  color: var(--text-primary);
-}
-
-/* Iconos en dark mode */
-.dark svg {
-  color: var(--text-primary);
-}
-
-/* Botones en dark mode */
-.dark .btn-secondary {
-  background: rgba(255, 255, 255, 0.1);
-  color: var(--text-primary);
-  border: 1px solid var(--border-color);
-}
-
-.dark .btn-secondary:hover {
-  background: rgba(255, 255, 255, 0.2);
-}
-
-/* Smooth transitions when theme changes */
+/* Smooth transitions */
 body, .form-container, .input-field, .card, footer { transition: background .25s ease, color .25s ease, border-color .25s ease, box-shadow .25s ease; }
 
 /* Full Width - Eliminar restricciones de ancho */
