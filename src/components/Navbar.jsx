@@ -16,27 +16,27 @@ function Navbar() {
             return <NavbarUser/>
     
   return (
-    <nav className="navbar my-3 mx-3 flex justify-between items-center py-6 px-10 rounded-xl shadow-2xl backdrop-blur-sm">
+    <nav className="navbar my-3 mx-3 flex flex-col md:flex-row justify-between items-center py-4 md:py-6 px-4 md:px-10 rounded-xl shadow-2xl backdrop-blur-sm gap-4 md:gap-0">
       <Link to='/' className="hover:scale-105 transition-transform duration-300">
-        <Logo size="medium" />
+        <Logo size="small" className="md:size-medium" />
       </Link>
       
-      <div className="flex items-center space-x-8">
+      <div className="flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-8">
         <Link 
           to='/properties' 
-          className="text-white hover:text-[var(--gold-accent)] font-medium text-lg transition-all duration-300 hover:scale-105 relative group"
+          className="text-white hover:text-[var(--gold-accent)] font-medium text-base md:text-lg transition-all duration-300 hover:scale-105 relative group"
         >
           Ver Propiedades
           <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-[var(--gold-accent)] transition-all duration-300 group-hover:w-full"></span>
         </Link>
         
-        <div className="flex items-center space-x-3">
+        <div className="flex flex-col md:flex-row items-center space-y-2 md:space-y-0 md:space-x-3">
           <Tooltip title="Iniciar Sesión" arrow>
             <Link 
               to='/login'
-              className="flex items-center space-x-2 btn-primary px-6 py-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105 hover:shadow-lg"
+              className="flex items-center space-x-2 btn-primary px-4 md:px-6 py-2 md:py-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105 hover:shadow-lg text-sm md:text-base"
             >
-              <IoLogIn size={20} />
+              <IoLogIn size={18} className="md:w-5 md:h-5" />
               <span>Iniciar Sesión</span>
             </Link>
           </Tooltip>
@@ -44,9 +44,9 @@ function Navbar() {
           <Tooltip title="Registrarse" arrow>
             <Link 
               to='/register'
-              className="flex items-center space-x-2 btn-secondary px-6 py-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105 hover:shadow-lg"
+              className="flex items-center space-x-2 btn-secondary px-4 md:px-6 py-2 md:py-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105 hover:shadow-lg text-sm md:text-base"
             >
-              <IoPersonAdd size={20} />
+              <IoPersonAdd size={18} className="md:w-5 md:h-5" />
               <span>Registrarse</span>
             </Link>
           </Tooltip>

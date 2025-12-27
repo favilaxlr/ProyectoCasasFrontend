@@ -32,54 +32,57 @@ function AllPropertiesPage() {
   return (
     <div className="h-screen flex flex-col">
       {/* Header */}
-      <div className="bg-gradient-to-r from-[var(--charcoal)] to-[var(--charcoal)]/80 px-6 py-4 flex justify-between items-center shadow-lg">
+      <div className="bg-gradient-to-r from-[var(--charcoal)] to-[var(--charcoal)]/80 px-4 md:px-6 py-4 flex flex-col md:flex-row justify-between items-start md:items-center shadow-lg gap-4 md:gap-0">
         <div className="flex items-center gap-4">
           <button
             onClick={() => navigate(-1)}
-            className="flex items-center space-x-2 btn-secondary px-3 py-2 rounded-lg font-medium transition-all"
+            className="flex items-center space-x-2 btn-secondary px-3 py-2 rounded-lg font-medium transition-all text-sm md:text-base"
           >
             <IoArrowBack size={20} />
             <span>Volver</span>
           </button>
-          <h1 className="text-3xl font-bold text-[var(--gold-accent)]">
+          <h1 className="text-2xl md:text-3xl font-bold text-[var(--gold-accent)]">
             Propiedades Disponibles
           </h1>
         </div>
         
         {/* View Mode Buttons */}
-        <div className="flex gap-2">
+        <div className="flex gap-2 flex-wrap">
           <button
             onClick={() => setViewMode('split')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all ${
+            className={`flex items-center gap-2 px-3 md:px-4 py-2 rounded-lg font-medium transition-all text-sm md:text-base ${
               viewMode === 'split' 
                 ? 'bg-[var(--gold-accent)] text-white' 
                 : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
             }`}
           >
-            <IoMapSharp size={20} />
-            Vista Dividida
+            <IoMapSharp size={16} className="md:w-5 md:h-5" />
+            <span className="hidden sm:inline">Vista Dividida</span>
+            <span className="sm:hidden">Split</span>
           </button>
           <button
             onClick={() => setViewMode('list')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all ${
+            className={`flex items-center gap-2 px-3 md:px-4 py-2 rounded-lg font-medium transition-all text-sm md:text-base ${
               viewMode === 'list' 
                 ? 'bg-[var(--gold-accent)] text-white' 
                 : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
             }`}
           >
-            <IoListSharp size={20} />
-            Lista
+            <IoListSharp size={16} className="md:w-5 md:h-5" />
+            <span className="hidden sm:inline">Lista</span>
+            <span className="sm:hidden">List</span>
           </button>
           <button
             onClick={() => setViewMode('map')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all ${
+            className={`flex items-center gap-2 px-3 md:px-4 py-2 rounded-lg font-medium transition-all text-sm md:text-base ${
               viewMode === 'map' 
                 ? 'bg-[var(--gold-accent)] text-white' 
                 : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
             }`}
           >
-            <IoMapSharp size={20} />
-            Mapa Completo
+            <IoMapSharp size={16} className="md:w-5 md:h-5" />
+            <span className="hidden sm:inline">Mapa Completo</span>
+            <span className="sm:hidden">Map</span>
           </button>
         </div>
       </div>
@@ -99,8 +102,8 @@ function AllPropertiesPage() {
         </div>
       ) : viewMode === 'split' ? (
         // Split View: Map + List
-        <div className="flex flex-1 h-[calc(100vh-200px)]">
-          <div className="w-7/12 h-full">
+        <div className="flex flex-1 flex-col md:flex-row h-[calc(100vh-200px)]">
+          <div className="w-full md:w-7/12 h-64 md:h-full">
             <InteractiveMap 
               properties={filteredProperties}
               selectedProperty={selectedProperty}
@@ -110,7 +113,7 @@ function AllPropertiesPage() {
               height="100%"
             />
           </div>
-          <div className="w-5/12 h-full overflow-y-scroll p-4 bg-gray-50 scrollbar-visible">
+          <div className="w-full md:w-5/12 h-full md:h-full overflow-y-scroll p-4 bg-gray-50 scrollbar-visible">
             <style>{`
               .scrollbar-visible::-webkit-scrollbar {
                 width: 12px;

@@ -48,19 +48,19 @@ function RegisterPage() {
   });
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 via-white to-gray-100 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 via-white to-gray-100 py-8 md:py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-sm md:max-w-md lg:max-w-lg w-full space-y-8">
         {/* Header */}
         <div className="text-center animate-fade-in">
-          <div className="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-[var(--gold-accent)] to-yellow-600 rounded-full flex items-center justify-center shadow-2xl transform hover:scale-105 transition-transform duration-300">
-            <IoPersonAdd className="w-10 h-10 text-white" />
+          <div className="w-16 h-16 md:w-20 md:h-20 mx-auto mb-4 md:mb-6 bg-gradient-to-br from-[var(--gold-accent)] to-yellow-600 rounded-full flex items-center justify-center shadow-2xl transform hover:scale-105 transition-transform duration-300">
+            <IoPersonAdd className="w-8 h-8 md:w-10 md:h-10 text-white" />
           </div>
-          <h2 className="text-4xl font-bold text-[var(--charcoal)] mb-2">¡Únete a nosotros!</h2>
-          <p className="text-gray-600 text-lg">Crea tu cuenta en FR Family Investments</p>
+          <h2 className="text-3xl md:text-4xl font-bold text-[var(--charcoal)] mb-2">¡Únete a nosotros!</h2>
+          <p className="text-gray-600 text-base md:text-lg">Crea tu cuenta en FR Family Investments</p>
         </div>
 
         {/* Form Container */}
-        <div className="bg-white rounded-2xl shadow-2xl p-8 space-y-6 transform hover:shadow-3xl transition-all duration-500 animate-slide-up">
+        <div className="bg-white rounded-2xl shadow-2xl p-6 md:p-8 space-y-6 transform hover:shadow-3xl transition-all duration-500 animate-slide-up">
           {/* Error Messages */}
           {registerErrors.length > 0 && (
             <div className="space-y-2 animate-shake">
