@@ -56,16 +56,21 @@
 
 /* Dark mode overrides: apply by adding class 'dark' to <html> or <body> */
 .dark {
-  --gold-accent: #C8A452;
-  --charcoal: #E6E6E6;
-  --soft-black: #0b1220;
-  --clean-white: #0b1220;
-  --light-gray: #071428;
+  --gold-accent: #D4AF37;      /* Oro más brillante para dark mode */
+  --charcoal: #F5F5F5;         /* Texto claro con alta opacidad */
+  --soft-black: #0b1220;       /* Fondo oscuro */
+  --clean-white: #0b1220;      /* Fondo oscuro principal */
+  --light-gray: #1a2332;       /* Fondo secundario más claro */
+  --text-primary: #FFFFFF;     /* Texto principal blanco puro */
+  --text-secondary: #E0E0E0;   /* Texto secundario */
+  --text-muted: #B0B0B0;       /* Texto atenuado pero legible */
+  --border-color: #2d3748;     /* Bordes visibles */
+  --input-bg: #1a2332;         /* Fondo inputs */
 }
 
 .dark body {
   background: var(--light-gray);
-  color: var(--charcoal);
+  color: var(--text-primary);
 }
 
 /* Footer specific styling */
@@ -83,7 +88,7 @@ footer a { text-decoration: none }
   width: 44px;
   height: 44px;
   border-radius: 9999px;
-  background: rgba(255,255,255,0.06);
+  background: rgba(255,255,255,0.1);
   color: var(--charcoal);
   transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
   box-shadow: 0 6px 12px rgba(2,6,23,0.15);
@@ -95,6 +100,13 @@ footer a { text-decoration: none }
 .social-btn.instagram:hover { background: radial-gradient(circle at 30% 30%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%); color: #fff }
 .social-btn.tiktok:hover { background: linear-gradient(180deg,#69C9D0,#EE1D52); color: #fff }
 
+/* Dark mode social buttons */
+.dark .social-btn {
+  background: rgba(255,255,255,0.15);
+  color: var(--text-primary);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+}
+
 /* Add subtle float animation on load */
 @keyframes floatUp {
   0% { transform: translateY(0) }
@@ -105,21 +117,60 @@ footer a { text-decoration: none }
 
 /* Improve form contrast in dark mode */
 .dark .form-container {
-  background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
-  border: 1px solid rgba(255,255,255,0.06);
-  color: #e6eef8;
+  background: rgba(26, 35, 50, 0.95);
+  border: 1px solid rgba(255,255,255,0.15);
+  color: var(--text-primary);
 }
 
 .dark .input-field {
-  background: rgba(255,255,255,0.02);
-  border: 1px solid rgba(255,255,255,0.08);
-  color: #e6eef8;
+  background: var(--input-bg);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
 }
 
-.dark .input-field::placeholder { color: rgba(230,238,248,0.5); }
-.dark textarea.input-field { color: #e6eef8 }
+.dark .input-field::placeholder { color: var(--text-muted); }
+.dark textarea.input-field { color: var(--text-primary); }
 
-.dark .card { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.04); }
+.dark .card { 
+  background: rgba(26, 35, 50, 0.95); 
+  border: 1px solid rgba(255,255,255,0.1); 
+  color: var(--text-primary);
+}
+
+/* Mejor contraste para labels en dark mode */
+.dark label {
+  color: var(--text-primary);
+}
+
+/* Selectores y dropdowns en dark mode */
+.dark select,
+.dark .market-selector,
+.dark .sort-selector {
+  background: var(--input-bg);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+}
+
+.dark select option {
+  background: var(--input-bg);
+  color: var(--text-primary);
+}
+
+/* Iconos en dark mode */
+.dark svg {
+  color: var(--text-primary);
+}
+
+/* Botones en dark mode */
+.dark .btn-secondary {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+}
+
+.dark .btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
 
 /* Smooth transitions when theme changes */
 body, .form-container, .input-field, .card, footer { transition: background .25s ease, color .25s ease, border-color .25s ease, box-shadow .25s ease; }
@@ -251,6 +302,27 @@ body {
   @apply bg-gray-700 text-white px-3 py-1 rounded border border-gray-600;
   @apply hover:border-gray-500 focus:border-[var(--gold-accent)] focus:outline-none;
   @apply transition-colors;
+}
+
+/* Mejorar contraste de selectores en modo claro */
+.market-selector, .sort-selector {
+  color: #FFFFFF;
+  font-weight: 500;
+}
+
+/* Selectores en dark mode con mejor contraste */
+.dark .market-selector, 
+.dark .sort-selector {
+  background: var(--input-bg);
+  color: var(--text-primary);
+  border-color: var(--border-color);
+  font-weight: 500;
+}
+
+.dark .market-selector:hover,
+.dark .sort-selector:hover {
+  border-color: var(--gold-accent);
+  background: rgba(26, 35, 50, 1);
 }
 
 /* Compact Property Card Enhancements */
@@ -387,6 +459,26 @@ body {
   transform: translateX(4px);
 }
 
+/* Dark mode para tablas */
+.dark .table-row {
+  color: var(--text-primary);
+}
+
+.dark .table-row:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* Headers de tabla en dark mode */
+.dark th {
+  color: var(--text-primary);
+  border-color: var(--border-color);
+}
+
+.dark td {
+  color: var(--text-secondary);
+  border-color: var(--border-color);
+}
+
 /* Loading Spinner */
 .loading-spinner {
   @apply animate-spin rounded-full border-b-2 border-white;
@@ -425,6 +517,40 @@ body {
 .card:hover {
   @apply shadow-2xl shadow-gray-200/60;
   transform: translateY(-2px);
+}
+
+/* Dark mode cards con mejor contraste */
+.dark .card {
+  background: rgba(26, 35, 50, 0.95);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: var(--text-primary);
+}
+
+.dark .card:hover {
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  border-color: rgba(255,255,255,0.15);
+}
+
+/* Títulos y textos en cards dark mode */
+.dark .card h1,
+.dark .card h2,
+.dark .card h3,
+.dark .card h4,
+.dark .card h5,
+.dark .card h6 {
+  color: var(--text-primary);
+}
+
+.dark .card p,
+.dark .card span,
+.dark .card div {
+  color: var(--text-secondary);
+}
+
+.dark .card .text-gray-500,
+.dark .card .text-gray-600,
+.dark .card .text-gray-700 {
+  color: var(--text-muted) !important;
 }
 
 /* Phone Input Styles */
@@ -524,4 +650,142 @@ body {
 
 .phone-input-custom .PhoneInputCountryIcon--border {
   box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
+}
+
+/* ============================================ */
+/* MEJORAS DE CONTRASTE Y LEGIBILIDAD GENERAL */
+/* ============================================ */
+
+/* Navegación en dark mode */
+.dark nav {
+  background: rgba(11, 18, 32, 0.95);
+  border-color: var(--border-color);
+}
+
+.dark nav a,
+.dark nav button {
+  color: var(--text-primary);
+}
+
+.dark nav a:hover,
+.dark nav button:hover {
+  color: var(--gold-accent);
+}
+
+/* Links en dark mode */
+.dark a {
+  color: var(--gold-accent);
+}
+
+.dark a:hover {
+  color: #E5C158;
+}
+
+/* Badges y etiquetas en dark mode */
+.dark .badge,
+.dark .tag {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+}
+
+/* Modales en dark mode */
+.dark .modal,
+.dark .dialog {
+  background: rgba(11, 18, 32, 0.98);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+}
+
+/* Tooltips en dark mode */
+.dark .tooltip {
+  background: rgba(11, 18, 32, 0.95);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+}
+
+/* Alertas en dark mode */
+.dark .alert {
+  background: rgba(26, 35, 50, 0.95);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+}
+
+/* Listas en dark mode */
+.dark ul li,
+.dark ol li {
+  color: var(--text-secondary);
+}
+
+/* Divisores en dark mode */
+.dark hr,
+.dark .divider {
+  border-color: var(--border-color);
+}
+
+/* Popups de leaflet en dark mode */
+.dark .leaflet-popup-content-wrapper {
+  background: rgba(11, 18, 32, 0.98);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+}
+
+.dark .leaflet-popup-tip {
+  background: rgba(11, 18, 32, 0.98);
+  border: 1px solid var(--border-color);
+}
+
+/* Phone input en dark mode */
+.dark .phone-input-custom .PhoneInputCountry {
+  background-color: var(--input-bg);
+  border-color: var(--border-color);
+}
+
+.dark .phone-input-custom .PhoneInputInput {
+  background-color: var(--input-bg);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+.dark .phone-input-custom .PhoneInputCountrySelectArrow {
+  border-right-color: var(--text-primary);
+  border-bottom-color: var(--text-primary);
+}
+
+/* Headers y títulos globales en dark mode */
+.dark h1, .dark h2, .dark h3, .dark h4, .dark h5, .dark h6 {
+  color: var(--text-primary);
+}
+
+/* Párrafos y texto general en dark mode */
+.dark p {
+  color: var(--text-secondary);
+}
+
+/* Texto muted en dark mode */
+.dark .text-muted,
+.dark .text-gray-400,
+.dark .text-gray-500,
+.dark .text-gray-600 {
+  color: var(--text-muted) !important;
+}
+
+/* Fondo de página en dark mode */
+.dark .page-container,
+.dark main {
+  background: var(--light-gray);
+  color: var(--text-primary);
+}
+
+/* Scrollbar en dark mode */
+.dark ::-webkit-scrollbar-track {
+  background: var(--soft-black);
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: var(--gold-accent);
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #E5C158;
 }

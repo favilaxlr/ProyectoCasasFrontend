@@ -23,6 +23,7 @@ import UsersManagementPage from './pages/UsersManagementPage';
 import AdminAppointmentsPage from './pages/AdminAppointmentsPage';
 import MyAppointmentsPage from './pages/MyAppointmentsPage';
 import NotificationsPage from './pages/NotificationsPage';
+import ConfirmAppointmentPage from './pages/ConfirmAppointmentPage';
 
 function App() {
   const [toastTheme, setToastTheme] = useState('light');
@@ -64,6 +65,9 @@ function App() {
                 <Route path='/login' element={<LoginPage />} />
                 <Route path='/register' element={<RegisterPage/>} />
                 <Route path='/verify' element={<VerificationPage/>} />
+                
+                {/* Ruta pública para confirmar citas por link */}
+                <Route path='/confirm-appointment/:id/:code' element={<ConfirmAppointmentPage/>} />
 
                 {/* Rutas públicas para propiedades */}
                 <Route path='/properties' element={<AllPropertiesPage/>} />

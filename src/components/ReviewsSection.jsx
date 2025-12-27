@@ -187,9 +187,17 @@ function ReviewsSection({ propertyId }) {
                         <div key={review._id} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
                             <div className="flex justify-between items-start mb-2">
                                 <div className="flex items-center gap-3">
-                                    <div className="bg-blue-100 rounded-full p-2">
-                                        <IoPersonSharp className="text-blue-600" size={24} />
-                                    </div>
+                                    {review.user?.profileImage?.url ? (
+                                        <img 
+                                            src={review.user.profileImage.url}
+                                            alt={review.user.username}
+                                            className="w-10 h-10 rounded-full object-cover"
+                                        />
+                                    ) : (
+                                        <div className="bg-blue-100 rounded-full p-2">
+                                            <IoPersonSharp className="text-blue-600" size={24} />
+                                        </div>
+                                    )}
                                     <div>
                                         <p className="font-semibold">{review.user?.username || 'Usuario'}</p>
                                         <div className="flex items-center gap-2">

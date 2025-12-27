@@ -1,13 +1,14 @@
 import { useState, useEffect } from 'react';
 import { getNotificationStatsRequest, getNotificationHistoryRequest, resendFailedNotificationsRequest } from '../api/notifications';
 import { toast } from 'react-toastify';
-import { IoStatsChartSharp, IoRefreshSharp, IoTimeSharp, IoCheckmarkCircleSharp, IoCloseCircleSharp, IoWarningSharp, IoPhonePortraitSharp } from 'react-icons/io5';
+import { IoStatsChartSharp, IoRefreshSharp, IoTimeSharp, IoCheckmarkCircleSharp, IoCloseCircleSharp, IoWarningSharp, IoPhonePortraitSharp, IoChevronDownSharp, IoChevronUpSharp } from 'react-icons/io5';
 
 function NotificationsPage() {
     const [stats, setStats] = useState(null);
     const [history, setHistory] = useState([]);
     const [loading, setLoading] = useState(true);
     const [resending, setResending] = useState(null);
+    const [expandedRow, setExpandedRow] = useState(null);
 
     useEffect(() => {
         loadData();
@@ -172,76 +173,146 @@ function NotificationsPage() {
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     Acciones
                                 </th>
+                                <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Detalles
+                                </th>
                             </tr>
                         </thead>
-                        <tbody className="bg-white divide-y divide-gray-200">
+                        <tbody className="bg-white">
                             {history.map((notification) => (
-                                <tr key={notification._id} className="hover:bg-gray-50">
-                                    <td className="px-6 py-4 whitespace-nowrap">
-                                        <div className="flex items-center">
-                                            {getStatusIcon(notification.status)}
-                                            <span className="ml-2 text-sm font-medium">
-                                                {getStatusText(notification.status)}
-                                            </span>
-                                        </div>
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        <div className="text-sm font-medium text-gray-900">
-                                            {notification.property?.title || 'Propiedad eliminada'}
-                                        </div>
-                                        <div className="text-sm text-gray-500">
-                                            {notification.property?.address?.city || 'N/A'}
-                                        </div>
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap">
-                                        <div className="text-sm text-gray-900">
-                                            <div className="flex space-x-4">
-                                                <span className="text-green-600 flex items-center">
-                                                    <IoCheckmarkCircleSharp className="mr-1" /> {notification.stats.sentCount}
+                                <>
+                                    <tr key={notification._id} className="hover:bg-gray-50 border-b border-gray-200">
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <div className="flex items-center">
+                                                {getStatusIcon(notification.status)}
+                                                <span className="ml-2 text-sm font-medium">
+                                                    {getStatusText(notification.status)}
                                                 </span>
-                                                {notification.stats.failedCount > 0 && (
-                                                    <span className="text-red-600 flex items-center">
-                                                        <IoCloseCircleSharp className="mr-1" /> {notification.stats.failedCount}
-                                                    </span>
-                                                )}
                                             </div>
-                                        </div>
-                                        <div className="text-xs text-gray-500">
-                                            de {notification.stats.totalUsers} usuarios
-                                        </div>
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                        {formatDuration(notification.processingTime?.duration)}
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                        {new Date(notification.createdAt).toLocaleDateString('es-ES', {
-                                            year: 'numeric',
-                                            month: 'short',
-                                            day: 'numeric',
-                                            hour: '2-digit',
-                                            minute: '2-digit'
-                                        })}
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                        {notification.stats.failedCount > 0 && notification.status === 'completed' && (
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            <div className="text-sm font-medium text-gray-900">
+                                                {notification.property?.title || 'Propiedad eliminada'}
+                                            </div>
+                                            <div className="text-sm text-gray-500">
+                                                {notification.property?.address?.city || 'N/A'}
+                                            </div>
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <div className="text-sm text-gray-900">
+                                                <div className="flex space-x-4">
+                                                    <span className="text-green-600 flex items-center">
+                                                        <IoCheckmarkCircleSharp className="mr-1" /> {notification.stats.sentCount}
+                                                    </span>
+                                                    {notification.stats.failedCount > 0 && (
+                                                        <span className="text-red-600 flex items-center">
+                                                            <IoCloseCircleSharp className="mr-1" /> {notification.stats.failedCount}
+                                                        </span>
+                                                    )}
+                                                </div>
+                                            </div>
+                                            <div className="text-xs text-gray-500">
+                                                de {notification.stats.totalUsers} usuarios
+                                            </div>
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            {formatDuration(notification.processingTime?.duration)}
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            {new Date(notification.createdAt).toLocaleDateString('es-ES', {
+                                                year: 'numeric',
+                                                month: 'short',
+                                                day: 'numeric',
+                                                hour: '2-digit',
+                                                minute: '2-digit'
+                                            })}
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                            {notification.stats.failedCount > 0 && notification.status === 'completed' && (
+                                                <button
+                                                    onClick={() => handleResend(notification._id)}
+                                                    disabled={resending === notification._id}
+                                                    className="text-white px-3 py-1 rounded hover:opacity-90 disabled:opacity-50 font-medium transition-all"
+                                                    style={{ backgroundColor: '#C8A452' }}
+                                                >
+                                                    {resending === notification._id ? (
+                                                        <div className="flex items-center">
+                                                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                                                            Reenviando...
+                                                        </div>
+                                                    ) : (
+                                                        'Reenviar fallidos'
+                                                    )}
+                                                </button>
+                                            )}
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-center">
                                             <button
-                                                onClick={() => handleResend(notification._id)}
-                                                disabled={resending === notification._id}
-                                                className="text-white px-3 py-1 rounded hover:opacity-90 disabled:opacity-50 font-medium transition-all"
-                                                style={{ backgroundColor: '#C8A452' }}
+                                                onClick={() => setExpandedRow(expandedRow === notification._id ? null : notification._id)}
+                                                className="text-gray-600 hover:text-gray-900 transition-colors"
                                             >
-                                                {resending === notification._id ? (
-                                                    <div className="flex items-center">
-                                                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                                                        Reenviando...
-                                                    </div>
+                                                {expandedRow === notification._id ? (
+                                                    <IoChevronUpSharp className="h-5 w-5" />
                                                 ) : (
-                                                    'Reenviar fallidos'
+                                                    <IoChevronDownSharp className="h-5 w-5" />
                                                 )}
                                             </button>
-                                        )}
-                                    </td>
-                                </tr>
+                                        </td>
+                                    </tr>
+                                    {expandedRow === notification._id && (
+                                        <tr>
+                                            <td colSpan="7" className="px-6 py-4 bg-gray-50">
+                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                                    {/* Enviados exitosamente */}
+                                                    <div className="bg-white rounded-lg p-4 border border-green-200">
+                                                        <h4 className="text-sm font-semibold text-green-700 mb-3 flex items-center">
+                                                            <IoCheckmarkCircleSharp className="mr-2" />
+                                                            Enviados Exitosamente ({notification.results?.filter(r => r.success).length || 0})
+                                                        </h4>
+                                                        <div className="space-y-2 max-h-60 overflow-y-auto">
+                                                            {notification.results?.filter(r => r.success).map((result, idx) => (
+                                                                <div key={idx} className="text-sm p-2 bg-green-50 rounded flex items-start">
+                                                                    <IoCheckmarkCircleSharp className="text-green-600 mt-0.5 mr-2 flex-shrink-0" />
+                                                                    <div className="flex-1">
+                                                                        <div className="font-medium text-gray-900">{result.user?.username || 'Usuario'}</div>
+                                                                        <div className="text-gray-600 text-xs">{result.user?.phone}</div>
+                                                                        <div className="text-green-600 text-xs mt-1">✓ Mensaje enviado</div>
+                                                                    </div>
+                                                                </div>
+                                                            ))}
+                                                            {notification.results?.filter(r => r.success).length === 0 && (
+                                                                <p className="text-gray-500 text-sm">No hay envíos exitosos</p>
+                                                            )}
+                                                        </div>
+                                                    </div>
+
+                                                    {/* Fallidos */}
+                                                    <div className="bg-white rounded-lg p-4 border border-red-200">
+                                                        <h4 className="text-sm font-semibold text-red-700 mb-3 flex items-center">
+                                                            <IoCloseCircleSharp className="mr-2" />
+                                                            Fallos en Envío ({notification.results?.filter(r => !r.success).length || 0})
+                                                        </h4>
+                                                        <div className="space-y-2 max-h-60 overflow-y-auto">
+                                                            {notification.results?.filter(r => !r.success).map((result, idx) => (
+                                                                <div key={idx} className="text-sm p-2 bg-red-50 rounded flex items-start">
+                                                                    <IoCloseCircleSharp className="text-red-600 mt-0.5 mr-2 flex-shrink-0" />
+                                                                    <div className="flex-1">
+                                                                        <div className="font-medium text-gray-900">{result.user?.username || 'Usuario'}</div>
+                                                                        <div className="text-gray-600 text-xs">{result.user?.phone}</div>
+                                                                        <div className="text-red-600 text-xs mt-1">✗ {result.error || 'Error desconocido'}</div>
+                                                                    </div>
+                                                                </div>
+                                                            ))}
+                                                            {notification.results?.filter(r => !r.success).length === 0 && (
+                                                                <p className="text-gray-500 text-sm">No hay fallos</p>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    )}
+                                </>
                             ))}
                         </tbody>
                     </table>

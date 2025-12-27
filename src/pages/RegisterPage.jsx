@@ -38,6 +38,9 @@ function RegisterPage() {
       if (result.success) {
         // Redirigir a la página de verificación con el email
         navigate('/verify', { state: { email: result.email } });
+      } else if (result.needsVerification) {
+        // Si el email ya está registrado pero no verificado, redirigir a verificación
+        navigate('/verify', { state: { email: result.email } });
       }
     } finally {
       setIsLoading(false);

@@ -63,21 +63,21 @@ function PropertyFormPage() {
             value: 'sale',
             title: 'Venta',
             description: 'Propiedad exclusivamente para venta',
-            icon: IoCardSharp,
+            icon: <IoCardSharp />,
             gradient: 'from-blue-500 to-blue-600'
         },
         {
             value: 'rent',
             title: 'Renta',
             description: 'Propiedad exclusivamente para renta',
-            icon: IoKeySharp,
+            icon: <IoKeySharp />,
             gradient: 'from-green-500 to-green-600'
         },
         {
             value: 'both',
             title: 'Renta/Venta',
             description: 'Propiedad disponible para renta o venta',
-            icon: IoBusinessSharp,
+            icon: <IoBusinessSharp />,
             gradient: 'from-purple-500 via-blue-500 to-green-500'
         }
     ];
@@ -273,6 +273,8 @@ function PropertyFormPage() {
     };
 
     const handleImageChange = (files) => {
+        console.log('📥 PropertyFormPage recibió archivos:', files?.length);
+        // Los archivos ya vienen con su información de preview desde ImageUploader
         setImages(files);
     };
 
@@ -424,7 +426,6 @@ function PropertyFormPage() {
 
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
                                     {businessModes.map((mode) => {
-                                        const Icon = mode.icon;
                                         const isSelected = businessMode === mode.value;
                                         
                                         return (
@@ -454,7 +455,9 @@ function PropertyFormPage() {
                                                         group-hover:scale-110 transition-transform
                                                         flex items-center justify-center
                                                     `}>
-                                                        <Icon className="text-5xl" />
+                                                        <div className="text-5xl">
+                                                            {mode.icon}
+                                                        </div>
                                                     </div>
                                                     
                                                     <h3 className="text-xl font-bold text-[var(--charcoal)]">

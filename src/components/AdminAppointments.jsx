@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { 
     getAppointmentsRequest, 
-    confirmAppointmentAdminRequest, 
+    confirmAppointmentAdminRequest,
+    assignAppointmentRequest,
     completeAppointmentRequest,
     cancelAppointmentRequest 
 } from '../api/appointments';
@@ -43,6 +44,10 @@ function AdminAppointments() {
                 case 'confirm':
                     await confirmAppointmentAdminRequest(appointmentId);
                     message = 'Cita confirmada';
+                    break;
+                case 'assign':
+                    await assignAppointmentRequest(appointmentId);
+                    message = 'Cita asignada exitosamente. Se ha notificado al cliente.';
                     break;
                 case 'complete':
                     await completeAppointmentRequest(appointmentId);
@@ -158,6 +163,9 @@ function AdminAppointments() {
                                         Usuario
                                     </th>
                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                                        Teléfono
+                                    </th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                                         Fecha y Hora
                                     </th>
                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
@@ -191,6 +199,11 @@ function AdminAppointments() {
                                                 </div>
                                             </div>
                                         </td>
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <div className="text-sm text-gray-900">
+                                                {appointment.user?.phone || appointment.visitor?.phone}
+                                            </div>
+                                        </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                             {formatDateTime(appointment.appointmentDate, appointment.appointmentTime)}
                                         </td>
@@ -218,6 +231,20 @@ function AdminAppointments() {
                                             )}
                                             {appointment.status === 'confirmed' && (
                                                 <>
+                                                    {!appointment.assignedTo && (
+                                                        <button
+                                                            onClick={() => handleStatusChange(appointment._id, 'assign')}
+                                                            className="px-3 py-1 rounded text-white font-medium transition-all hover:opacity-90"
+                                                            style={{ backgroundColor: '#C8A452' }}
+                                                        >
+                                                            Asignarme esta cita
+                                                        </button>
+                                                    )}
+                                                    {appointment.assignedTo && (
+                                                        <span className="text-green-600 font-medium">
+                                                            ✓ Asignada a: {appointment.assignedTo.username}
+                                                        </span>
+                                                    )}
                                                     <button
                                                         onClick={() => handleStatusChange(appointment._id, 'complete')}
                                                         className="text-green-600 hover:text-green-900"

@@ -35,6 +35,16 @@ export const AuthProvider = ({ children }) => {
             //si existe un error al registrar el usuario
             //guardamos el error en la variable error
             setErrors(error.response.data.message);
+            
+            // Si el backend indica que necesita verificación, redirigir
+            if (error.response?.data?.needsVerification) {
+                return { 
+                    success: false, 
+                    needsVerification: true, 
+                    email: error.response.data.email 
+                };
+            }
+            
             return { success: false };
         }
     }; //fin de signup
@@ -169,6 +179,15 @@ export const AuthProvider = ({ children }) => {
         }));
     }
 
+    // Función para autenticar usuario después de verificación
+    const authenticateUser = (userData) => {
+        setUser(userData);
+        setIsAuthenticated(true);
+        setIsAdmin(userData.role === 'admin');
+        setIsCoAdmin(userData.role === 'co-admin');
+        setErrors([]);
+    }
+
     return (
         <AuthContext.Provider value={{
             logOut,
@@ -180,7 +199,8 @@ export const AuthProvider = ({ children }) => {
             isLoading,
             isAdmin,
             isCoAdmin,
-            updateUserData
+            updateUserData,
+            authenticateUser
         }}>
             {children}
         </AuthContext.Provider>

@@ -1,17 +1,30 @@
 import { useForm } from 'react-hook-form';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from "react-router";
-import { IoShieldCheckmarkSharp, IoMailSharp, IoPhonePortraitSharp, IoCheckmarkCircle } from "react-icons/io5";
+import { IoShieldCheckmarkSharp, IoMailSharp, IoPhonePortraitSharp, IoCheckmarkCircle, IoTimeSharp } from "react-icons/io5";
 import { verifyCodeRequest, resendCodeRequest } from '../api/auth';
 import { toast } from 'react-toastify';
+import { useAuth } from '../context/AuthContext';
 
 function VerificationPage() {
   const { register, handleSubmit, formState: { errors } } = useForm();
   const navigate = useNavigate();
   const location = useLocation();
+  const { authenticateUser } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [isResending, setIsResending] = useState(false);
+  const [cooldownTime, setCooldownTime] = useState(0);
   const userEmail = location.state?.email || '';
+
+  // Timer para el cooldown
+  useEffect(() => {
+    if (cooldownTime > 0) {
+      const timer = setTimeout(() => {
+        setCooldownTime(cooldownTime - 1);
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [cooldownTime]);
 
   const onSubmit = handleSubmit(async (values) => {
     setIsLoading(true);
@@ -21,14 +34,23 @@ function VerificationPage() {
         code: values.code
       });
       
-      toast.success('¡Verificación exitosa! Ya puedes iniciar sesión', {
-        icon: <IoCheckmarkCircle className="text-green-500" />
-      });
+      console.log('✅ Respuesta de verificación:', response.data);
       
-      setTimeout(() => {
-        navigate('/login');
-      }, 2000);
+      // El backend ahora devuelve los datos del usuario con token
+      if (response.data) {
+        authenticateUser(response.data);
+        
+        toast.success('¡Verificación exitosa! Bienvenido', {
+          icon: <IoCheckmarkCircle className="text-green-500" />
+        });
+        
+        // Redirigir después de un breve delay
+        setTimeout(() => {
+          navigate('/properties', { replace: true });
+        }, 1000);
+      }
     } catch (error) {
+      console.error('❌ Error en verificación:', error);
       const errorMessage = error.response?.data?.message?.[0] || 'Error al verificar el código';
       toast.error(errorMessage);
     } finally {
@@ -42,10 +64,16 @@ function VerificationPage() {
       return;
     }
     
+    if (cooldownTime > 0) {
+      toast.warning(`Espera ${cooldownTime} segundos antes de reenviar`);
+      return;
+    }
+    
     setIsResending(true);
     try {
       await resendCodeRequest({ email: userEmail });
       toast.success('Código reenviado exitosamente. Revisa tu email y SMS');
+      setCooldownTime(60); // 60 segundos de cooldown
     } catch (error) {
       const errorMessage = error.response?.data?.message?.[0] || 'Error al reenviar el código';
       toast.error(errorMessage);
@@ -135,10 +163,26 @@ function VerificationPage() {
             <button
               type="button"
               onClick={handleResendCode}
-              disabled={isResending}
-              className="text-[var(--gold-accent)] hover:text-yellow-600 font-semibold text-sm transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled={isResending || cooldownTime > 0}
+              className={`font-semibold text-sm transition-all duration-300 disabled:cursor-not-allowed flex items-center justify-center mx-auto ${
+                cooldownTime > 0 
+                  ? 'text-gray-400' 
+                  : 'text-[var(--gold-accent)] hover:text-yellow-600'
+              }`}
             >
-              {isResending ? 'Reenviando...' : 'Reenviar código'}
+              {isResending ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-[var(--gold-accent)] border-t-transparent rounded-full animate-spin mr-2"></div>
+                  Reenviando...
+                </>
+              ) : cooldownTime > 0 ? (
+                <>
+                  <IoTimeSharp className="w-4 h-4 mr-2" />
+                  Espera {cooldownTime}s para reenviar
+                </>
+              ) : (
+                'Reenviar código'
+              )}
             </button>
           </div>
 

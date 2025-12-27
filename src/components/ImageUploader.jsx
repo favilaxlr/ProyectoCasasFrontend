@@ -12,6 +12,8 @@ function ImageUploader({ propertyId, onImagesUploaded, initialImages = [], onCha
     const handleFileSelect = async (files) => {
         if (!files || files.length === 0) return;
 
+        console.log('📸 Archivos seleccionados:', files.length);
+
         // Crear URLs de vista previa para los archivos seleccionados
         const newPreviews = Array.from(files).map((file, index) => ({
             file,
@@ -19,12 +21,18 @@ function ImageUploader({ propertyId, onImagesUploaded, initialImages = [], onCha
             isMain: previewImages.length === 0 && index === 0
         }));
 
+        console.log('🖼️ Previews creados:', newPreviews.length);
+
         const updatedImages = [...previewImages, ...newPreviews];
         setPreviewImages(updatedImages);
 
+        console.log('📊 Total de imágenes en preview:', updatedImages.length);
+
         // Si hay una función onChange, llamarla con los archivos
         if (onChange) {
-            onChange(updatedImages.map(img => img.file).filter(Boolean));
+            const filesToSend = updatedImages.map(img => img.file).filter(Boolean);
+            console.log('🔄 Enviando archivos a onChange:', filesToSend.length);
+            onChange(filesToSend);
         }
 
         // Si hay propertyId, subir directamente

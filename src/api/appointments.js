@@ -14,6 +14,9 @@ export const cancelAppointmentRequest = (id, reason) =>
 export const confirmAppointmentAdminRequest = (id) => 
     axios.put(`/appointments/${id}/confirm`);
 
+export const assignAppointmentRequest = (id) => 
+    axios.put(`/appointments/${id}/assign`);
+
 export const completeAppointmentRequest = (id) => 
     axios.put(`/appointments/${id}/complete`);
 
