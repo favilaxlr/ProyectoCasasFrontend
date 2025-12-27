@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import logoImage from '../assets/frfamilylogo.png';
 
 function Logo({ className = "", size = "medium" }) {
   const [imageError, setImageError] = useState(false);
@@ -8,9 +9,6 @@ function Logo({ className = "", size = "medium" }) {
     medium: "h-12",
     large: "h-16"
   };
-
-  // Intentar cargar el logo desde assets
-  const logoPath = "/src/assets/frfamilylogo.png";
 
   const handleImageError = () => {
     setImageError(true);
@@ -35,11 +33,11 @@ function Logo({ className = "", size = "medium" }) {
     );
   }
 
-  // Intentar mostrar la imagen del logo
+  // Mostrar la imagen del logo importada correctamente
   return (
     <div className={`flex items-center ${className}`}>
       <img 
-        src="/src/assets/frfamilylogo.png"
+        src={logoImage}
         alt="FR Family Investments"
         className={`${sizeClasses[size]} w-auto object-contain`}
         onError={handleImageError}
