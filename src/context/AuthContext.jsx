@@ -58,6 +58,12 @@ export const AuthProvider = ({ children }) => {
                 throw new Error('No se recibió respuesta del servidor');
             }
             
+            // Guardar token en localStorage para producción (dominios diferentes)
+            const token = Cookies.get('token');
+            if (token) {
+                localStorage.setItem('token', token);
+            }
+            
             // Verificar roles
             if (res.data.role?.role === 'admin') {
                 setIsAdmin(true);
@@ -114,9 +120,12 @@ export const AuthProvider = ({ children }) => {
     //useEffect para verificar la sesion del usuario
     useEffect(() => {
         async function checkLogin() {
-            const cookies = Cookies.get();
+            // Intentar obtener token de cookies o localStorage
+            const cookieToken = Cookies.get('token');
+            const localToken = localStorage.getItem('token');
+            const token = cookieToken || localToken;
             
-            if (!cookies.token) {
+            if (!token) {
                 setIsAuthenticated(false);
                 setUser(null);
                 setIsLoading(false);
@@ -126,7 +135,7 @@ export const AuthProvider = ({ children }) => {
             }
 
             try {
-                const res = await verifyTokenRequest(cookies.token);
+                const res = await verifyTokenRequest(token);
                 if (!res.data) {
                     throw new Error('No data received');
                 }
@@ -149,6 +158,7 @@ export const AuthProvider = ({ children }) => {
 
             } catch (error) {
                 Cookies.remove('token');
+                localStorage.removeItem('token');
                 setIsAuthenticated(false);
                 setUser(null);
                 setIsLoading(false);
@@ -164,6 +174,7 @@ export const AuthProvider = ({ children }) => {
     const logOut = () => {
         logOutRequest();
         Cookies.remove('token');
+        localStorage.removeItem('token');
         setIsAuthenticated(false);
         setIsAdmin(false);
         setIsCoAdmin(false);

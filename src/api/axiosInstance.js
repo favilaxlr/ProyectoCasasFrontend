@@ -6,4 +6,22 @@ const instance = axios.create({
     withCredentials: true
 });
 
+// Interceptor para agregar el token de localStorage al header de cada petición
+instance.interceptors.request.use(
+    (config) => {
+        // Intentar obtener el token de localStorage
+        const token = localStorage.getItem('token');
+        
+        if (token) {
+            // Si existe, agregarlo al header Authorization
+            config.headers.Authorization = `Bearer ${token}`;
+        }
+        
+        return config;
+    },
+    (error) => {
+        return Promise.reject(error);
+    }
+);
+
 export default instance;
