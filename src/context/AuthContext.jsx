@@ -59,7 +59,8 @@ export const AuthProvider = ({ children }) => {
             }
             
             // Guardar token en localStorage para producción (dominios diferentes)
-            const token = Cookies.get('token');
+            // Priorizar el token del body sobre el de cookies
+            const token = res.data.token || Cookies.get('token');
             if (token) {
                 localStorage.setItem('token', token);
             }

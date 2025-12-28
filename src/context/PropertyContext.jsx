@@ -40,7 +40,12 @@ export function PropertiesProvider({ children }) {
       const res = await getAllPropertiesRequest();
       setProperties(res.data);
     } catch (error) {
-      setErrors(error.response.data.message);
+      console.error('Error loading properties:', error);
+      if (error.response?.data?.message) {
+        setErrors(error.response.data.message);
+      } else {
+        setErrors(['Error al cargar las propiedades']);
+      }
     }
   };
 
