@@ -15,6 +15,15 @@ function VerificationPage() {
   const [isResending, setIsResending] = useState(false);
   const [cooldownTime, setCooldownTime] = useState(0);
   const userEmail = location.state?.email || '';
+  const userPhone = location.state?.phone || '';
+  
+  // Función para censurar el teléfono mostrando solo los últimos 4 dígitos
+  const maskPhone = (phone) => {
+    if (!phone || phone.length < 4) return '****';
+    const lastFour = phone.slice(-4);
+    const masked = '*'.repeat(phone.length - 4);
+    return masked + lastFour;
+  };
 
   // Timer para el cooldown
   useEffect(() => {
@@ -99,12 +108,22 @@ function VerificationPage() {
               <IoMailSharp className="w-5 h-5 mr-2" />
               <span>{userEmail}</span>
             </div>
-            <div className="flex items-center justify-center text-[var(--gold-accent)] font-semibold">
-              <IoPhonePortraitSharp className="w-5 h-5 mr-2" />
-              <span>Tu número de teléfono</span>
+            {userPhone && (
+              <div className="flex items-center justify-center text-[var(--gold-accent)] font-semibold">
+                <IoPhonePortraitSharp className="w-5 h-5 mr-2" />
+                <span>{maskPhone(userPhone)}</span>
+              </div>
+            )}
+          </div>
+          <div className="mt-4 space-y-2">
+            <p className="text-gray-500 text-sm">El código es válido por 10 minutos</p>
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mt-3">
+              <p className="text-yellow-800 text-xs flex items-start">
+                <IoMailSharp className="w-4 h-4 mr-2 mt-0.5 flex-shrink-0" />
+                <span><strong>Nota:</strong> Si no encuentras el correo en tu bandeja de entrada, revisa tu carpeta de <strong>SPAM</strong> o <strong>Correo no deseado</strong>.</span>
+              </p>
             </div>
           </div>
-          <p className="text-gray-500 text-sm mt-4">El código es válido por 10 minutos</p>
         </div>
 
         {/* Form Container */}

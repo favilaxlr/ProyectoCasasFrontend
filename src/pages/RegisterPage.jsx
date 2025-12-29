@@ -36,11 +36,11 @@ function RegisterPage() {
     try {
       const result = await signUp(values);
       if (result.success) {
-        // Redirigir a la página de verificación con el email
-        navigate('/verify', { state: { email: result.email } });
+        // Redirigir a la página de verificación con el email y teléfono
+        navigate('/verify', { state: { email: result.email, phone: values.phone } });
       } else if (result.needsVerification) {
         // Si el email ya está registrado pero no verificado, redirigir a verificación
-        navigate('/verify', { state: { email: result.email } });
+        navigate('/verify', { state: { email: result.email, phone: values.phone } });
       }
     } finally {
       setIsLoading(false);
