@@ -13,7 +13,8 @@ const ConfirmAppointmentPage = () => {
     useEffect(() => {
         const confirmAppointment = async () => {
             try {
-                const response = await fetch(`http://localhost:4000/api/appointments/confirm/${id}/${code}`);
+                const baseUrl = import.meta.env.VITE_BASE_URL || 'http://localhost:4000';
+                const response = await fetch(`${baseUrl}/api/appointments/confirm/${id}/${code}`);
                 const data = await response.json();
 
                 if (response.ok && data.success) {
