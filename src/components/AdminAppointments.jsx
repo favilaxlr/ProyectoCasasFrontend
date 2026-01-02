@@ -43,20 +43,20 @@ function AdminAppointments() {
             switch (action) {
                 case 'confirm':
                     await confirmAppointmentAdminRequest(appointmentId);
-                    message = 'Cita confirmada';
+                    message = 'Appointment confirmed';
                     break;
                 case 'assign':
                     await assignAppointmentRequest(appointmentId);
-                    message = 'Cita asignada exitosamente. Se ha notificado al cliente.';
+                    message = 'Appointment assigned successfully. The client has been notified.';
                     break;
                 case 'complete':
                     await completeAppointmentRequest(appointmentId);
-                    message = 'Cita marcada como completada';
+                    message = 'Appointment marked as completed';
                     break;
                 case 'cancel':
-                    const reason = prompt('Motivo de cancelación (opcional):');
+                    const reason = prompt('Cancellation reason (optional):');
                     await cancelAppointmentRequest(appointmentId, reason);
-                    message = 'Cita cancelada';
+                    message = 'Appointment cancelled';
                     break;
             }
             
@@ -64,13 +64,14 @@ function AdminAppointments() {
             loadAppointments();
         } catch (error) {
             console.error('Error updating appointment:', error);
-            alert('Error al actualizar la cita');
+            alert('Error updating appointment');
         }
     };
 
     const getStatusColor = (status) => {
         const colors = {
             'pending': 'bg-yellow-100 text-yellow-800',
+            'pending_sms_confirmation': 'bg-orange-100 text-orange-800',
             'confirmed': 'bg-blue-100 text-blue-800',
             'completed': 'bg-green-100 text-green-800',
             'cancelled': 'bg-red-100 text-red-800'
@@ -80,20 +81,21 @@ function AdminAppointments() {
 
     const getStatusText = (status) => {
         const texts = {
-            'pending': 'Pendiente',
-            'confirmed': 'Confirmada',
-            'completed': 'Completada',
-            'cancelled': 'Cancelada'
+            'pending': 'Pending',
+            'pending_sms_confirmation': 'Pending SMS Confirmation',
+            'confirmed': 'Confirmed',
+            'completed': 'Completed',
+            'cancelled': 'Cancelled'
         };
         return texts[status] || status;
     };
 
     const formatDateTime = (date, time) => {
         const appointmentDate = new Date(date);
-        return `${appointmentDate.toLocaleDateString('es-ES')} a las ${time}`;
+        return `${appointmentDate.toLocaleDateString('en-US')} at ${time}`;
     };
 
-    if (loading) return <div className="text-center py-8">Cargando citas...</div>;
+    if (loading) return <div className="text-center py-8">Loading appointments...</div>;
 
     return (
         <div className="space-y-6">
@@ -102,25 +104,25 @@ function AdminAppointments() {
                     <svg className="w-5 h-5 mr-2 text-[var(--gold-accent)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.414A1 1 0 013 6.707V4z" />
                     </svg>
-                    Filtros de Búsqueda
+                    Search Filters
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
-                        <label className="block text-sm font-medium mb-1">Estado</label>
+                        <label className="block text-sm font-medium mb-1">Status</label>
                         <select
                             value={filters.status}
                             onChange={(e) => setFilters({...filters, status: e.target.value})}
                             className="input-field"
                         >
-                            <option value="">Todos los estados</option>
-                            <option value="pending">Pendientes</option>
-                            <option value="confirmed">Confirmadas</option>
-                            <option value="completed">Completadas</option>
-                            <option value="cancelled">Canceladas</option>
+                            <option value="">All statuses</option>
+                            <option value="pending">Pending</option>
+                            <option value="confirmed">Confirmed</option>
+                            <option value="completed">Completed</option>
+                            <option value="cancelled">Cancelled</option>
                         </select>
                     </div>
                     <div>
-                        <label className="block text-sm font-medium mb-1">Fecha desde</label>
+                        <label className="block text-sm font-medium mb-1">Date from</label>
                         <input
                             type="date"
                             value={filters.startDate}
@@ -129,7 +131,7 @@ function AdminAppointments() {
                         />
                     </div>
                     <div>
-                        <label className="block text-sm font-medium mb-1">Fecha hasta</label>
+                        <label className="block text-sm font-medium mb-1">Date until</label>
                         <input
                             type="date"
                             value={filters.endDate}
@@ -148,8 +150,8 @@ function AdminAppointments() {
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                             </svg>
                         </div>
-                        <h3 className="text-lg font-semibold text-gray-700 mb-2">No hay citas</h3>
-                        <p className="text-gray-500">No hay citas que coincidan con los filtros seleccionados</p>
+                        <h3 className="text-lg font-semibold text-gray-700 mb-2">No appointments</h3>
+                        <p className="text-gray-500">No appointments match the selected filters</p>
                     </div>
                 ) : (
                     <div className="overflow-x-auto">
@@ -157,22 +159,22 @@ function AdminAppointments() {
                             <thead className="bg-gray-50">
                                 <tr>
                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                                        Propiedad
+                                        Property
                                     </th>
                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                                        Usuario
+                                        User
                                     </th>
                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                                        Teléfono
+                                        Phone
                                     </th>
                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                                        Fecha y Hora
+                                        Date and Time
                                     </th>
                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                                        Estado
+                                        Status
                                     </th>
                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                                        Acciones
+                                        Actions
                                     </th>
                                 </tr>
                             </thead>
@@ -219,13 +221,13 @@ function AdminAppointments() {
                                                         onClick={() => handleStatusChange(appointment._id, 'confirm')}
                                                         className="text-blue-600 hover:text-blue-900"
                                                     >
-                                                        Confirmar
+                                                        Confirm
                                                     </button>
                                                     <button
                                                         onClick={() => handleStatusChange(appointment._id, 'cancel')}
                                                         className="text-red-600 hover:text-red-900"
                                                     >
-                                                        Cancelar
+                                                        Cancel
                                                     </button>
                                                 </>
                                             )}
@@ -237,25 +239,25 @@ function AdminAppointments() {
                                                             className="px-3 py-1 rounded text-white font-medium transition-all hover:opacity-90"
                                                             style={{ backgroundColor: '#C8A452' }}
                                                         >
-                                                            Asignarme esta cita
+                                                            Assign this appointment to me
                                                         </button>
                                                     )}
                                                     {appointment.assignedTo && (
                                                         <span className="text-green-600 font-medium">
-                                                            ✓ Asignada a: {appointment.assignedTo.username}
+                                                            ✓ Assigned to: {appointment.assignedTo.username}
                                                         </span>
                                                     )}
                                                     <button
                                                         onClick={() => handleStatusChange(appointment._id, 'complete')}
                                                         className="text-green-600 hover:text-green-900"
                                                     >
-                                                        Completar
+                                                        Complete
                                                     </button>
                                                     <button
                                                         onClick={() => handleStatusChange(appointment._id, 'cancel')}
                                                         className="text-red-600 hover:text-red-900"
                                                     >
-                                                        Cancelar
+                                                        Cancel
                                                     </button>
                                                 </>
                                             )}

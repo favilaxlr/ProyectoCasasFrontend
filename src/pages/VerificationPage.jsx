@@ -17,7 +17,7 @@ function VerificationPage() {
   const userEmail = location.state?.email || '';
   const userPhone = location.state?.phone || '';
   
-  // Función para censurar el teléfono mostrando solo los últimos 4 dígitos
+  // Function to mask the phone showing only the last 4 digits
   const maskPhone = (phone) => {
     if (!phone || phone.length < 4) return '****';
     const lastFour = phone.slice(-4);
@@ -45,7 +45,7 @@ function VerificationPage() {
       
       console.log('✅ Respuesta de verificación:', response.data);
       
-      // El backend ahora devuelve los datos del usuario con token
+      // The backend now returns user data with token
       if (response.data) {
         authenticateUser(response.data);
         
@@ -53,13 +53,13 @@ function VerificationPage() {
           icon: <IoCheckmarkCircle className="text-green-500" />
         });
         
-        // Redirigir después de un breve delay
+        // Redirect after a brief delay
         setTimeout(() => {
           navigate('/properties', { replace: true });
         }, 1000);
       }
     } catch (error) {
-      console.error('❌ Error en verificación:', error);
+      console.error('❌ Error in verification:', error);
       const errorMessage = error.response?.data?.message?.[0] || 'Error verifying the code';
       toast.error(errorMessage);
     } finally {
@@ -192,7 +192,7 @@ function VerificationPage() {
               {isResending ? (
                 <>
                   <div className="w-4 h-4 border-2 border-[var(--gold-accent)] border-t-transparent rounded-full animate-spin mr-2"></div>
-                  Reenviando...
+                  Resending...
                 </>
               ) : cooldownTime > 0 ? (
                 <>

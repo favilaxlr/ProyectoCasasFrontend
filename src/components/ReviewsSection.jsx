@@ -50,29 +50,29 @@ function ReviewsSection({ propertyId }) {
             formData.append('comment', comment);
 
             await createReviewRequest(formData);
-            toast.success('Reseña enviada correctamente');
+            toast.success('Review sent successfully');
             setRating(0);
             setComment('');
             setShowForm(false);
             loadReviews();
         } catch (error) {
             console.error('Error submitting review:', error);
-            toast.error(error.response?.data?.message?.[0] || 'Error al enviar la reseña');
+            toast.error(error.response?.data?.message?.[0] || 'Error sending the review');
         } finally {
             setSubmitting(false);
         }
     };
 
     const handleDelete = async (reviewId) => {
-        if (!window.confirm('¿Estás seguro de eliminar esta reseña?')) return;
+        if (!window.confirm('Are you sure you want to delete this review?')) return;
 
         try {
             await deleteReviewRequest(reviewId);
-            toast.success('Reseña eliminada');
+            toast.success('Review deleted');
             loadReviews();
         } catch (error) {
             console.error('Error deleting review:', error);
-            toast.error('Error al eliminar la reseña');
+            toast.error('Error deleting the review');
         }
     };
 
@@ -108,14 +108,14 @@ function ReviewsSection({ propertyId }) {
         <div className="bg-white p-6 rounded-lg shadow-lg">
             <div className="flex justify-between items-center mb-6">
                 <div>
-                    <h3 className="text-2xl font-bold mb-2">Reseñas de los Visitantes</h3>
+                    <h3 className="text-2xl font-bold mb-2">Visitor Reviews</h3>
                     {reviews.length > 0 && (
                         <div className="flex items-center gap-3">
                             <div className="flex items-center gap-1">
                                 {renderStars(Math.round(averageRating))}
                             </div>
                             <span className="text-xl font-semibold">{averageRating}</span>
-                            <span className="text-gray-600">({reviews.length} {reviews.length === 1 ? 'reseña' : 'reseñas'})</span>
+                            <span className="text-gray-600">({reviews.length} {reviews.length === 1 ? 'review' : 'reviews'})</span>
                         </div>
                     )}
                 </div>
@@ -125,7 +125,7 @@ function ReviewsSection({ propertyId }) {
                         onClick={() => setShowForm(!showForm)}
                         className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-semibold transition-all"
                     >
-                        {showForm ? 'Cancelar' : 'Escribir Reseña'}
+                        {showForm ? 'Cancel' : 'Write Review'}
                     </button>
                 )}
             </div>
@@ -133,21 +133,21 @@ function ReviewsSection({ propertyId }) {
             {/* Formulario para crear reseña */}
             {showForm && isAuthenticated && !isAdmin && !isCoAdmin && (
                 <form onSubmit={handleSubmit} className="bg-gray-50 p-6 rounded-lg mb-6 border-2 border-blue-200">
-                    <h4 className="text-lg font-semibold mb-4">Tu Calificación</h4>
+                    <h4 className="text-lg font-semibold mb-4">Your Rating</h4>
                     
                     <div className="mb-4">
-                        <label className="block text-sm font-medium mb-2">Calificación:</label>
+                        <label className="block text-sm font-medium mb-2">Rating:</label>
                         {renderStars(rating, true)}
                     </div>
 
                     <div className="mb-4">
-                        <label className="block text-sm font-medium mb-2">Comentario:</label>
+                        <label className="block text-sm font-medium mb-2">Comment:</label>
                         <textarea
                             value={comment}
                             onChange={(e) => setComment(e.target.value)}
                             className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                             rows="4"
-                            placeholder="Comparte tu experiencia con esta propiedad..."
+                            placeholder="Share your experience with this property..."
                             required
                         />
                     </div>
@@ -157,7 +157,7 @@ function ReviewsSection({ propertyId }) {
                         disabled={submitting}
                         className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-semibold transition-all disabled:opacity-50"
                     >
-                        {submitting ? 'Enviando...' : 'Publicar Reseña'}
+                        {submitting ? 'Sending...' : 'Publish Review'}
                     </button>
                 </form>
             )}
@@ -166,9 +166,9 @@ function ReviewsSection({ propertyId }) {
             {!isAuthenticated && (
                 <div className="bg-blue-50 border border-blue-200 p-4 rounded-lg mb-6 text-center">
                     <p className="text-gray-700">
-                        <span className="font-semibold">¿Quieres dejar una reseña?</span> Por favor{' '}
-                        <a href="/login" className="text-blue-600 hover:underline font-semibold">inicia sesión</a> o{' '}
-                        <a href="/register" className="text-blue-600 hover:underline font-semibold">regístrate</a>
+                        <span className="font-semibold">Want to leave a review?</span> Please{' '}
+                        <a href="/login" className="text-blue-600 hover:underline font-semibold">log in</a> or{' '}
+                        <a href="/register" className="text-blue-600 hover:underline font-semibold">register</a>
                     </p>
                 </div>
             )}
@@ -176,11 +176,11 @@ function ReviewsSection({ propertyId }) {
             {/* Lista de reseñas */}
             <div className="space-y-4">
                 {loading ? (
-                    <p className="text-center text-gray-500">Cargando reseñas...</p>
+                    <p className="text-center text-gray-500">Loading reviews...</p>
                 ) : reviews.length === 0 ? (
                     <div className="text-center py-8 text-gray-500">
-                        <p className="text-lg">No hay reseñas aún</p>
-                        <p className="text-sm">¡Sé el primero en compartir tu experiencia!</p>
+                        <p className="text-lg">No reviews yet</p>
+                        <p className="text-sm">Be the first to share your experience!</p>
                     </div>
                 ) : (
                     reviews.map((review) => (
@@ -218,7 +218,7 @@ function ReviewsSection({ propertyId }) {
                                     <button
                                         onClick={() => handleDelete(review._id)}
                                         className="text-red-600 hover:bg-red-50 p-2 rounded-lg transition-all"
-                                        title="Eliminar reseña"
+                                        title="Delete review"
                                     >
                                         <IoTrashBinSharp size={20} />
                                     </button>

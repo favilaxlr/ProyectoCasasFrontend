@@ -51,11 +51,11 @@ function ProfilePage() {
   const handleSaveProfile = async () => {
     // Validaciones básicas
     if (!formData.username.trim()) {
-      toast.error('El usuario no puede estar vacío');
+      toast.error('Username cannot be empty');
       return;
     }
     if (!formData.email.trim()) {
-      toast.error('El email no puede estar vacío');
+      toast.error('Email cannot be empty');
       return;
     }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
@@ -63,7 +63,7 @@ function ProfilePage() {
       return;
     }
     if (!formData.phone.trim()) {
-      toast.error('El teléfono no puede estar vacío');
+      toast.error('Phone cannot be empty');
       return;
     }
 
@@ -75,11 +75,11 @@ function ProfilePage() {
         updateUserData(res.data.user);
       }
       
-      toast.success('Perfil actualizado correctamente');
+      toast.success('Profile updated successfully');
       setIsEditing(false);
     } catch (error) {
       console.error('Error updating profile:', error);
-      const errorMessage = error.response?.data?.message?.[0] || 'Error al actualizar el perfil';
+      const errorMessage = error.response?.data?.message?.[0] || 'Error updating profile';
       toast.error(errorMessage);
     } finally {
       setLoading(false);
@@ -93,11 +93,11 @@ function ProfilePage() {
       return;
     }
     if (passwordData.newPassword.length < 8) {
-      toast.error('La nueva contraseña debe tener al menos 8 caracteres');
+      toast.error('The new password must be at least 8 characters');
       return;
     }
     if (passwordData.newPassword !== passwordData.confirmPassword) {
-      toast.error('Las contraseñas no coinciden');
+      toast.error('Passwords do not match');
       return;
     }
 
@@ -108,7 +108,7 @@ function ProfilePage() {
         newPassword: passwordData.newPassword
       });
       
-      toast.success('Contraseña actualizada correctamente');
+      toast.success('Password updated successfully');
       setIsChangingPassword(false);
       setPasswordData({
         currentPassword: '',
@@ -117,7 +117,7 @@ function ProfilePage() {
       });
     } catch (error) {
       console.error('Error changing password:', error);
-      const errorMessage = error.response?.data?.message?.[0] || 'Error al cambiar la contraseña';
+      const errorMessage = error.response?.data?.message?.[0] || 'Error changing password';
       toast.error(errorMessage);
     } finally {
       setLoading(false);
@@ -131,13 +131,13 @@ function ProfilePage() {
     // Validar tipo de archivo
     const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
     if (!allowedTypes.includes(file.type)) {
-      toast.error('Tipo de archivo no permitido. Usa JPG, PNG, GIF o WebP');
+      toast.error('File type not allowed. Use JPG, PNG, GIF or WebP');
       return;
     }
 
     // Validar tamaño (máximo 5MB)
     if (file.size > 5 * 1024 * 1024) {
-      toast.error('El archivo es muy grande. Máximo 5MB');
+      toast.error('File is too large. Maximum 5MB');
       return;
     }
 
@@ -152,10 +152,10 @@ function ProfilePage() {
         updateUserData(res.data.user);
       }
       
-      toast.success('Foto de perfil actualizada correctamente');
+      toast.success('Profile picture updated successfully');
     } catch (error) {
       console.error('Error updating profile image:', error);
-      const errorMessage = error.response?.data?.message?.[0] || 'Error al actualizar la foto de perfil';
+      const errorMessage = error.response?.data?.message?.[0] || 'Error updating profile picture';
       toast.error(errorMessage);
     } finally {
       setLoading(false);
@@ -165,29 +165,29 @@ function ProfilePage() {
   return (
     <div className="max-w-4xl mx-auto p-6">
       <div className="mb-8">
-        <h1 className="text-4xl font-bold mb-2" style={{ color: '#1F1F1F' }}>Mi Perfil</h1>
-        <p className="text-gray-600">Administra tu información personal y seguridad</p>
+        <h1 className="text-4xl font-bold mb-2" style={{ color: '#1F1F1F' }}>My Profile</h1>
+        <p className="text-gray-600">Manage your personal information and security</p>
       </div>
 
-      {/* Card de Foto de Perfil */}
+      {/* Profile Picture Card */}
       <div className="bg-white rounded-lg shadow-lg mb-6 border-t-4" style={{ borderColor: '#C8A452' }}>
         <div className="p-6">
-          <h2 className="text-xl font-semibold mb-4" style={{ color: '#3C3C3C' }}>Foto de Perfil</h2>
+          <h2 className="text-xl font-semibold mb-4" style={{ color: '#3C3C3C' }}>Profile Picture</h2>
           <div className="flex items-center gap-6">
-            {/* Imagen de perfil */}
+            {/* Profile Image */}
             <div className="relative">
               <div className="w-32 h-32 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center">
                 {user?.profileImage?.url ? (
                   <img 
                     src={user.profileImage.url} 
-                    alt="Perfil" 
+                    alt="Profile" 
                     className="w-full h-full object-cover"
                   />
                 ) : (
                   <IoPersonSharp size={64} className="text-gray-400" />
                 )}
               </div>
-              {/* Botón de cámara para cambiar foto */}
+              {/* Camera button to change photo */}
               <label 
                 htmlFor="profileImageInput" 
                 className="absolute bottom-0 right-0 text-white p-2 rounded-full cursor-pointer hover:opacity-90 transition-all"
@@ -206,19 +206,19 @@ function ProfilePage() {
             </div>
             {/* Instrucciones */}
             <div className="flex-1">
-              <p className="text-gray-700 mb-2">Haz clic en el icono de cámara para cambiar tu foto de perfil</p>
-              <p className="text-sm text-gray-500">Formatos permitidos: JPG, PNG, GIF, WebP (máximo 5MB)</p>
+              <p className="text-gray-700 mb-2">Click the camera icon to change your profile picture</p>
+              <p className="text-sm text-gray-500">Allowed formats: JPG, PNG, GIF, WebP (maximum 5MB)</p>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Card de Información Personal */}
+      {/* Personal Information Card */}
       <div className="bg-white rounded-lg shadow-lg mb-6 border-t-4" style={{ borderColor: '#C8A452' }}>
         <div className="p-6 border-b border-gray-200 flex justify-between items-center">
           <div>
-            <h2 className="text-2xl font-semibold" style={{ color: '#3C3C3C' }}>Información Personal</h2>
-            <p className="text-gray-600 text-sm mt-1">Actualiza tu información de cuenta</p>
+            <h2 className="text-2xl font-semibold" style={{ color: '#3C3C3C' }}>Personal Information</h2>
+            <p className="text-gray-600 text-sm mt-1">Update your account information</p>
           </div>
           {!isEditing && (
             <button
@@ -226,19 +226,19 @@ function ProfilePage() {
               className="text-white px-4 py-2 rounded-lg font-medium transition-all hover:opacity-90"
               style={{ backgroundColor: '#C8A452' }}
             >
-              Editar
+              Edit
             </button>
           )}
         </div>
 
         <div className="p-6 space-y-4">
-          {/* Rol del Usuario */}
+          {/* User Role */}
           <div className="flex items-center space-x-3 p-4 rounded-lg" style={{ backgroundColor: '#F5F5F5' }}>
             <IoShieldCheckmarkSharp size={24} style={{ color: '#C8A452' }} />
             <div className="flex-1">
-              <p className="text-sm text-gray-600">Rol de Usuario</p>
+              <p className="text-sm text-gray-600">User Role</p>
               <p className="text-lg font-semibold" style={{ color: '#3C3C3C' }}>
-                {user?.role?.role === 'admin' ? '🔴 Administrador' : user?.role?.role === 'co-admin' ? '🟡 Co-Administrador' : '🟢 Usuario'}
+                {user?.role?.role === 'admin' ? '🔴 Administrator' : user?.role?.role === 'co-admin' ? '🟡 Co-Administrator' : '🟢 User'}
               </p>
             </div>
           </div>
@@ -249,7 +249,7 @@ function ProfilePage() {
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2 flex items-center">
                 <IoPersonSharp className="mr-2" style={{ color: '#C8A452' }} />
-                Nombre de Usuario
+                Username
               </label>
               <input
                 type="text"
@@ -279,11 +279,11 @@ function ProfilePage() {
               />
             </div>
 
-            {/* Teléfono */}
+            {/* Phone */}
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2 flex items-center">
                 <IoPhonePortraitSharp className="mr-2" style={{ color: '#C8A452' }} />
-                Teléfono
+                Phone
               </label>
               <input
                 type="tel"
@@ -308,7 +308,7 @@ function ProfilePage() {
                 style={{ backgroundColor: '#C8A452' }}
               >
                 <IoCheckmarkCircleSharp className="mr-2" />
-                {loading ? 'Guardando...' : 'Guardar Cambios'}
+                {loading ? 'Saving...' : 'Save Changes'}
               </button>
               <button
                 onClick={() => {
@@ -322,22 +322,22 @@ function ProfilePage() {
                 className="text-gray-700 px-6 py-2 rounded-lg font-medium border border-gray-300 transition-all hover:bg-gray-50"
               >
                 <IoCloseCircleSharp className="mr-2 inline" />
-                Cancelar
+                Cancel
               </button>
             </div>
           )}
         </div>
       </div>
 
-      {/* Card de Seguridad */}
+      {/* Security Card */}
       <div className="bg-white rounded-lg shadow-lg border-t-4" style={{ borderColor: '#C8A452' }}>
         <div className="p-6 border-b border-gray-200 flex justify-between items-center">
           <div>
             <h2 className="text-2xl font-semibold flex items-center" style={{ color: '#3C3C3C' }}>
               <IoLockClosedSharp className="mr-2" />
-              Seguridad
+              Security
             </h2>
-            <p className="text-gray-600 text-sm mt-1">Cambia tu contraseña</p>
+            <p className="text-gray-600 text-sm mt-1">Change your password</p>
           </div>
           {!isChangingPassword && (
             <button
@@ -345,7 +345,7 @@ function ProfilePage() {
               className="text-white px-4 py-2 rounded-lg font-medium transition-all hover:opacity-90"
               style={{ backgroundColor: '#C8A452' }}
             >
-              Cambiar Contraseña
+              Change Password
             </button>
           )}
         </div>
@@ -354,49 +354,49 @@ function ProfilePage() {
           {!isChangingPassword ? (
             <div className="p-4 rounded-lg" style={{ backgroundColor: '#F5F5F5' }}>
               <p className="text-gray-700 text-sm">
-                Por tu seguridad, te recomendamos cambiar tu contraseña regularmente.
+                For your security, we recommend changing your password regularly.
               </p>
             </div>
           ) : (
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Contraseña Actual
+                  Current Password
                 </label>
                 <input
                   type="password"
                   name="currentPassword"
                   value={passwordData.currentPassword}
                   onChange={handlePasswordChange}
-                  placeholder="Ingresa tu contraseña actual"
+                  placeholder="Enter your current password"
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2"
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Nueva Contraseña
+                  New Password
                 </label>
                 <input
                   type="password"
                   name="newPassword"
                   value={passwordData.newPassword}
                   onChange={handlePasswordChange}
-                  placeholder="Mínimo 8 caracteres"
+                  placeholder="Minimum 8 characters"
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2"
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Confirmar Contraseña
+                  Confirm Password
                 </label>
                 <input
                   type="password"
                   name="confirmPassword"
                   value={passwordData.confirmPassword}
                   onChange={handlePasswordChange}
-                  placeholder="Repite tu nueva contraseña"
+                  placeholder="Repeat your new password"
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2"
                 />
               </div>
@@ -409,7 +409,7 @@ function ProfilePage() {
                   style={{ backgroundColor: '#C8A452' }}
                 >
                   <IoCheckmarkCircleSharp className="mr-2" />
-                  {loading ? 'Actualizando...' : 'Actualizar Contraseña'}
+                  {loading ? 'Updating...' : 'Update Password'}
                 </button>
                 <button
                   onClick={() => {
@@ -423,7 +423,7 @@ function ProfilePage() {
                   className="text-gray-700 px-6 py-2 rounded-lg font-medium border border-gray-300 transition-all hover:bg-gray-50"
                 >
                   <IoCloseCircleSharp className="mr-2 inline" />
-                  Cancelar
+                  Cancel
                 </button>
               </div>
             </div>

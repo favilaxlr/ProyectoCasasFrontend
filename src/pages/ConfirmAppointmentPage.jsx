@@ -21,10 +21,10 @@ const ConfirmAppointmentPage = () => {
                     setSuccess(true);
                     setAppointmentData(data.appointment);
                 } else {
-                    setError(data.message?.[0] || 'No se pudo confirmar la cita');
+                    setError(data.message?.[0] || 'Could not confirm the appointment');
                 }
             } catch (err) {
-                setError('Error de conexión. Por favor intenta más tarde.');
+                setError('Connection error. Please try again later.');
             } finally {
                 setLoading(false);
             }
@@ -62,7 +62,7 @@ const ConfirmAppointmentPage = () => {
 
                     {appointmentData && (
                         <div className="bg-gray-50 rounded-xl p-6 mb-6 text-left">
-                            <h2 className="font-semibold text-lg mb-4 text-gray-800">Detalles de tu cita:</h2>
+                            <h2 className="font-semibold text-lg mb-4 text-gray-800">Appointment Details:</h2>
                             
                             <div className="space-y-3">
                                 <div className="flex items-start">
@@ -80,7 +80,7 @@ const ConfirmAppointmentPage = () => {
                                 <div className="flex items-center">
                                     <IoCalendarSharp className="text-blue-600 mr-3" />
                                     <p className="text-gray-700">
-                                        {new Date(appointmentData.date).toLocaleDateString('es-MX', {
+                                        {new Date(appointmentData.date).toLocaleDateString('en-US', {
                                             weekday: 'long',
                                             year: 'numeric',
                                             month: 'long',
@@ -103,13 +103,13 @@ const ConfirmAppointmentPage = () => {
                             className="w-full py-3 rounded-lg font-semibold transition-all"
                             style={{ backgroundColor: '#C8A452', color: 'white' }}
                         >
-                            Ver mis citas
+                            View my appointments
                         </button>
                         <button
                             onClick={() => navigate('/')}
                             className="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 py-3 rounded-lg font-semibold transition-all"
                         >
-                            Volver al inicio
+                            Back to home
                         </button>
                     </div>
                 </div>
@@ -125,7 +125,7 @@ const ConfirmAppointmentPage = () => {
                         <IoCloseCircleSharp className="text-red-600 text-5xl" />
                     </div>
                     <h1 className="text-3xl font-bold text-gray-800 mb-2">
-                        Error al Confirmar
+                        Confirmation Error
                     </h1>
                     <p className="text-gray-600 mb-6">
                         {error}

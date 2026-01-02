@@ -12,7 +12,7 @@ function ReviewForm({ propertyId, userAppointments, onReviewCreated }) {
 
     const rating = watch('rating');
 
-    // Filtrar citas completadas para esta propiedad
+    // Filter completed appointments for this property
     const eligibleAppointments = userAppointments?.filter(apt => 
         apt.property._id === propertyId && 
         apt.status === 'completed' &&
@@ -21,7 +21,7 @@ function ReviewForm({ propertyId, userAppointments, onReviewCreated }) {
 
     const onSubmit = async (data) => {
         if (eligibleAppointments.length === 0) {
-            alert('Necesitas tener una cita completada para reseñar esta propiedad');
+            alert('You need to have a completed appointment to review this property');
             return;
         }
 
@@ -29,7 +29,7 @@ function ReviewForm({ propertyId, userAppointments, onReviewCreated }) {
         try {
             const formData = new FormData();
             
-            // Agregar datos del formulario
+            // Add form data
             formData.append('propertyId', propertyId);
             formData.append('appointmentId', data.appointmentId);
             formData.append('rating', data.rating);
@@ -39,7 +39,7 @@ function ReviewForm({ propertyId, userAppointments, onReviewCreated }) {
                 formData.append('recommendation', data.recommendation);
             }
 
-            // Subcategorías opcionales
+            // Optional subcategories
             if (data.subcategories) {
                 Object.keys(data.subcategories).forEach(key => {
                     if (data.subcategories[key]) {
@@ -55,19 +55,19 @@ function ReviewForm({ propertyId, userAppointments, onReviewCreated }) {
 
             await createReviewRequest(formData);
             
-            alert('Reseña enviada para moderación. Será visible una vez aprobada.');
+            alert('Review sent for moderation. It will be visible once approved.');
             setShowForm(false);
             onReviewCreated && onReviewCreated();
         } catch (error) {
             console.error('Error creating review:', error);
-            alert('Error al enviar reseña');
+            alert('Error sending review');
         } finally {
             setLoading(false);
         }
     };
 
     const handleImageChange = (e) => {
-        const files = Array.from(e.target.files).slice(0, 5); // Máximo 5 imágenes
+        const files = Array.from(e.target.files).slice(0, 5); // Maximum 5 images
         setImages(files);
     };
 
@@ -91,7 +91,7 @@ function ReviewForm({ propertyId, userAppointments, onReviewCreated }) {
     if (!user) {
         return (
             <div className="bg-blue-50 p-4 rounded-lg text-center">
-                <p className="text-blue-700">Inicia sesión para dejar una reseña</p>
+                <p className="text-blue-700">Log in to leave a review</p>
             </div>
         );
     }
@@ -99,7 +99,7 @@ function ReviewForm({ propertyId, userAppointments, onReviewCreated }) {
     if (eligibleAppointments.length === 0) {
         return (
             <div className="bg-gray-50 p-4 rounded-lg text-center">
-                <p className="text-gray-600">Necesitas tener una cita completada para reseñar esta propiedad</p>
+                <p className="text-gray-600">You need to have a completed appointment to review this property</p>
             </div>
         );
     }
@@ -111,7 +111,7 @@ function ReviewForm({ propertyId, userAppointments, onReviewCreated }) {
                     onClick={() => setShowForm(true)}
                     className="btn-primary"
                 >
-                    Escribir Reseña
+                    Write Review
                 </button>
             </div>
         );
@@ -119,17 +119,17 @@ function ReviewForm({ propertyId, userAppointments, onReviewCreated }) {
 
     return (
         <div className="bg-white p-6 rounded-lg shadow">
-            <h3 className="text-xl font-semibold mb-4">Escribir Reseña</h3>
+            <h3 className="text-xl font-semibold mb-4">Write Review</h3>
             
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-                {/* Selección de cita */}
+                {/* Appointment Selection */}
                 <div>
-                    <label className="block text-sm font-medium mb-2">Cita Asociada</label>
+                    <label className="block text-sm font-medium mb-2">Associated Appointment</label>
                     <select
-                        {...register('appointmentId', { required: 'Selecciona una cita' })}
+                        {...register('appointmentId', { required: 'Select an appointment' })}
                         className="w-full border border-gray-300 rounded px-3 py-2"
                     >
-                        <option value="">Selecciona la cita...</option>
+                        <option value="">Select appointment...</option>
                         {eligibleAppointments.map(apt => (
                             <option key={apt._id} value={apt._id}>
                                 {new Date(apt.appointmentDate).toLocaleDateString()} - {apt.appointmentTime}
@@ -139,45 +139,45 @@ function ReviewForm({ propertyId, userAppointments, onReviewCreated }) {
                     {errors.appointmentId && <p className="text-red-500 text-sm">{errors.appointmentId.message}</p>}
                 </div>
 
-                {/* Calificación principal */}
+                {/* Main Rating */}
                 <div>
-                    <label className="block text-sm font-medium mb-2">Calificación General *</label>
+                    <label className="block text-sm font-medium mb-2">Overall Rating *</label>
                     {renderStarRating('rating', rating)}
-                    <input type="hidden" {...register('rating', { required: 'La calificación es requerida' })} />
+                    <input type="hidden" {...register('rating', { required: 'Rating is required' })} />
                     {errors.rating && <p className="text-red-500 text-sm">{errors.rating.message}</p>}
                 </div>
 
-                {/* Subcategorías opcionales */}
+                {/* Optional Subcategories */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label className="block text-sm font-medium mb-2">Ubicación</label>
                         {renderStarRating('subcategories.location', watch('subcategories.location'))}
                     </div>
                     <div>
-                        <label className="block text-sm font-medium mb-2">Estado de la Propiedad</label>
+                        <label className="block text-sm font-medium mb-2">Property Condition</label>
                         {renderStarRating('subcategories.condition', watch('subcategories.condition'))}
                     </div>
                     <div>
-                        <label className="block text-sm font-medium mb-2">Relación Precio-Calidad</label>
+                        <label className="block text-sm font-medium mb-2">Price-Quality Ratio</label>
                         {renderStarRating('subcategories.value', watch('subcategories.value'))}
                     </div>
                     <div>
-                        <label className="block text-sm font-medium mb-2">Atención Recibida</label>
+                        <label className="block text-sm font-medium mb-2">Service Received</label>
                         {renderStarRating('subcategories.service', watch('subcategories.service'))}
                     </div>
                 </div>
 
-                {/* Comentario */}
+                {/* Comment */}
                 <div>
-                    <label className="block text-sm font-medium mb-2">Comentario *</label>
+                    <label className="block text-sm font-medium mb-2">Comment *</label>
                     <textarea
                         {...register('comment', { 
-                            required: 'El comentario es requerido',
-                            minLength: { value: 50, message: 'Mínimo 50 caracteres' },
-                            maxLength: { value: 1000, message: 'Máximo 1000 caracteres' }
+                            required: 'Comment is required',
+                            minLength: { value: 50, message: 'Minimum 50 characters' },
+                            maxLength: { value: 1000, message: 'Maximum 1000 characters' }
                         })}
                         rows="4"
-                        placeholder="Comparte tu experiencia con esta propiedad..."
+                        placeholder="Share your experience with this property..."
                         className="w-full border border-gray-300 rounded px-3 py-2"
                     />
                     {errors.comment && <p className="text-red-500 text-sm">{errors.comment.message}</p>}
@@ -185,7 +185,7 @@ function ReviewForm({ propertyId, userAppointments, onReviewCreated }) {
 
                 {/* Recomendación */}
                 <div>
-                    <label className="block text-sm font-medium mb-2">¿Recomendarías esta propiedad?</label>
+                    <label className="block text-sm font-medium mb-2">Would you recommend this property?</label>
                     <div className="flex gap-4">
                         <label className="flex items-center">
                             <input
@@ -210,7 +210,7 @@ function ReviewForm({ propertyId, userAppointments, onReviewCreated }) {
 
                 {/* Imágenes */}
                 <div>
-                    <label className="block text-sm font-medium mb-2">Fotos (opcional, máximo 5)</label>
+                    <label className="block text-sm font-medium mb-2">Photos (optional, maximum 5)</label>
                     <input
                         type="file"
                         multiple
@@ -220,7 +220,7 @@ function ReviewForm({ propertyId, userAppointments, onReviewCreated }) {
                     />
                     {images.length > 0 && (
                         <p className="text-sm text-gray-600 mt-1">
-                            {images.length} imagen{images.length !== 1 ? 'es' : ''} seleccionada{images.length !== 1 ? 's' : ''}
+                            {images.length} image{images.length !== 1 ? 's' : ''} selected
                         </p>
                     )}
                 </div>
@@ -232,14 +232,14 @@ function ReviewForm({ propertyId, userAppointments, onReviewCreated }) {
                         disabled={loading}
                         className="btn-primary disabled:opacity-50"
                     >
-                        {loading ? 'Enviando...' : 'Enviar Reseña'}
+                        {loading ? 'Sending...' : 'Send Review'}
                     </button>
                     <button
                         type="button"
                         onClick={() => setShowForm(false)}
                         className="btn-secondary"
                     >
-                        Cancelar
+                        Cancel
                     </button>
                 </div>
             </form>

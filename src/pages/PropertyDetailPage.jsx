@@ -53,8 +53,8 @@ function PropertyDetailPage() {
             const res = await getPropertyRequest(id);
             setProperty(res.data);
         } catch (error) {
-            console.error('Error al cambiar estado:', error);
-            toast.error('Error al cambiar el estado');
+            console.error('Error changing status:', error);
+            toast.error('Error changing the status');
         }
     };
 
@@ -83,9 +83,9 @@ function PropertyDetailPage() {
                                 'bg-gray-100 text-gray-800'
                             }`}
                         >
-                            <option value="DISPONIBLE">Disponible</option>
-                            <option value="EN_CONTRATO">En Contrato</option>
-                            <option value="VENDIDA">Vendida</option>
+                            <option value="DISPONIBLE">Available</option>
+                            <option value="EN_CONTRATO">Under Contract</option>
+                            <option value="VENDIDA">Sold</option>
                         </select>
                     ) : (
                         <span className={`px-4 py-2 rounded-full text-sm font-semibold ${
@@ -94,9 +94,9 @@ function PropertyDetailPage() {
                             property.status === 'VENDIDA' ? 'bg-red-100 text-red-800 border-2 border-red-300' :
                             'bg-gray-100 text-gray-800'
                         }`}>
-                            {property.status === 'DISPONIBLE' ? 'Disponible' :
-                             property.status === 'EN_CONTRATO' ? 'En Contrato' :
-                             property.status === 'VENDIDA' ? 'Vendida' :
+                            {property.status === 'DISPONIBLE' ? 'Available' :
+                             property.status === 'EN_CONTRATO' ? 'Under Contract' :
+                             property.status === 'VENDIDA' ? 'Sold' :
                              property.status}
                         </span>
                     )}
@@ -136,7 +136,7 @@ function PropertyDetailPage() {
 
                 {/* Información principal */}
                 <div className="bg-white p-6 rounded-lg shadow-lg h-fit">
-                    {/* Badge de Modalidad de Negocio */}
+                    {/* Business Mode Badge */}
                     {property.businessMode && (
                         <div className="mb-4 text-center">
                             <span className={`inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold ${
@@ -182,7 +182,7 @@ function PropertyDetailPage() {
                                 </div>
                             </div>
 
-                            {/* Información adicional de venta */}
+                            {/* Additional sale information */}
                             {(property.price.taxes || property.price.deedConditions) && (
                                 <div className="bg-blue-50 p-3 rounded-lg mb-4 text-sm">
                                     {property.price.taxes && (
@@ -217,7 +217,7 @@ function PropertyDetailPage() {
                                     <p className="text-sm text-gray-600">Monthly Rent</p>
                                 </div>
                                 
-                                {/* Detalles de renta */}
+                                {/* Rental Details */}
                                 <div className="space-y-2 text-sm">
                                     {property.price.deposit !== undefined && (
                                         <div className="flex justify-between items-center bg-white p-2 rounded">
@@ -250,15 +250,15 @@ function PropertyDetailPage() {
                         </div>
                     )}
 
-                    {/* Mensaje informativo para modalidad Renta/Venta */}
+                    {/* Informative message for Rent/Sale modality */}
                     {property.businessMode === 'both' && (
                         <div className="bg-gradient-to-r from-purple-50 via-blue-50 to-green-50 border-l-4 border-purple-400 p-3 rounded-r-lg mb-4">
                             <div className="flex items-start">
                                 <IoBusinessSharp className="text-purple-600 text-xl mr-2 mt-0.5 flex-shrink-0" />
                                 <div>
-                                    <p className="text-sm font-semibold text-purple-800">Renta/Venta</p>
+                                    <p className="text-sm font-semibold text-purple-800">Rent/Sale</p>
                                     <p className="text-xs text-purple-700 mt-1">
-                                        Esta propiedad está disponible tanto para venta como para renta. Puedes elegir la opción que mejor se adapte a tus necesidades.
+                                        This property is available for both sale and rent. You can choose the option that best suits your needs.
                                     </p>
                                 </div>
                             </div>
@@ -269,7 +269,7 @@ function PropertyDetailPage() {
                     {(isAdmin || isCoAdmin) && property.createdBy && (
                         <div className="bg-gray-100 p-3 rounded-lg mb-6 text-sm border-l-4 border-blue-500">
                             <p className="text-gray-700">
-                                <span className="font-semibold">Subida por:</span> {property.createdBy.username}
+                                <span className="font-semibold">Uploaded by:</span> {property.createdBy.username}
                             </p>
                             {property.createdBy.email && (
                                 <p className="text-gray-500 text-xs mt-1">{property.createdBy.email}</p>
@@ -283,11 +283,11 @@ function PropertyDetailPage() {
                             <div className="text-gray-700 flex items-center">
                                 <IoTimeSharp className="mr-2 text-yellow-600" />
                                 <span>
-                                    <span className="font-semibold">Última modificación por:</span> {property.lastModifiedBy.username}
+                                    <span className="font-semibold">Last modified by:</span> {property.lastModifiedBy.username}
                                 </span>
                             </div>
                             <p className="text-gray-500 text-xs mt-1 ml-6">
-                                {new Date(property.updatedAt).toLocaleString('es-MX', {
+                                {new Date(property.updatedAt).toLocaleString('en-US', {
                                     year: 'numeric',
                                     month: 'long',
                                     day: 'numeric',
@@ -298,7 +298,7 @@ function PropertyDetailPage() {
                         </div>
                     )}
 
-                    {/* Detalles principales */}
+                    {/* Main Details */}
                     <div className="grid grid-cols-2 gap-4 mb-6">
                         <div className="text-center p-3 bg-blue-50 rounded">
                             <IoBedSharp className="mx-auto text-2xl text-blue-600 mb-1" />
@@ -312,7 +312,7 @@ function PropertyDetailPage() {
                         </div>
                     </div>
 
-                    {/* Información adicional */}
+                    {/* Additional Information */}
                     <div className="space-y-3 text-sm">
                         <div className="flex justify-between">
                             <span className="text-gray-600">Type:</span>
@@ -349,11 +349,11 @@ function PropertyDetailPage() {
                                 ) : (
                                     <IoCloseCircleSharp className="inline" />
                                 )}
-                                {property.details?.petFriendly ? ' Permitidas' : ' No permitidas'}
+                                {property.details?.petFriendly ? ' Allowed' : ' Not allowed'}
                             </span>
                         </div>
                         <div className="flex justify-between">
-                            <span className="text-gray-600">Amueblado:</span>
+                            <span className="text-gray-600">Furnished:</span>
                             <span className={`font-semibold ${property.details?.furnished ? 'text-green-600' : 'text-gray-600'}`}>
                                 {property.details?.furnished ? (
                                     <IoCheckmarkCircleSharp className="inline" />
@@ -371,7 +371,7 @@ function PropertyDetailPage() {
                             <div className="flex items-center text-green-700">
                                 <IoCalendarSharp className="mr-2" />
                                 <span className="text-sm">
-                                    Disponible desde: {new Date(property.availability.availableFrom).toLocaleDateString()}
+                                    Available from: {new Date(property.availability.availableFrom).toLocaleDateString()}
                                 </span>
                             </div>
                         </div>
@@ -381,14 +381,14 @@ function PropertyDetailPage() {
 
             {/* Descripción */}
             <div className="bg-white p-6 rounded-lg shadow-lg mb-8">
-                <h2 className="text-2xl font-semibold mb-4">Descripción</h2>
+                <h2 className="text-2xl font-semibold mb-4">Description</h2>
                 <p className="text-gray-700 leading-relaxed whitespace-pre-line">{property.description}</p>
             </div>
 
-            {/* Comodidades */}
+            {/* Amenities */}
             {property.amenities && property.amenities.length > 0 && (
                 <div className="bg-white p-6 rounded-lg shadow-lg mb-8">
-                    <h2 className="text-2xl font-semibold mb-4">Comodidades</h2>
+                    <h2 className="text-2xl font-semibold mb-4">Amenities</h2>
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
                         {property.amenities.map((amenity, index) => (
                             <div key={index} className="flex items-center p-3 bg-blue-50 rounded-lg">
@@ -400,14 +400,14 @@ function PropertyDetailPage() {
                 </div>
             )}
 
-            {/* Información de contacto */}
+            {/* Contact Information */}
             {(property.contact?.phone || property.contact?.email) && (
                 <div className="bg-white p-6 rounded-lg shadow-lg mb-8">
-                    <h2 className="text-2xl font-semibold mb-4">Contacto</h2>
+                    <h2 className="text-2xl font-semibold mb-4">Contact</h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {property.contact.phone && (
                             <div className="flex items-center p-3 bg-gray-50 rounded">
-                                <span className="font-semibold mr-2">Teléfono:</span>
+                                <span className="font-semibold mr-2">Phone:</span>
                                 <a href={`tel:${property.contact.phone}`} className="text-blue-600 hover:underline">
                                     {property.contact.phone}
                                 </a>
@@ -425,11 +425,11 @@ function PropertyDetailPage() {
                 </div>
             )}
 
-            {/* Formulario para agendar cita - Solo si está disponible y NO es admin/co-admin */}
+            {/* Appointment scheduling form - Only if available and NOT admin/co-admin */}
             {property.status === 'DISPONIBLE' && !isCoAdmin && !isAdmin && (
                 <div className="bg-gradient-to-r from-blue-50 to-green-50 p-6 rounded-lg shadow-lg">
-                    <h3 className="text-2xl font-semibold mb-4 text-center">¿Interesado en esta propiedad?</h3>
-                    <p className="text-gray-600 text-center mb-6">Agenda una cita para visitarla</p>
+                    <h3 className="text-2xl font-semibold mb-4 text-center">Interested in this property?</h3>
+                    <p className="text-gray-600 text-center mb-6">Schedule an appointment to visit it</p>
                     <AppointmentForm propertyId={property._id} />
                 </div>
             )}
@@ -437,27 +437,27 @@ function PropertyDetailPage() {
             {/* Opciones de administración para admin/co-admin */}
             {(isAdmin || isCoAdmin) && (
                 <div className="bg-gradient-to-r from-purple-50 to-blue-50 p-6 rounded-lg shadow-lg">
-                    <h3 className="text-2xl font-semibold mb-4 text-center text-gray-800">Opciones de Administración</h3>
-                    <p className="text-gray-600 text-center mb-6">Gestiona esta propiedad</p>
+                    <h3 className="text-2xl font-semibold mb-4 text-center text-gray-800">Administration Options</h3>
+                    <p className="text-gray-600 text-center mb-6">Manage this property</p>
                     <div className="flex flex-col sm:flex-row gap-4">
                         <Link
                             to={`/admin/properties/edit/${property._id}`}
                             className="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition-all flex items-center justify-center"
                         >
                             <IoPencilSharp className="mr-2" size={20} />
-                            Editar Propiedad
+                            Edit Property
                         </Link>
                         <button
                             onClick={() => navigate('/admin/properties')}
                             className="flex-1 bg-gray-600 hover:bg-gray-700 text-white px-6 py-3 rounded-lg font-semibold transition-all"
                         >
-                            Ver Todas las Propiedades
+                            View All Properties
                         </button>
                     </div>
                 </div>
             )}
 
-            {/* Sección de Reseñas */}
+            {/* Reviews Section */}
             <ReviewsSection propertyId={property._id} />
         </div>
     );

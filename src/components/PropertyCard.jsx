@@ -40,7 +40,7 @@ function PropertyCard({ property, compact = false }) {
           {/* Información compacta */}
           <div className="flex-1 min-w-0">
             <div className="flex justify-between items-start mb-2">
-              {/* Mostrar precio según modalidad y solo si está DISPONIBLE */}
+              {/* Show price according to modality and only if AVAILABLE */}
               {property.status === 'DISPONIBLE' && (
                 <div className="flex flex-col gap-1">
                   {/* Badge de modalidad */}
@@ -108,11 +108,11 @@ function PropertyCard({ property, compact = false }) {
             </p>
 
             {(isAdmin || isCoAdmin) && property.createdBy?.username && (
-              <p className="text-xs text-gray-500 truncate mb-1">Subida por: {property.createdBy.username}</p>
+              <p className="text-xs text-gray-500 truncate mb-1">Uploaded by: {property.createdBy.username}</p>
             )}
 
             {(isAdmin || isCoAdmin) && property.lastModifiedBy?.username && (
-              <p className="text-xs text-yellow-600 truncate mb-1">Modificada por: {property.lastModifiedBy.username}</p>
+              <p className="text-xs text-yellow-600 truncate mb-1">Modified by: {property.lastModifiedBy.username}</p>
             )}
             
             <div className="flex items-center text-sm text-gray-600 space-x-4 font-medium">
@@ -125,7 +125,7 @@ function PropertyCard({ property, compact = false }) {
 
         {/* Botones separados debajo - Mejor visibilidad */}
         <div className="flex gap-2 pt-3 border-t border-gray-200">
-          {/* Botón Ver Detalles - Visible para todos */}
+          {/* View Details Button - Visible for everyone */}
           <Tooltip title="View full details">
             <Link
               to={'/properties/' + property._id}
@@ -279,7 +279,7 @@ function PropertyCard({ property, compact = false }) {
           )}
         </div>
 
-        {/* Características adicionales */}
+        {/* Additional Features */}
         <div className="flex flex-wrap gap-2 text-xs">
           {property.details?.parking && (
             <span className="bg-green-600 text-white px-2 py-1 rounded">

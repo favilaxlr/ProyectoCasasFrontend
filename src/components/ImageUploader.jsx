@@ -12,9 +12,9 @@ function ImageUploader({ propertyId, onImagesUploaded, initialImages = [], onCha
     const handleFileSelect = async (files) => {
         if (!files || files.length === 0) return;
 
-        console.log('📸 Archivos seleccionados:', files.length);
+        console.log('📸 Selected files:', files.length);
 
-        // Crear URLs de vista previa para los archivos seleccionados
+        // Create preview URLs for the selected files
         const newPreviews = Array.from(files).map((file, index) => ({
             file,
             url: URL.createObjectURL(file),
@@ -50,8 +50,8 @@ function ImageUploader({ propertyId, onImagesUploaded, initialImages = [], onCha
                     fileInputRef.current.value = '';
                 }
             } catch (error) {
-                console.error('Error al subir imágenes:', error);
-                alert('Error al subir imágenes');
+                console.error('Error uploading images:', error);
+                alert('Error uploading images');
             } finally {
                 setUploading(false);
             }
@@ -116,7 +116,7 @@ function ImageUploader({ propertyId, onImagesUploaded, initialImages = [], onCha
     return (
         <div className="space-y-4">
             <h3 className="text-lg font-semibold">
-                {propertyId ? 'Agregar Imágenes' : 'Subir Imágenes'}
+                {propertyId ? 'Add Images' : 'Upload Images'}
             </h3>
             
             {/* Vista previa de imágenes */}
@@ -125,10 +125,10 @@ function ImageUploader({ propertyId, onImagesUploaded, initialImages = [], onCha
                     <div className="bg-gray-50 p-4 rounded-lg">
                         <div className="flex items-center justify-between mb-3">
                             <p className="text-sm font-semibold text-gray-700">
-                                Vista Previa ({previewImages.length} imagen{previewImages.length !== 1 ? 'es' : ''})
+                                Preview ({previewImages.length} image{previewImages.length !== 1 ? 's' : ''})
                             </p>
                             <p className="text-xs text-gray-500">
-                                <IoStarSharp className="inline text-yellow-500" /> = Imagen principal
+                                <IoStarSharp className="inline text-yellow-500" /> = Main image
                             </p>
                         </div>
                         
@@ -164,7 +164,7 @@ function ImageUploader({ propertyId, onImagesUploaded, initialImages = [], onCha
                                                     type="button"
                                                     onClick={() => moveImage(index, index - 1)}
                                                     className="p-2 bg-white rounded-full hover:bg-gray-100"
-                                                    title="Mover a la izquierda"
+                                                    title="Move left"
                                                 >
                                                     <IoArrowBack size={16} />
                                                 </button>
@@ -179,7 +179,7 @@ function ImageUploader({ propertyId, onImagesUploaded, initialImages = [], onCha
                                                         ? 'bg-yellow-500 text-white'
                                                         : 'bg-white hover:bg-gray-100'
                                                 }`}
-                                                title="Establecer como imagen principal"
+                                                title="Set as main image"
                                             >
                                                 {index === mainImageIndex ? (
                                                     <IoStarSharp size={16} />
@@ -194,7 +194,7 @@ function ImageUploader({ propertyId, onImagesUploaded, initialImages = [], onCha
                                                     type="button"
                                                     onClick={() => moveImage(index, index + 1)}
                                                     className="p-2 bg-white rounded-full hover:bg-gray-100"
-                                                    title="Mover a la derecha"
+                                                    title="Move right"
                                                 >
                                                     <IoArrowForward size={16} />
                                                 </button>
@@ -205,7 +205,7 @@ function ImageUploader({ propertyId, onImagesUploaded, initialImages = [], onCha
                                                 type="button"
                                                 onClick={() => removeImage(index)}
                                                 className="p-2 bg-red-500 text-white rounded-full hover:bg-red-600"
-                                                title="Eliminar imagen"
+                                                title="Delete image"
                                             >
                                                 <IoCloseCircle size={16} />
                                             </button>
@@ -216,7 +216,7 @@ function ImageUploader({ propertyId, onImagesUploaded, initialImages = [], onCha
                                     {index === mainImageIndex && (
                                         <div className="absolute top-2 right-2 bg-yellow-500 text-white px-2 py-1 rounded-full text-xs font-semibold flex items-center gap-1">
                                             <IoStarSharp size={12} />
-                                            Principal
+                                            Main
                                         </div>
                                     )}
 
@@ -247,17 +247,17 @@ function ImageUploader({ propertyId, onImagesUploaded, initialImages = [], onCha
                         <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
                     <div className="text-gray-600">
-                        <p>Arrastra imágenes aquí o</p>
+                        <p>Drag images here or</p>
                         <button
                             type="button"
                             className="text-blue-600 hover:text-blue-500 font-medium"
                             onClick={() => fileInputRef.current?.click()}
                         >
-                            selecciona archivos
+                            select files
                         </button>
                     </div>
                     <p className="text-xs text-gray-500">
-                        PNG, JPG, GIF hasta 5MB cada una (máximo 10 imágenes)
+                        PNG, JPG, GIF up to 5MB each (maximum 10 images)
                     </p>
                 </div>
             </div>

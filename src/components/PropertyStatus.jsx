@@ -13,7 +13,7 @@ function PropertyStatus({ property, onStatusChange, showChangeButton = false, va
 
     const statusConfig = {
         'DISPONIBLE': {
-            label: 'Disponible',
+            label: 'Available',
             icon: <IoCheckmarkCircleSharp />,
             bgColor: 'bg-green-100',
             textColor: 'text-green-800',
@@ -21,7 +21,7 @@ function PropertyStatus({ property, onStatusChange, showChangeButton = false, va
             dotColor: 'bg-green-500'
         },
         'EN_CONTRATO': {
-            label: 'En Contrato',
+            label: 'Under Contract',
             icon: <IoWarningSharp />,
             bgColor: 'bg-orange-100',
             textColor: 'text-orange-800',
@@ -29,7 +29,7 @@ function PropertyStatus({ property, onStatusChange, showChangeButton = false, va
             dotColor: 'bg-orange-500'
         },
         'VENDIDA': {
-            label: 'Vendida',
+            label: 'Sold',
             icon: <IoCloseCircleSharp />,
             bgColor: 'bg-red-100',
             textColor: 'text-red-800',
@@ -97,7 +97,7 @@ function PropertyStatus({ property, onStatusChange, showChangeButton = false, va
                     className="text-white px-3 py-1 rounded font-medium text-sm transition-all hover:opacity-90"
                     style={{ backgroundColor: '#C8A452' }}
                 >
-                    Cambiar Estado
+                    Change Status
                 </button>
             )}
 
@@ -109,26 +109,26 @@ function PropertyStatus({ property, onStatusChange, showChangeButton = false, va
                         
                         <div className="space-y-4">
                             <div>
-                                <label className="block text-sm font-medium mb-2" style={{ color: '#3C3C3C' }}>Nuevo Estado</label>
+                                <label className="block text-sm font-medium mb-2" style={{ color: '#3C3C3C' }}>New Status</label>
                                 <select
                                     value={newStatus}
                                     onChange={(e) => setNewStatus(e.target.value)}
                                     className="w-full border-2 border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2"
                                     style={{ borderColor: '#ddd' }}
                                 >
-                                    <option value="">Seleccionar...</option>
-                                    <option value="DISPONIBLE">✅ Disponible</option>
-                                    <option value="EN_CONTRATO">⚠️ En Contrato</option>
-                                    <option value="VENDIDA">❌ Vendida</option>
+                                    <option value="">Select...</option>
+                                    <option value="DISPONIBLE">✅ Available</option>
+                                    <option value="EN_CONTRATO">⚠️ Under Contract</option>
+                                    <option value="VENDIDA">❌ Sold</option>
                                 </select>
                             </div>
                             
                             <div>
-                                <label className="block text-sm font-medium mb-2" style={{ color: '#3C3C3C' }}>Motivo del Cambio</label>
+                                <label className="block text-sm font-medium mb-2" style={{ color: '#3C3C3C' }}>Reason for Change</label>
                                 <textarea
                                     value={reason}
                                     onChange={(e) => setReason(e.target.value)}
-                                    placeholder="Explica el motivo del cambio de estado..."
+                                    placeholder="Explain the reason for the status change..."
                                     className="w-full border-2 border-gray-300 rounded px-3 py-2 h-20 focus:outline-none focus:ring-2"
                                     style={{ borderColor: '#ddd' }}
                                 />
@@ -153,7 +153,7 @@ function PropertyStatus({ property, onStatusChange, showChangeButton = false, va
                                 className="px-4 py-2 rounded font-medium border-2 border-gray-300 transition-all hover:bg-gray-50"
                                 style={{ color: '#3C3C3C', borderColor: '#ddd' }}
                             >
-                                Cancelar
+                                Cancel
                             </button>
                         </div>
                     </div>

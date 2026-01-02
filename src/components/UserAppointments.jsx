@@ -21,16 +21,16 @@ function UserAppointments() {
     };
 
     const handleCancel = async (appointmentId) => {
-        const reason = prompt('¿Por qué deseas cancelar esta cita? (opcional)');
+        const reason = prompt('Why do you want to cancel this appointment? (optional)');
         if (reason === null) return; // Usuario canceló el prompt
         
         try {
             await cancelAppointmentRequest(appointmentId, reason);
-            alert('Cita cancelada exitosamente');
+            alert('Appointment canceled successfully');
             loadAppointments();
         } catch (error) {
             console.error('Error canceling appointment:', error);
-            alert('Error al cancelar la cita');
+            alert('Error canceling appointment');
         }
     };
 
@@ -46,22 +46,22 @@ function UserAppointments() {
 
     const getStatusText = (status) => {
         const texts = {
-            'pending': 'Pendiente de confirmación',
-            'confirmed': 'Confirmada',
-            'completed': 'Completada',
-            'cancelled': 'Cancelada'
+            'pending': 'Pending Confirmation',
+            'confirmed': 'Confirmed',
+            'completed': 'Completed',
+            'cancelled': 'Cancelled'
         };
         return texts[status] || status;
     };
 
     const formatDateTime = (date, time) => {
         const appointmentDate = new Date(date);
-        return `${appointmentDate.toLocaleDateString('es-ES', {
+        return `${appointmentDate.toLocaleDateString('en-US', {
             weekday: 'long',
             year: 'numeric',
             month: 'long',
             day: 'numeric'
-        })} a las ${time}`;
+        })} at ${time}`;
     };
 
     const canCancel = (appointment) => {
@@ -138,7 +138,7 @@ function UserAppointments() {
                                                 onClick={() => handleCancel(appointment._id)}
                                                 className="text-red-600 hover:text-red-800 text-sm font-medium"
                                             >
-                                                Cancelar Cita
+                                                Cancel Appointment
                                             </button>
                                         )}
                                         
@@ -147,7 +147,7 @@ function UserAppointments() {
                                                 onClick={() => window.location.href = `/properties/${appointment.property._id}#reviews`}
                                                 className="text-blue-600 hover:text-blue-800 text-sm font-medium"
                                             >
-                                                Escribir Reseña
+                                                Write Review
                                             </button>
                                         )}
 
@@ -172,14 +172,14 @@ function UserAppointments() {
                 </div>
             )}
 
-            {/* Información adicional */}
+            {/* Additional Information */}
             <div className="bg-blue-50 p-4 rounded-lg">
-                <h3 className="font-semibold text-blue-800 mb-2">Información sobre las citas:</h3>
+                <h3 className="font-semibold text-blue-800 mb-2">Information about appointments:</h3>
                 <ul className="text-sm text-blue-700 space-y-1">
-                    <li>• Las citas pendientes serán confirmadas por nuestro equipo</li>
-                    <li>• Puedes cancelar citas hasta el día de la visita</li>
-                    <li>• Después de una cita completada, puedes escribir una reseña</li>
-                    <li>• Máximo 2 citas activas por usuario</li>
+                    <li>• Pending appointments will be confirmed by our team</li>
+                    <li>• You can cancel appointments until the day of the visit</li>
+                    <li>• After a completed appointment, you can write a review</li>
+                    <li>• Maximum 2 active appointments per user</li>
                 </ul>
             </div>
         </div>

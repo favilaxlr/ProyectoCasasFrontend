@@ -37,7 +37,7 @@ function NotificationsPage() {
             }
         } catch (error) {
             console.error('Error loading data:', error);
-            toast.error('Error al cargar datos de notificaciones');
+            toast.error('Error loading notification data');
         } finally {
             setLoading(false);
         }
@@ -48,11 +48,11 @@ function NotificationsPage() {
             setResending(notificationId);
             const response = await resendFailedNotificationsRequest(notificationId);
             
-            toast.success(`Reenvío completado: ${response.data.result.resent} mensajes enviados`);
+            toast.success(`Resend completed: ${response.data.result.resent} messages sent`);
             await loadData(true); // Recargar datos con toast
         } catch (error) {
             console.error('Error resending:', error);
-            toast.error('Error al reenviar notificaciones');
+            toast.error('Error resending notifications');
         } finally {
             setResending(null);
         }
@@ -73,10 +73,10 @@ function NotificationsPage() {
 
     const getStatusText = (status) => {
         switch (status) {
-            case 'completed': return 'Completado';
-            case 'failed': return 'Fallido';
-            case 'in_progress': return 'En Progreso';
-            case 'pending': return 'Pendiente';
+            case 'completed': return 'Completed';
+            case 'failed': return 'Failed';
+            case 'in_progress': return 'In Progress';
+            case 'pending': return 'Pending';
             default: return status;
         }
     };
@@ -100,8 +100,8 @@ function NotificationsPage() {
         <div className="max-w-7xl mx-auto p-6">
             <div className="flex justify-between items-center mb-8">
                 <div>
-                    <h1 className="text-4xl font-bold text-gray-800">Panel de Notificaciones</h1>
-                    <p className="text-gray-600 mt-2">Sistema de notificaciones masivas por SMS</p>
+                    <h1 className="text-4xl font-bold text-gray-800">Notifications Panel</h1>
+                    <p className="text-gray-600 mt-2">Mass SMS Notification System</p>
                 </div>
                 <button
                     onClick={() => loadData(true)}
@@ -109,7 +109,7 @@ function NotificationsPage() {
                     style={{ backgroundColor: '#C8A452' }}
                 >
                     <IoRefreshSharp className="mr-2" />
-                    Actualizar
+                    Update
                 </button>
             </div>
 
@@ -120,9 +120,9 @@ function NotificationsPage() {
                         <div className="flex items-center">
                             <IoStatsChartSharp className="text-3xl mr-4" style={{ color: '#C8A452' }} />
                             <div>
-                                <h3 className="text-lg font-semibold text-gray-700">Total Usuarios</h3>
+                                <h3 className="text-lg font-semibold text-gray-700">Total Users</h3>
                                 <p className="text-3xl font-bold" style={{ color: '#C8A452' }}>{stats.totalUsers}</p>
-                                <p className="text-sm text-gray-500">Usuarios registrados con teléfono</p>
+                                <p className="text-sm text-gray-500">Users registered with phone</p>
                             </div>
                         </div>
                     </div>
@@ -131,11 +131,11 @@ function NotificationsPage() {
                         <div className="flex items-center">
                             <IoCheckmarkCircleSharp className="text-3xl text-green-500 mr-4" />
                             <div>
-                                <h3 className="text-lg font-semibold text-gray-700">Notificaciones Enviadas</h3>
+                                <h3 className="text-lg font-semibold text-gray-700">Notifications Sent</h3>
                                 <p className="text-3xl font-bold text-green-600">
                                     {stats.recentNotifications.reduce((acc, n) => acc + n.stats.sentCount, 0)}
                                 </p>
-                                <p className="text-sm text-gray-500">Total histórico</p>
+                                <p className="text-sm text-gray-500">Total historical</p>
                             </div>
                         </div>
                     </div>
@@ -144,11 +144,11 @@ function NotificationsPage() {
                         <div className="flex items-center">
                             <IoWarningSharp className="text-3xl text-red-500 mr-4" />
                             <div>
-                                <h3 className="text-lg font-semibold text-gray-700">Envíos Fallidos</h3>
+                                <h3 className="text-lg font-semibold text-gray-700">Failed Deliveries</h3>
                                 <p className="text-3xl font-bold text-red-600">
                                     {stats.recentNotifications.reduce((acc, n) => acc + n.stats.failedCount, 0)}
                                 </p>
-                                <p className="text-sm text-gray-500">Requieren atención</p>
+                                <p className="text-sm text-gray-500">Require attention</p>
                             </div>
                         </div>
                     </div>
@@ -158,8 +158,8 @@ function NotificationsPage() {
             {/* Historial de Notificaciones */}
             <div className="bg-white rounded-lg shadow-lg">
                 <div className="p-6 border-b border-gray-200">
-                    <h2 className="text-xl font-semibold text-gray-800">Historial Reciente</h2>
-                    <p className="text-gray-600 text-sm mt-1">Últimas notificaciones masivas enviadas</p>
+                    <h2 className="text-xl font-semibold text-gray-800">Recent History</h2>
+                    <p className="text-gray-600 text-sm mt-1">Latest mass notifications sent</p>
                 </div>
 
                 <div className="overflow-x-auto">
@@ -167,25 +167,25 @@ function NotificationsPage() {
                         <thead className="bg-gray-50">
                             <tr>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Estado
+                                    Status
                                 </th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Propiedad
+                                    Property
                                 </th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Estadísticas
+                                    Statistics
                                 </th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Duración
+                                    Duration
                                 </th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Fecha
+                                    Date
                                 </th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Acciones
+                                    Actions
                                 </th>
                                 <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Detalles
+                                    Details
                                 </th>
                             </tr>
                         </thead>
@@ -203,7 +203,7 @@ function NotificationsPage() {
                                         </td>
                                         <td className="px-6 py-4">
                                             <div className="text-sm font-medium text-gray-900">
-                                                {notification.property?.title || 'Propiedad eliminada'}
+                                                {notification.property?.title || 'Property deleted'}
                                             </div>
                                             <div className="text-sm text-gray-500">
                                                 {notification.property?.address?.city || 'N/A'}
@@ -223,7 +223,7 @@ function NotificationsPage() {
                                                 </div>
                                             </div>
                                             <div className="text-xs text-gray-500">
-                                                de {notification.stats.totalUsers} usuarios
+                                                of {notification.stats.totalUsers} users
                                             </div>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -249,10 +249,10 @@ function NotificationsPage() {
                                                     {resending === notification._id ? (
                                                         <div className="flex items-center">
                                                             <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                                                            Reenviando...
+                                                            Resending...
                                                         </div>
                                                     ) : (
-                                                        'Reenviar fallidos'
+                                                        'Resend failed'
                                                     )}
                                                 </button>
                                             )}
@@ -274,48 +274,48 @@ function NotificationsPage() {
                                         <tr>
                                             <td colSpan="7" className="px-6 py-4 bg-gray-50">
                                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                                    {/* Enviados exitosamente */}
+                                                    {/* Successfully sent */}
                                                     <div className="bg-white rounded-lg p-4 border border-green-200">
                                                         <h4 className="text-sm font-semibold text-green-700 mb-3 flex items-center">
                                                             <IoCheckmarkCircleSharp className="mr-2" />
-                                                            Enviados Exitosamente ({notification.results?.filter(r => r.success).length || 0})
+                                                            Successfully Sent ({notification.results?.filter(r => r.success).length || 0})
                                                         </h4>
                                                         <div className="space-y-2 max-h-60 overflow-y-auto">
                                                             {notification.results?.filter(r => r.success).map((result, idx) => (
                                                                 <div key={idx} className="text-sm p-2 bg-green-50 rounded flex items-start">
                                                                     <IoCheckmarkCircleSharp className="text-green-600 mt-0.5 mr-2 flex-shrink-0" />
                                                                     <div className="flex-1">
-                                                                        <div className="font-medium text-gray-900">{result.user?.username || 'Usuario'}</div>
+                                                                        <div className="font-medium text-gray-900">{result.user?.username || 'User'}</div>
                                                                         <div className="text-gray-600 text-xs">{result.user?.phone}</div>
-                                                                        <div className="text-green-600 text-xs mt-1">✓ Mensaje enviado</div>
+                                                                        <div className="text-green-600 text-xs mt-1">✓ Message sent</div>
                                                                     </div>
                                                                 </div>
                                                             ))}
                                                             {notification.results?.filter(r => r.success).length === 0 && (
-                                                                <p className="text-gray-500 text-sm">No hay envíos exitosos</p>
+                                                                <p className="text-gray-500 text-sm">No successful deliveries</p>
                                                             )}
                                                         </div>
                                                     </div>
 
-                                                    {/* Fallidos */}
+                                                    {/* Failed */}
                                                     <div className="bg-white rounded-lg p-4 border border-red-200">
                                                         <h4 className="text-sm font-semibold text-red-700 mb-3 flex items-center">
                                                             <IoCloseCircleSharp className="mr-2" />
-                                                            Fallos en Envío ({notification.results?.filter(r => !r.success).length || 0})
+                                                            Delivery Failures ({notification.results?.filter(r => !r.success).length || 0})
                                                         </h4>
                                                         <div className="space-y-2 max-h-60 overflow-y-auto">
                                                             {notification.results?.filter(r => !r.success).map((result, idx) => (
                                                                 <div key={idx} className="text-sm p-2 bg-red-50 rounded flex items-start">
                                                                     <IoCloseCircleSharp className="text-red-600 mt-0.5 mr-2 flex-shrink-0" />
                                                                     <div className="flex-1">
-                                                                        <div className="font-medium text-gray-900">{result.user?.username || 'Usuario'}</div>
+                                                                        <div className="font-medium text-gray-900">{result.user?.username || 'User'}</div>
                                                                         <div className="text-gray-600 text-xs">{result.user?.phone}</div>
-                                                                        <div className="text-red-600 text-xs mt-1">✗ {result.error || 'Error desconocido'}</div>
+                                                                        <div className="text-red-600 text-xs mt-1">✗ {result.error || 'Unknown error'}</div>
                                                                     </div>
                                                                 </div>
                                                             ))}
                                                             {notification.results?.filter(r => !r.success).length === 0 && (
-                                                                <p className="text-gray-500 text-sm">No hay fallos</p>
+                                                                <p className="text-gray-500 text-sm">No failures</p>
                                                             )}
                                                         </div>
                                                     </div>
@@ -332,9 +332,9 @@ function NotificationsPage() {
                 {history.length === 0 && (
                     <div className="text-center py-12">
                         <IoStatsChartSharp className="mx-auto h-12 w-12 text-gray-400" />
-                        <h3 className="mt-2 text-sm font-medium text-gray-900">No hay notificaciones</h3>
+                        <h3 className="mt-2 text-sm font-medium text-gray-900">No notifications</h3>
                         <p className="mt-1 text-sm text-gray-500">
-                            Las notificaciones aparecerán aquí cuando se publiquen nuevas propiedades.
+                            Notifications will appear here when new properties are published.
                         </p>
                     </div>
                 )}
@@ -344,27 +344,27 @@ function NotificationsPage() {
             <div className="mt-8 rounded-lg p-6 border-l-4" style={{ backgroundColor: '#F5F5F5', borderColor: '#C8A452' }}>
                 <h3 className="text-lg font-semibold mb-3 flex items-center" style={{ color: '#3C3C3C' }}>
                     <IoPhonePortraitSharp className="mr-2" style={{ color: '#C8A452' }} />
-                    Sistema de Notificaciones Automáticas
+                    Automatic Notification System
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm" style={{ color: '#3C3C3C' }}>
                     <div>
-                        <h4 className="font-semibold mb-2">Funcionamiento:</h4>
+                        <h4 className="font-semibold mb-2">How it works:</h4>
                         <ul className="space-y-1">
-                            <li>• Envío automático al publicar propiedades</li>
-                            <li>• Notificación a TODOS los usuarios registrados y verificados</li>
-                            <li>• Procesamiento en lotes de 50 mensajes</li>
-                            <li>• Reintentos automáticos para fallos</li>
-                            <li>• Auto-actualización cada 30 segundos</li>
+                            <li>• Automatic sending when publishing properties</li>
+                            <li>• Notification to ALL registered and verified users</li>
+                            <li>• Processing in batches of 50 messages</li>
+                            <li>• Automatic retries for failures</li>
+                            <li>• Auto-update every 30 seconds</li>
                         </ul>
                     </div>
                     <div>
-                        <h4 className="font-semibold mb-2">Configuración:</h4>
+                        <h4 className="font-semibold mb-2">Configuration:</h4>
                         <ul className="space-y-1">
-                            <li>• Intervalo entre lotes: 1 segundo</li>
-                            <li>• Máximo 3 reintentos por número</li>
-                            <li>• Tiempo límite: 10 minutos</li>
-                            <li>• Los administradores no reciben SMS</li>
-                            <li>• Historial muestra últimas 20 notificaciones</li>
+                            <li>• Interval between batches: 1 second</li>
+                            <li>• Maximum 3 retries per number</li>
+                            <li>• Time limit: 10 minutes</li>
+                            <li>• Administrators do not receive SMS</li>
+                            <li>• History shows last 20 notifications</li>
                         </ul>
                     </div>
                 </div>

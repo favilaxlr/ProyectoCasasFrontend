@@ -63,31 +63,31 @@ function UsersManagementPage() {
         }
     };
 
-    if (loading) return <div className="flex justify-center p-8">Cargando...</div>;
+    if (loading) return <div className="flex justify-center p-8">Loading...</div>;
 
     return (
         <div className="max-w-6xl mx-auto p-6">
-            <h1 className="text-4xl font-bold mb-2" style={{ color: '#1F1F1F' }}>Gestión de Usuarios</h1>
-            <p className="text-gray-600 mb-6">Asigna y administra roles de administrador y co-administrador</p>
+            <h1 className="text-4xl font-bold mb-2" style={{ color: '#1F1F1F' }}>User Management</h1>
+            <p className="text-gray-600 mb-6">Assign and manage administrator and co-administrator roles</p>
             
             <div className="bg-white rounded-lg shadow overflow-hidden border-t-4" style={{ borderColor: '#C8A452' }}>
                 <table className="min-w-full divide-y divide-gray-200">
                     <thead style={{ backgroundColor: '#F5F5F5' }}>
                         <tr>
                             <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                                Usuario
+                                User
                             </th>
                             <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                                 Email
                             </th>
                             <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                                Rol Actual
+                                Current Role
                             </th>
                             <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                                Cambiar Rol
+                                Change Role
                             </th>
                             <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                                Acciones
+                                Actions
                             </th>
                         </tr>
                     </thead>
@@ -110,7 +110,7 @@ function UsersManagementPage() {
                                             ? 'bg-amber-100 text-amber-800'
                                             : 'bg-gray-100 text-gray-800'
                                     }`}>
-                                        {user.role?.role || 'sin rol'}
+                                        {user.role?.role || 'no role'}
                                     </span>
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap">
@@ -133,7 +133,7 @@ function UsersManagementPage() {
                                         className="text-red-600 hover:text-red-900 disabled:opacity-50 disabled:cursor-not-allowed font-medium"
                                         disabled={user.role?.role === 'admin'}
                                     >
-                                        Eliminar
+                                        Delete
                                     </button>
                                 </td>
                             </tr>
@@ -143,15 +143,15 @@ function UsersManagementPage() {
             </div>
 
             <div className="mt-6 p-4 rounded-lg border-l-4" style={{ backgroundColor: '#F5F5F5', borderColor: '#C8A452' }}>
-                <h3 className="font-semibold mb-2" style={{ color: '#3C3C3C' }}>Roles del Sistema:</h3>
+                <h3 className="font-semibold mb-2" style={{ color: '#3C3C3C' }}>System Roles:</h3>
                 <ul className="text-sm" style={{ color: '#3C3C3C' }}>
-                    <li className="mb-1"><strong style={{ color: '#C8A452' }}>Admin:</strong> Acceso completo + gestión de usuarios</li>
-                    <li className="mb-1"><strong style={{ color: '#C8A452' }}>Co-Admin:</strong> Gestión de propiedades y citas</li>
-                    <li><strong style={{ color: '#C8A452' }}>User:</strong> Solo visualización pública</li>
+                    <li className="mb-1"><strong style={{ color: '#C8A452' }}>Admin:</strong> Full access + user management</li>
+                    <li className="mb-1"><strong style={{ color: '#C8A452' }}>Co-Admin:</strong> Property and appointment management</li>
+                    <li><strong style={{ color: '#C8A452' }}>User:</strong> Public viewing only</li>
                 </ul>
             </div>
 
-            {/* Modal de confirmación de eliminación */}
+            {/* Delete confirmation modal */}
             {showDeleteModal && (
                 <div className="fixed inset-0 overflow-y-auto" style={{ zIndex: 9999 }}>
                     <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
@@ -175,7 +175,7 @@ function UsersManagementPage() {
                                             <IoWarningOutline className="h-7 w-7 text-white" />
                                         </div>
                                         <h3 className="text-xl font-bold text-white">
-                                            Confirmar Eliminación
+                                            Confirm Deletion
                                         </h3>
                                     </div>
                                     <button
@@ -192,7 +192,7 @@ function UsersManagementPage() {
                             <div className="bg-white px-6 py-6">
                                 <div className="mb-4">
                                     <p className="text-gray-700 text-base mb-3">
-                                        ¿Estás seguro de que deseas eliminar al siguiente usuario?
+                                        Are you sure you want to delete the following user?
                                     </p>
                                     <div className="bg-gray-50 border-l-4 border-red-500 p-4 rounded">
                                         <div className="flex items-start">
@@ -204,7 +204,7 @@ function UsersManagementPage() {
                                                     {userToDelete?.email}
                                                 </p>
                                                 <p className="text-xs text-gray-500 mt-2">
-                                                    Rol: <span className="font-medium">{userToDelete?.role?.role}</span>
+                                                    Role: <span className="font-medium">{userToDelete?.role?.role}</span>
                                                 </p>
                                             </div>
                                         </div>
@@ -212,7 +212,7 @@ function UsersManagementPage() {
                                 </div>
                                 <div className="bg-yellow-50 border-l-4 border-yellow-400 p-3 rounded">
                                     <p className="text-sm text-yellow-800">
-                                        <strong>⚠️ Advertencia:</strong> Esta acción no se puede deshacer.
+                                        <strong>⚠️ Warning:</strong> This action cannot be undone.
                                     </p>
                                 </div>
                             </div>
@@ -225,7 +225,7 @@ function UsersManagementPage() {
                                     disabled={isDeleting}
                                     className="w-full sm:w-auto px-6 py-2.5 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
-                                    Cancelar
+                                    Cancel
                                 </button>
                                 <button
                                     type="button"
@@ -239,10 +239,10 @@ function UsersManagementPage() {
                                                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                                                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                                             </svg>
-                                            Eliminando...
+                                            Deleting...
                                         </>
                                     ) : (
-                                        'Eliminar Usuario'
+                                        'Delete User'
                                     )}
                                 </button>
                             </div>

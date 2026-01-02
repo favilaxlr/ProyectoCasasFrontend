@@ -235,11 +235,11 @@ function InteractiveMap({
                   <div className="grid grid-cols-3 gap-2 mb-3 text-xs text-gray-600">
                     <div className="text-center">
                       <div className="font-semibold">{property.details.bedrooms}</div>
-                      <div>Habitaciones</div>
+                      <div>Bedrooms</div>
                     </div>
                     <div className="text-center">
                       <div className="font-semibold">{property.details.bathrooms}</div>
-                      <div>Baños</div>
+                      <div>Bathrooms</div>
                     </div>
                     <div className="text-center">
                       <div className="font-semibold">
@@ -249,7 +249,7 @@ function InteractiveMap({
                     </div>
                   </div>
                   
-                  {/* Características adicionales */}
+                  {/* Additional Features */}
                   <div className="flex flex-wrap gap-1 mb-3">
                     {property.details?.parking && (
                       <span className="bg-green-100 text-green-800 px-2 py-1 rounded text-xs">
@@ -273,7 +273,7 @@ function InteractiveMap({
                       to={`/properties/${property._id}`}
                       className="inline-block bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded text-sm font-medium transition-colors"
                     >
-                      Ver detalles completos
+                      View full details
                     </Link>
                   </div>
                 </div>

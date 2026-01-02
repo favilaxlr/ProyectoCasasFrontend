@@ -42,7 +42,7 @@ function PropertiesPage() {
             toast.success('Status updated successfully');
             loadProperties(); // Recargar lista
         } catch (error) {
-            console.error('Error al cambiar estado:', error);
+            console.error('Error changing status:', error);
             toast.error('Error changing status');
         }
     };
@@ -167,7 +167,7 @@ function PropertiesPage() {
                                     </div>
                                 </div>
 
-                                {/* Características adicionales */}
+                                {/* Additional Features */}
                                 <div className="flex flex-wrap gap-1 mb-3">
                                     {property.details?.parking && (
                                         <span className="bg-green-100 text-green-800 px-2 py-1 rounded text-xs">

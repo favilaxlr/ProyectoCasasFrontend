@@ -31,12 +31,12 @@ function AppointmentCalendar({ propertyId, onAppointmentCreated }) {
         e.preventDefault();
         
         if (!isAuthenticated) {
-            alert('Debes iniciar sesión para agendar una cita');
+            alert('You must log in to schedule an appointment');
             return;
         }
 
         if (!selectedDate || !selectedTime) {
-            alert('Selecciona fecha y hora');
+            alert('Select date and time');
             return;
         }
 
@@ -57,7 +57,7 @@ function AppointmentCalendar({ propertyId, onAppointmentCreated }) {
             onAppointmentCreated && onAppointmentCreated();
         } catch (error) {
             console.error('Error creating appointment:', error);
-            const message = error.response?.data?.message?.[0] || 'Error al agendar cita';
+            const message = error.response?.data?.message?.[0] || 'Error scheduling appointment';
             alert(message);
         } finally {
             setLoading(false);
@@ -90,10 +90,10 @@ function AppointmentCalendar({ propertyId, onAppointmentCreated }) {
     if (!isAuthenticated) {
         return (
             <div className="bg-blue-50 p-6 rounded-lg text-center">
-                <h3 className="text-lg font-semibold mb-2">¿Interesado en esta propiedad?</h3>
-                <p className="text-gray-600 mb-4">Inicia sesión para agendar una visita</p>
+                <h3 className="text-lg font-semibold mb-2">Interested in this property?</h3>
+                <p className="text-gray-600 mb-4">Log in to schedule a visit</p>
                 <button className="btn-primary">
-                    Iniciar Sesión
+                    Log In
                 </button>
             </div>
         );
@@ -106,7 +106,7 @@ function AppointmentCalendar({ propertyId, onAppointmentCreated }) {
                     onClick={() => setShowForm(true)}
                     className="btn-primary text-lg px-8 py-3"
                 >
-                    Agendar Visita
+                    Schedule Visit
                 </button>
             </div>
         );
@@ -114,12 +114,12 @@ function AppointmentCalendar({ propertyId, onAppointmentCreated }) {
 
     return (
         <div className="bg-white p-6 rounded-lg shadow">
-            <h3 className="text-xl font-semibold mb-4">Agendar Visita</h3>
+            <h3 className="text-xl font-semibold mb-4">Schedule Visit</h3>
             
             <form onSubmit={handleSubmit} className="space-y-4">
                 {/* Selección de fecha */}
                 <div>
-                    <label className="block text-sm font-medium mb-2">Fecha de la visita</label>
+                    <label className="block text-sm font-medium mb-2">Visit date</label>
                     <input
                         type="date"
                         value={selectedDate}
@@ -139,13 +139,13 @@ function AppointmentCalendar({ propertyId, onAppointmentCreated }) {
                 {/* Horarios disponibles */}
                 {selectedDate && (
                     <div>
-                        <label className="block text-sm font-medium mb-2">Horario disponible</label>
+                        <label className="block text-sm font-medium mb-2">Available time</label>
                         {availableSlots.length === 0 ? (
                             <p className="text-gray-500 text-sm">
-                                No hay horarios disponibles para esta fecha. 
+                                No available times for this date. 
                                 <br />
                                 <span className="text-xs">
-                                    Horarios: Lun-Vie 9:00-18:00, Sáb 10:00-14:00
+                                    Hours: Mon-Fri 9:00-18:00, Sat 10:00-14:00
                                 </span>
                             </p>
                         ) : (
@@ -172,31 +172,30 @@ function AppointmentCalendar({ propertyId, onAppointmentCreated }) {
                 {/* Notas opcionales */}
                 <div>
                     <label className="block text-sm font-medium mb-2">
-                        Mensaje para el administrador (opcional)
+                        Message for the administrator (optional)
                     </label>
                     <textarea
                         value={notes}
                         onChange={(e) => setNotes(e.target.value)}
-                        placeholder="Alguna pregunta específica o comentario..."
+                        placeholder="Any specific question or comment..."
                         rows="3"
                         className="w-full border border-gray-300 rounded px-3 py-2"
                         maxLength="500"
                     />
                 </div>
 
-                {/* Información del usuario */}
+                {/* User Information */}
                 <div className="bg-gray-50 p-3 rounded">
-                    <h4 className="font-medium mb-2">Información de contacto:</h4>
+                    <h4 className="font-medium mb-2">Contact information:</h4>
                     <p className="text-sm text-gray-600">
-                        <strong>Nombre:</strong> {user?.username}<br />
+                        <strong>Name:</strong> {user?.username}<br />
                         <strong>Email:</strong> {user?.email}
                     </p>
                 </div>
 
-                {/* Términos */}
+                {/* Terms */}
                 <div className="text-xs text-gray-500">
-                    Al agendar esta cita, aceptas que FR Family Investments se ponga en contacto 
-                    contigo para confirmar los detalles de la visita.
+                    By scheduling this appointment, you agree that FR Family Investments will contact you to confirm the visit details.
                 </div>
 
                 {/* Botones */}
@@ -206,7 +205,7 @@ function AppointmentCalendar({ propertyId, onAppointmentCreated }) {
                         disabled={loading || !selectedDate || !selectedTime}
                         className="btn-primary disabled:opacity-50"
                     >
-                        {loading ? 'Agendando...' : 'Confirmar Cita'}
+                        {loading ? 'Scheduling...' : 'Confirm Appointment'}
                     </button>
                     <button
                         type="button"
@@ -218,7 +217,7 @@ function AppointmentCalendar({ propertyId, onAppointmentCreated }) {
                         }}
                         className="btn-secondary"
                     >
-                        Cancelar
+                        Cancel
                     </button>
                 </div>
             </form>

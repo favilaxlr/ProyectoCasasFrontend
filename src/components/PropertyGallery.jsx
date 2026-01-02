@@ -9,12 +9,12 @@ function PropertyGallery({ property, onImageUpdate, isEditable = false }) {
     const canEdit = isEditable && (isAdmin || isCoAdmin);
 
     const handleDeleteImage = async (imageId, index) => {
-        if (window.confirm('¿Eliminar esta imagen?')) {
+        if (window.confirm('Delete this image?')) {
             try {
                 await deleteImageRequest(property._id, imageId);
                 onImageUpdate && onImageUpdate();
             } catch (error) {
-                console.error('Error al eliminar imagen:', error);
+                console.error('Error deleting image:', error);
             }
         }
     };
@@ -52,21 +52,21 @@ function PropertyGallery({ property, onImageUpdate, isEditable = false }) {
                                 onClick={() => handleSetMain(property.images[selectedImage]._id)}
                                 className="bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700"
                             >
-                                Hacer Principal
+                                Make Main
                             </button>
                         )}
                         <button
                             onClick={() => handleDeleteImage(property.images[selectedImage]._id, selectedImage)}
                             className="bg-red-600 text-white px-3 py-1 rounded text-sm hover:bg-red-700"
                         >
-                            Eliminar
+                            Delete
                         </button>
                     </div>
                 )}
                 {property.images[selectedImage]?.isMain && (
                     <div className="absolute top-2 left-2">
                         <span className="bg-blue-600 text-white px-2 py-1 rounded text-sm">
-                            Principal
+                            Main
                         </span>
                     </div>
                 )}

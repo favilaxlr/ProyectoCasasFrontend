@@ -23,7 +23,7 @@ function PropertyFormPage() {
     const [loading, setLoading] = useState(false);
     const [property, setProperty] = useState(null);
     const [coordinates, setCoordinates] = useState(null);
-    const [currentStep, setCurrentStep] = useState(0); // Empieza en 0 para el selector de modalidad
+    const [currentStep, setCurrentStep] = useState(0); // Starts at 0 for the modality selector
     const [selectedAmenities, setSelectedAmenities] = useState([]);
     const [geocodingFromFields, setGeocodingFromFields] = useState(false);
     const [updatingFromMap, setUpdatingFromMap] = useState(false);
@@ -32,7 +32,7 @@ function PropertyFormPage() {
     const { id } = useParams();
     const isEditing = !!id;
 
-    // Comodidades predefinidas comunes
+    // Common predefined amenities
     const availableAmenities = [
         { id: 'pool', label: 'Pool', icon: <IoWaterSharp /> },
         { id: 'gym', label: 'Gym', icon: <IoSettingsSharp /> },
@@ -57,7 +57,7 @@ function PropertyFormPage() {
         { number: 5, title: 'Images', icon: <IoCameraSharp /> }
     ];
 
-    // Modalidades de negocio disponibles
+    // Available business modes
     const businessModes = [
         {
             value: 'sale',
@@ -85,7 +85,7 @@ function PropertyFormPage() {
     useEffect(() => {
         if (isEditing) {
             loadProperty();
-            setCurrentStep(1); // Saltar el paso 0 cuando se edita
+            setCurrentStep(1); // Skip step 0 when editing
         }
     }, [id]);
 
@@ -216,7 +216,7 @@ function PropertyFormPage() {
                 }
             }
             
-            // Agregar la modalidad de negocio al FormData
+            // Add the business modality to FormData
             if (businessMode) formData.append('businessMode', businessMode);
 
             if (data.address) {
@@ -252,10 +252,10 @@ function PropertyFormPage() {
 
             if (isEditing) {
                 await updatePropertyRequest(id, formData);
-                toast.success('Propiedad actualizada exitosamente');
+                toast.success('Property updated successfully');
             } else {
                 await createPropertyRequest(formData);
-                toast.success('Propiedad creada exitosamente');
+                toast.success('Property created successfully');
             }
             
             navigate('/admin/properties');
@@ -265,7 +265,7 @@ function PropertyFormPage() {
                 ? (Array.isArray(error.response.data.message) 
                     ? error.response.data.message.join(', ') 
                     : error.response.data.message)
-                : 'Error al guardar la propiedad';
+                : 'Error saving property';
             toast.error(errorMsg);
         } finally {
             setLoading(false);
@@ -310,7 +310,7 @@ function PropertyFormPage() {
                 }
                 break;
             case 4:
-                // Validar precios según modalidad
+                // Validate prices according to modality
                 if (businessMode === 'sale' && !values.price?.sale) {
                     toast.error('Please enter the sale price');
                     return false;
@@ -361,12 +361,12 @@ function PropertyFormPage() {
                 <div className="animate-slide-in-left mb-8 text-center">
                     <h1 className="text-4xl font-bold text-[var(--charcoal)] mb-2 flex items-center justify-center">
                         {isEditing ? (
-                            <><IoSettingsSharp className="mr-3" /> Editar Propiedad</>
+                            <><IoSettingsSharp className="mr-3" /> Edit Property</>
                         ) : (
-                            <><IoHomeSharp className="mr-3" /> Nueva Propiedad</>
+                            <><IoHomeSharp className="mr-3" /> New Property</>
                         )}
                     </h1>
-                    <p className="text-gray-600">Complete los campos del formulario paso a paso</p>
+                    <p className="text-gray-600">Complete the form fields step by step</p>
                 </div>
 
                 <div className="bg-white rounded-2xl shadow-lg p-6 mb-6">
@@ -412,15 +412,15 @@ function PropertyFormPage() {
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <div className="bg-white rounded-2xl shadow-xl p-8 mb-6 min-h-[500px]">
                         
-                        {/* Paso 0: Selección de Modalidad de Negocio */}
+                        {/* Step 0: Business Mode Selection */}
                         {currentStep === 0 && (
                             <div className="animate-fade-in space-y-6">
                                 <div className="text-center mb-8">
                                     <h2 className="text-3xl font-bold text-[var(--charcoal)] mb-2">
-                                        ¿Qué tipo de negocio deseas realizar?
+                                        What type of business do you want to conduct?
                                     </h2>
                                     <p className="text-gray-600">
-                                        Selecciona la modalidad para continuar con el formulario
+                                        Select the modality to continue with the form
                                     </p>
                                 </div>
 
@@ -471,7 +471,7 @@ function PropertyFormPage() {
                                                     {isSelected && (
                                                         <div className="flex items-center text-[var(--gold-accent)] font-semibold">
                                                             <IoCheckmarkCircleSharp className="text-2xl mr-2" />
-                                                            Seleccionado
+                                                            Selected
                                                         </div>
                                                     )}
                                                 </div>
@@ -485,12 +485,12 @@ function PropertyFormPage() {
                                         <IoInformationCircleSharp className="text-2xl text-blue-600 mr-3 flex-shrink-0" />
                                         <div>
                                             <p className="text-sm font-medium text-blue-800 mb-2">
-                                                ℹ️ Información sobre las modalidades:
+                                                ℹ️ Information about modalities:
                                             </p>
                                             <ul className="text-xs text-blue-700 space-y-1">
-                                                <li>• <strong>Venta:</strong> La propiedad se venderá definitivamente</li>
-                                                <li>• <strong>Renta:</strong> La propiedad se alquilará por períodos</li>
-                                                <li>• <strong>Renta/Venta:</strong> El cliente podrá elegir entre rentar o comprar</li>
+                                                <li>• <strong>Sale:</strong> The property will be sold permanently</li>
+                                                <li>• <strong>Rent:</strong> The property will be rented for periods</li>
+                                                <li>• <strong>Rent/Sale:</strong> The client can choose between renting or buying</li>
                                             </ul>
                                         </div>
                                     </div>
@@ -688,19 +688,19 @@ function PropertyFormPage() {
                                     <h2 className="text-2xl font-bold text-[var(--charcoal)] flex items-center">
                                         <IoHomeSharp className="mr-3" /> Property Details
                                     </h2>
-                                    <p className="text-gray-600 mt-1">Características y especificaciones</p>
+                                    <p className="text-gray-600 mt-1">Features and specifications</p>
                                 </div>
 
                                 <div>
                                     <label className="block text-sm font-semibold mb-3 text-gray-700">
-                                        Tipo de Propiedad *
+                                        Property Type *
                                     </label>
                                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                                         {[
-                                            { value: 'house', label: 'Casa', icon: <IoHomeSharp /> },
-                                            { value: 'apartment', label: 'Apartamento', icon: <IoBusinessSharp /> },
-                                            { value: 'condo', label: 'Condominio', icon: <IoBusinessSharp /> },
-                                            { value: 'townhouse', label: 'Casa Adosada', icon: <IoHomeSharp /> }
+                                            { value: 'house', label: 'House', icon: <IoHomeSharp /> },
+                                            { value: 'apartment', label: 'Apartment', icon: <IoBusinessSharp /> },
+                                            { value: 'condo', label: 'Condo', icon: <IoBusinessSharp /> },
+                                            { value: 'townhouse', label: 'Townhouse', icon: <IoHomeSharp /> }
                                         ].map((type) => (
                                             <label
                                                 key={type.value}
@@ -782,7 +782,7 @@ function PropertyFormPage() {
 
                                 <div>
                                     <label className="block text-sm font-semibold mb-3 text-gray-700">
-                                        Características Especiales
+                                        Special Features
                                     </label>
                                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                         <label className="flex items-center p-4 border-2 border-gray-200 rounded-xl cursor-pointer hover:border-[var(--gold-accent)] transition-all">
@@ -819,7 +819,7 @@ function PropertyFormPage() {
 
                                 <div>
                                     <label className="block text-sm font-semibold mb-3 text-gray-700">
-                                        Comodidades
+                                        Amenities
                                     </label>
                                     <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
                                         {availableAmenities.map((amenity) => (
@@ -842,17 +842,17 @@ function PropertyFormPage() {
                             </div>
                         )}
 
-                        {/* Paso 4: Información de Precios (Condicional según modalidad) */}
+                        {/* Step 4: Price Information (Conditional based on modality) */}
                         {currentStep === 4 && (
                             <div className="animate-fade-in space-y-6">
                                 {!businessMode ? (
                                     <div className="text-center py-16">
                                         <IoWarningSharp className="text-6xl text-yellow-500 mx-auto mb-4" />
                                         <h3 className="text-2xl font-bold text-[var(--charcoal)] mb-2">
-                                            Modalidad no seleccionada
+                                            Modality not selected
                                         </h3>
                                         <p className="text-gray-600 mb-6">
-                                            Debes volver al paso 0 y seleccionar una modalidad de negocio
+                                            You must go back to step 0 and select a business modality
                                         </p>
                                         <button
                                             type="button"
@@ -860,7 +860,7 @@ function PropertyFormPage() {
                                             className="px-6 py-3 bg-[var(--gold-accent)] text-white rounded-xl font-medium hover:bg-[var(--charcoal)] transition-all inline-flex items-center"
                                         >
                                             <IoArrowBackSharp className="mr-2" />
-                                            Volver al Paso 0
+                                            Back to Step 0
                                         </button>
                                     </div>
                                 ) : (
@@ -868,14 +868,14 @@ function PropertyFormPage() {
                                         <div className="border-b pb-4 mb-6">
                                             <h2 className="text-2xl font-bold text-[var(--charcoal)] flex items-center">
                                                 <IoCashSharp className="mr-3" /> 
-                                                {businessMode === 'sale' && 'Información de Venta'}
-                                                {businessMode === 'rent' && 'Información de Renta'}
-                                                {businessMode === 'both' && 'Información de Venta y Renta'}
+                                                {businessMode === 'sale' && 'Sale Information'}
+                                                {businessMode === 'rent' && 'Rent Information'}
+                                                {businessMode === 'both' && 'Sale and Rent Information'}
                                             </h2>
                                             <p className="text-gray-600 mt-1">
-                                                {businessMode === 'sale' && 'Precio y condiciones de venta'}
-                                                {businessMode === 'rent' && 'Precio y condiciones de renta'}
-                                                {businessMode === 'both' && 'Precios para ambas modalidades'}
+                                                {businessMode === 'sale' && 'Sale price and conditions'}
+                                                {businessMode === 'rent' && 'Rent price and conditions'}
+                                                {businessMode === 'both' && 'Prices for both modalities'}
                                             </p>
                                         </div>
 
@@ -1043,17 +1043,17 @@ function PropertyFormPage() {
                                     </div>
                                 )}
 
-                                {/* Información adicional para modalidad 'both' */}
+                                {/* Additional information for 'both' modality */}
                                 {businessMode === 'both' && (
                                     <div className="bg-purple-50 border-l-4 border-purple-400 p-4 rounded-r-xl">
                                         <div className="flex">
                                             <IoInformationCircleSharp className="text-2xl text-purple-600 mr-3 flex-shrink-0" />
                                             <div>
                                                 <p className="text-sm font-medium text-purple-800">
-                                                    Modalidad: Venta y Renta
+                                                    Modality: Sale and Rent
                                                 </p>
                                                 <p className="text-xs text-purple-700 mt-1">
-                                                    Esta propiedad estará disponible para venta O renta. Los usuarios podrán elegir la modalidad que prefieran.
+                                                    This property will be available for sale OR rent. Users can choose the modality they prefer.
                                                 </p>
                                             </div>
                                         </div>

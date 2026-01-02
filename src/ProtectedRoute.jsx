@@ -4,13 +4,13 @@ import {useAuth} from './context/AuthContext';
 function ProtectedRoute() {
     const {isLoading, isAuthenticated} = useAuth();
 
-    //si esta cargando la app los datos retona cargando en un h1
+    // If the app is loading data, return loading in an h1
     if (isLoading){
-        return <h1>cargando...</h1>
+        return <h1>Loading...</h1>
     }
 
-    //si la aplicacion no esta cargando
-    //y ademas no esta autenticado, entonces redirige a /login
+    // If the application is not loading
+    // and also not authenticated, then redirect to /login
     if (!isLoading && !isAuthenticated)
         return <Navigate to='/login' replace />
 
