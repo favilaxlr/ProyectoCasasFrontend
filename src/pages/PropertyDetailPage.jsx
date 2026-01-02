@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router';
 import { getPropertyRequest, changePropertyStatusRequest } from '../api/properties';
+import { checkExistingOfferRequest } from '../api/offers';
 import AppointmentForm from '../components/AppointmentForm';
 import PropertyStatus from '../components/PropertyStatus';
 import ReviewsSection from '../components/ReviewsSection';
@@ -19,12 +20,25 @@ function PropertyDetailPage() {
     const [selectedImage, setSelectedImage] = useState(0);
     const [showOfferModal, setShowOfferModal] = useState(false);
 
-    const handleMakeOfferClick = () => {
+    const handleMakeOfferClick = async () => {
         if (!isAuthenticated) {
             toast.info('Please log in or register to make an offer');
             navigate('/login', { state: { from: `/properties/${id}` } });
             return;
         }
+
+        // Verificar si ya existe una oferta activa
+        try {
+            const res = await checkExistingOfferRequest(id);
+            if (res.data.hasOffer) {
+                toast.info('You already have an active offer for this property. Redirecting to your offer...');
+                navigate(`/my-offers/${res.data.offer._id}`);
+                return;
+            }
+        } catch (error) {
+            console.error('Error checking existing offer:', error);
+        }
+
         setShowOfferModal(true);
     };
 
@@ -486,6 +500,7 @@ function PropertyDetailPage() {
                         <OfferChat
                             propertyId={property._id}
                             propertyTitle={property.title}
+                            propertyPrice={property.price?.sale}
                             onClose={() => setShowOfferModal(false)}
                         />
                     </div>

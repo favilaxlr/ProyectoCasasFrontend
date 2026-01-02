@@ -2,6 +2,9 @@ import axios from './axiosInstance';
 
 // ========== USER ENDPOINTS ==========
 
+// Verificar si existe una oferta activa para una propiedad
+export const checkExistingOfferRequest = (propertyId) => axios.get(`/offers/check/${propertyId}`);
+
 // Crear una oferta para una propiedad
 export const createOfferRequest = (data) => axios.post('/offers', data);
 

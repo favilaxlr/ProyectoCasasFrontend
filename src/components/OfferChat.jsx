@@ -3,7 +3,7 @@ import { IoCashOutline, IoSendSharp, IoCloseCircle, IoCheckmarkCircle, IoTimeOut
 import { toast } from 'react-toastify';
 import { createOfferRequest, getUserOfferRequest, sendOfferMessageRequest } from '../api/offers';
 
-function OfferChat({ propertyId, propertyTitle, onClose }) {
+function OfferChat({ propertyId, propertyTitle, propertyPrice, onClose }) {
     const [offerId, setOfferId] = useState(null);
     const [offer, setOffer] = useState(null);
     const [offerAmount, setOfferAmount] = useState('');
@@ -41,6 +41,12 @@ function OfferChat({ propertyId, propertyTitle, onClose }) {
 
         if (!offerAmount || !message) {
             toast.error('Please enter an offer amount and message');
+            return;
+        }
+
+        // Validar que la oferta no sea mayor al precio de venta
+        if (propertyPrice && Number(offerAmount) > propertyPrice) {
+            toast.error(`Your offer cannot be higher than the asking price ($${propertyPrice.toLocaleString()})`);
             return;
         }
 
@@ -123,6 +129,16 @@ function OfferChat({ propertyId, propertyTitle, onClose }) {
             {!offerId ? (
                 // Formulario para crear oferta
                 <form onSubmit={handleCreateOffer}>
+                    {propertyPrice && (
+                        <div className="mb-4 p-3 bg-blue-50 rounded-lg border-2 border-blue-200">
+                            <p className="text-sm text-blue-800">
+                                <strong>Asking Price:</strong> ${propertyPrice.toLocaleString()}
+                            </p>
+                            <p className="text-xs text-blue-600 mt-1">
+                                Your offer must be equal to or less than the asking price
+                            </p>
+                        </div>
+                    )}
                     <div className="mb-4">
                         <label className="block text-sm font-semibold mb-2">
                             Your Offer Amount (USD)
