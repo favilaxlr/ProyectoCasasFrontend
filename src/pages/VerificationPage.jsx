@@ -49,7 +49,7 @@ function VerificationPage() {
       if (response.data) {
         authenticateUser(response.data);
         
-        toast.success('¡Verificación exitosa! Bienvenido', {
+        toast.success('Verification successful! Welcome', {
           icon: <IoCheckmarkCircle className="text-green-500" />
         });
         
@@ -60,7 +60,7 @@ function VerificationPage() {
       }
     } catch (error) {
       console.error('❌ Error en verificación:', error);
-      const errorMessage = error.response?.data?.message?.[0] || 'Error al verificar el código';
+      const errorMessage = error.response?.data?.message?.[0] || 'Error verifying the code';
       toast.error(errorMessage);
     } finally {
       setIsLoading(false);
@@ -69,22 +69,22 @@ function VerificationPage() {
 
   const handleResendCode = async () => {
     if (!userEmail) {
-      toast.error('No se encontró el email del usuario');
+      toast.error('User email not found');
       return;
     }
     
     if (cooldownTime > 0) {
-      toast.warning(`Espera ${cooldownTime} segundos antes de reenviar`);
+      toast.warning(`Wait ${cooldownTime} seconds before resending`);
       return;
     }
     
     setIsResending(true);
     try {
       await resendCodeRequest({ email: userEmail });
-      toast.success('Código reenviado exitosamente. Revisa tu email y SMS');
+      toast.success('Code resent successfully. Check your email and SMS');
       setCooldownTime(60); // 60 segundos de cooldown
     } catch (error) {
-      const errorMessage = error.response?.data?.message?.[0] || 'Error al reenviar el código';
+      const errorMessage = error.response?.data?.message?.[0] || 'Error resending the code';
       toast.error(errorMessage);
     } finally {
       setIsResending(false);
@@ -99,9 +99,9 @@ function VerificationPage() {
           <div className="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-green-500 to-green-600 rounded-full flex items-center justify-center shadow-2xl transform hover:scale-105 transition-transform duration-300">
             <IoShieldCheckmarkSharp className="w-10 h-10 text-white" />
           </div>
-          <h2 className="text-4xl font-bold text-[var(--charcoal)] mb-2">Verifica tu cuenta</h2>
+          <h2 className="text-4xl font-bold text-[var(--charcoal)] mb-2">Verify your account</h2>
           <p className="text-gray-600 text-lg mb-4">
-            Hemos enviado un código de 6 dígitos a:
+            We have sent a 6-digit code to:
           </p>
           <div className="space-y-2 text-sm">
             <div className="flex items-center justify-center text-[var(--gold-accent)] font-semibold">
@@ -116,11 +116,11 @@ function VerificationPage() {
             )}
           </div>
           <div className="mt-4 space-y-2">
-            <p className="text-gray-500 text-sm">El código es válido por 10 minutos</p>
+            <p className="text-gray-500 text-sm">The code is valid for 10 minutes</p>
             <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mt-3">
               <p className="text-yellow-800 text-xs flex items-start">
                 <IoMailSharp className="w-4 h-4 mr-2 mt-0.5 flex-shrink-0" />
-                <span><strong>Nota:</strong> Si no encuentras el correo en tu bandeja de entrada, revisa tu carpeta de <strong>SPAM</strong> o <strong>Correo no deseado</strong>.</span>
+                <span><strong>Note:</strong> If you don't find the email in your inbox, check your <strong>SPAM</strong> or <strong>Junk</strong> folder.</span>
               </p>
             </div>
           </div>
@@ -132,7 +132,7 @@ function VerificationPage() {
             {/* Verification Code Field */}
             <div className="space-y-2">
               <label className="text-sm font-semibold text-[var(--charcoal)] flex items-center justify-center">
-                Código de Verificación
+                Verification Code
               </label>
               <div className="relative group">
                 <input
@@ -143,10 +143,10 @@ function VerificationPage() {
                   }`}
                   placeholder="000000"
                   {...register("code", {
-                    required: "El código es requerido",
+                    required: "The code is required",
                     pattern: {
                       value: /^[0-9]{6}$/,
-                      message: "El código debe ser de 6 dígitos"
+                      message: "The code must be 6 digits"
                     }
                   })}
                 />
@@ -165,12 +165,12 @@ function VerificationPage() {
               {isLoading ? (
                 <div className="flex items-center justify-center">
                   <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
-                  Verificando...
+                  Verifying...
                 </div>
               ) : (
                 <div className="flex items-center justify-center">
                   <IoShieldCheckmarkSharp className="w-5 h-5 mr-2" />
-                  Verificar Cuenta
+                  Verify Account
                 </div>
               )}
             </button>
@@ -178,7 +178,7 @@ function VerificationPage() {
 
           {/* Resend Code Section */}
           <div className="text-center space-y-3 pt-4 border-t border-gray-200">
-            <p className="text-gray-600 text-sm">¿No recibiste el código?</p>
+            <p className="text-gray-600 text-sm">Didn't receive the code?</p>
             <button
               type="button"
               onClick={handleResendCode}
@@ -197,10 +197,10 @@ function VerificationPage() {
               ) : cooldownTime > 0 ? (
                 <>
                   <IoTimeSharp className="w-4 h-4 mr-2" />
-                  Espera {cooldownTime}s para reenviar
+                  Wait {cooldownTime}s to resend
                 </>
               ) : (
-                'Reenviar código'
+                'Resend code'
               )}
             </button>
           </div>
@@ -212,7 +212,7 @@ function VerificationPage() {
               onClick={() => navigate('/login')}
               className="text-gray-600 hover:text-[var(--charcoal)] text-sm transition-colors duration-300"
             >
-              Volver al inicio de sesión
+              Back to sign in
             </button>
           </div>
         </div>
@@ -225,11 +225,11 @@ function VerificationPage() {
             </div>
             <div className="ml-3">
               <h3 className="text-sm font-semibold text-blue-900 mb-1">
-                ¿Por qué verificar?
+                Why verify?
               </h3>
               <p className="text-xs text-blue-700">
-                La verificación de tu cuenta nos ayuda a mantener la seguridad de nuestra plataforma 
-                y asegura que recibas notificaciones importantes sobre nuevas propiedades disponibles.
+                Account verification helps us maintain platform security 
+                and ensures you receive important notifications about new properties available.
               </p>
             </div>
           </div>

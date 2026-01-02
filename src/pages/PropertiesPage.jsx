@@ -24,7 +24,7 @@ function PropertiesPage() {
     };
 
     const handleDelete = async (id) => {
-        if (window.confirm('¿Estás seguro de eliminar esta propiedad?')) {
+        if (window.confirm('Are you sure you want to delete this property?')) {
             try {
                 await deletePropertyRequest(id);
                 loadProperties();
@@ -39,20 +39,20 @@ function PropertiesPage() {
 
         try {
             await changePropertyStatusRequest(propertyId, newStatus, '');
-            toast.success('Estado actualizado correctamente');
+            toast.success('Status updated successfully');
             loadProperties(); // Recargar lista
         } catch (error) {
             console.error('Error al cambiar estado:', error);
-            toast.error('Error al cambiar el estado');
+            toast.error('Error changing status');
         }
     };
 
-    if (loading) return <div className="flex justify-center p-8">Cargando...</div>;
+    if (loading) return <div className="flex justify-center p-8">Loading...</div>;
 
     return (
         <div className="page-container max-w-7xl mx-auto p-6">
             <div className="flex justify-between items-center mb-6 animate-slide-in-left">
-                <h1 className="text-3xl font-bold text-[var(--charcoal)]">Propiedades</h1>
+                <h1 className="text-3xl font-bold text-[var(--charcoal)]">Properties</h1>
                 <Link
                     to="/admin/add-property"
                     className="btn-secondary-animated"
@@ -60,7 +60,7 @@ function PropertiesPage() {
                     <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                     </svg>
-                    Nueva Propiedad
+                    New Property
                 </Link>
             </div>
 
@@ -71,8 +71,8 @@ function PropertiesPage() {
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                         </svg>
                     </div>
-                    <h3 className="text-2xl font-bold text-gray-700 mb-4">No tienes propiedades registradas</h3>
-                    <p className="text-gray-500 mb-6">Comienza agregando tu primera propiedad</p>
+                    <h3 className="text-2xl font-bold text-gray-700 mb-4">You have no registered properties</h3>
+                    <p className="text-gray-500 mb-6">Start by adding your first property</p>
                     <Link
                         to="/admin/add-property"
                         className="btn-primary-animated inline-flex"
@@ -80,7 +80,7 @@ function PropertiesPage() {
                         <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                         </svg>
-                        Crear Primera Propiedad
+                        Create First Property
                     </Link>
                 </div>
             ) : (
@@ -95,7 +95,7 @@ function PropertiesPage() {
                                 />
                             ) : (
                                 <div className="w-full h-48 bg-gray-200 flex items-center justify-center">
-                                    <span className="text-gray-500">Sin imagen</span>
+                                    <span className="text-gray-500">No image</span>
                                 </div>
                             )}
                             
@@ -104,11 +104,11 @@ function PropertiesPage() {
                                 <p className="text-gray-600 text-sm mb-2 line-clamp-2">{property.description}</p>
 
                                 {property.createdBy?.username && (
-                                    <p className="text-xs text-gray-500 mb-1">Subida por: {property.createdBy.username}</p>
+                                    <p className="text-xs text-gray-500 mb-1">Uploaded by: {property.createdBy.username}</p>
                                 )}
 
                                 {property.lastModifiedBy?.username && (
-                                    <p className="text-xs text-yellow-700 mb-2">Modificada por: {property.lastModifiedBy.username}</p>
+                                    <p className="text-xs text-yellow-700 mb-2">Modified by: {property.lastModifiedBy.username}</p>
                                 )}
                                 
                                 <div className="flex justify-between items-center mb-3">
@@ -125,40 +125,40 @@ function PropertiesPage() {
                                             'bg-gray-100 text-gray-800'
                                         }`}
                                     >
-                                        <option value="DISPONIBLE">Disponible</option>
-                                        <option value="EN_CONTRATO">En Contrato</option>
-                                        <option value="VENDIDA">Vendida</option>
+                                        <option value="DISPONIBLE">Available</option>
+                                        <option value="EN_CONTRATO">Under Contract</option>
+                                        <option value="VENDIDA">Sold</option>
                                     </select>
                                 </div>
 
                                 <div className="text-sm text-gray-600 mb-3 space-y-1">
                                     <div className="flex justify-between">
-                                        <span>Habitaciones:</span>
+                                        <span>Bedrooms:</span>
                                         <span className="font-semibold">{property.details?.bedrooms || 0}</span>
                                     </div>
                                     <div className="flex justify-between">
-                                        <span>Baños:</span>
+                                        <span>Bathrooms:</span>
                                         <span className="font-semibold">{property.details?.bathrooms || 0}</span>
                                     </div>
                                     <div className="flex justify-between">
-                                        <span>Tipo:</span>
+                                        <span>Type:</span>
                                         <span className="font-semibold">
-                                            {property.details?.propertyType === 'house' ? 'Casa' :
-                                             property.details?.propertyType === 'apartment' ? 'Apartamento' :
-                                             property.details?.propertyType === 'condo' ? 'Condominio' :
-                                             property.details?.propertyType === 'townhouse' ? 'Casa Adosada' :
+                                            {property.details?.propertyType === 'house' ? 'House' :
+                                             property.details?.propertyType === 'apartment' ? 'Apartment' :
+                                             property.details?.propertyType === 'condo' ? 'Condo' :
+                                             property.details?.propertyType === 'townhouse' ? 'Townhouse' :
                                              property.details?.propertyType || 'N/A'}
                                         </span>
                                     </div>
                                     {property.details?.squareFeet && (
                                         <div className="flex justify-between">
-                                            <span>Área:</span>
+                                            <span>Area:</span>
                                             <span className="font-semibold">{property.details.squareFeet.toLocaleString()} sq ft</span>
                                         </div>
                                     )}
                                     {property.price?.deposit && (
                                         <div className="flex justify-between">
-                                            <span>Depósito:</span>
+                                            <span>Deposit:</span>
                                             <span className="font-semibold">${property.price.deposit.toLocaleString()}</span>
                                         </div>
                                     )}
@@ -181,7 +181,7 @@ function PropertiesPage() {
                                     )}
                                     {property.details?.furnished && (
                                         <span className="bg-purple-100 text-purple-800 px-2 py-1 rounded text-xs">
-                                            Amueblado
+                                            Furnished
                                         </span>
                                     )}
                                 </div>
@@ -191,19 +191,19 @@ function PropertiesPage() {
                                         to={`/properties/${property._id}`}
                                         className="flex-1 bg-blue-600 text-white text-center py-2 rounded hover:bg-blue-700 text-sm"
                                     >
-                                        Ver
+                                        View
                                     </Link>
                                     <Link
                                         to={`/admin/properties/edit/${property._id}`}
                                         className="flex-1 bg-yellow-600 text-white text-center py-2 rounded hover:bg-yellow-700 text-sm"
                                     >
-                                        Editar
+                                        Edit
                                     </Link>
                                     <button
                                         onClick={() => handleDelete(property._id)}
                                         className="flex-1 bg-red-600 text-white py-2 rounded hover:bg-red-700 text-sm"
                                     >
-                                        Eliminar
+                                        Delete
                                     </button>
                                 </div>
                             </div>

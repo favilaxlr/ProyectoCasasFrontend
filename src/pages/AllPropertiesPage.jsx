@@ -39,10 +39,10 @@ function AllPropertiesPage() {
             className="flex items-center space-x-2 btn-secondary px-3 py-2 rounded-lg font-medium transition-all text-sm md:text-base"
           >
             <IoArrowBack size={20} />
-            <span>Volver</span>
+            <span>Back</span>
           </button>
           <h1 className="text-2xl md:text-3xl font-bold text-[var(--gold-accent)]">
-            Propiedades Disponibles
+            Available Properties
           </h1>
         </div>
         
@@ -57,7 +57,7 @@ function AllPropertiesPage() {
             }`}
           >
             <IoMapSharp size={16} className="md:w-5 md:h-5" />
-            <span className="hidden sm:inline">Vista Dividida</span>
+            <span className="hidden sm:inline">Split View</span>
             <span className="sm:hidden">Split</span>
           </button>
           <button
@@ -69,7 +69,7 @@ function AllPropertiesPage() {
             }`}
           >
             <IoListSharp size={16} className="md:w-5 md:h-5" />
-            <span className="hidden sm:inline">Lista</span>
+            <span className="hidden sm:inline">List</span>
             <span className="sm:hidden">List</span>
           </button>
           <button
@@ -81,7 +81,7 @@ function AllPropertiesPage() {
             }`}
           >
             <IoMapSharp size={16} className="md:w-5 md:h-5" />
-            <span className="hidden sm:inline">Mapa Completo</span>
+            <span className="hidden sm:inline">Full Map</span>
             <span className="sm:hidden">Map</span>
           </button>
         </div>
@@ -145,7 +145,7 @@ function AllPropertiesPage() {
                 ))
               ) : (
                 <div className="text-center py-8 text-gray-500">
-                  No hay propiedades que coincidan con los filtros
+                  No properties match the filters
                 </div>
               )}
             </div>
@@ -155,10 +155,10 @@ function AllPropertiesPage() {
         // List View Only
         <div className="flex-1 overflow-y-auto p-6 bg-gray-50">
           <div className="mb-6 bg-white p-4 rounded-lg shadow">
-            <h2 className="text-lg font-semibold mb-4">Filtros</h2>
+            <h2 className="text-lg font-semibold mb-4">Filters</h2>
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <div>
-                <label className="block text-sm font-medium mb-1">Precio Mínimo</label>
+                <label className="block text-sm font-medium mb-1">Minimum Price</label>
                 <input
                   type="number"
                   value={filters.minPrice}
@@ -168,7 +168,7 @@ function AllPropertiesPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1">Precio Máximo</label>
+                <label className="block text-sm font-medium mb-1">Maximum Price</label>
                 <input
                   type="number"
                   value={filters.maxPrice}
@@ -178,26 +178,26 @@ function AllPropertiesPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1">Habitaciones</label>
+                <label className="block text-sm font-medium mb-1">Bedrooms</label>
                 <input
                   type="number"
                   value={filters.bedrooms}
                   onChange={(e) => setFilters({...filters, bedrooms: e.target.value})}
                   className="w-full border border-gray-300 rounded px-3 py-2"
-                  placeholder="Cualquier"
+                  placeholder="Any"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1">Tipo de Propiedad</label>
+                <label className="block text-sm font-medium mb-1">Property Type</label>
                 <select
                   value={filters.propertyType}
                   onChange={(e) => setFilters({...filters, propertyType: e.target.value})}
                   className="w-full border border-gray-300 rounded px-3 py-2"
                 >
-                  <option value="">Cualquier</option>
-                  <option value="house">Casa</option>
-                  <option value="apartment">Apartamento</option>
-                  <option value="condo">Condominio</option>
+                  <option value="">Any</option>
+                  <option value="house">House</option>
+                  <option value="apartment">Apartment</option>
+                  <option value="condo">Condo</option>
                 </select>
               </div>
             </div>
@@ -210,7 +210,7 @@ function AllPropertiesPage() {
               ))
             ) : (
               <div className="col-span-full text-center py-8 text-gray-500">
-                No hay propiedades que coincidan con los filtros
+                No properties match the filters
               </div>
             )}
           </div>

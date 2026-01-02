@@ -16,7 +16,7 @@ function NavbarUser() {
         <li>
         <Menu>
         <MenuButton className="inline-flex items-center gap-2 rounded-md px-3 py-1.5 text-sm/6 font-semibold text-white hover:bg-white/10 transition-all">
-          Propiedades
+          Properties
           <IoChevronDownSharp className="fill-white/60" size={20} />
         </MenuButton>
 
@@ -29,14 +29,14 @@ function NavbarUser() {
             <button onClick={ ()=>{navigate('/properties')}} 
                     className="group flex w-full items-center gap-2 rounded-lg px-3 py-1.5 text-gray-700 hover:bg-gray-100 data-focus:bg-gray-100">
               <IoBagOutline className="text-gray-500" size={20} />
-              Ver Propiedades
+              View Properties
             </button>
           </MenuItem>
           <MenuItem>
             <button onClick={ ()=>{navigate('/my-appointments')}} 
                     className="group flex w-full items-center gap-2 rounded-lg px-3 py-1.5 text-gray-700 hover:bg-gray-100 data-focus:bg-gray-100">
               <IoCartOutline className="text-gray-500" size={20} />
-              Mis Citas
+              My Appointments
             </button>
           </MenuItem>
         </MenuItems>
@@ -59,7 +59,7 @@ function NavbarUser() {
             <button onClick={ ()=>{navigate('/profile')}} 
                     className="group flex w-full items-center gap-2 rounded-lg px-3 py-1.5 text-gray-700 hover:bg-gray-100 data-focus:bg-gray-100">
               <IoPerson className="text-gray-500" size={20} />
-              Mi Perfil
+              My Profile
             </button>
           </MenuItem>
           <div className="my-1 h-px bg-gray-200" />
@@ -67,7 +67,7 @@ function NavbarUser() {
             <button onClick={ () => { logOut(); navigate('/'); }} 
                     className="group flex w-full items-center gap-2 rounded-lg px-3 py-1.5 text-red-700 hover:bg-red-50 data-focus:bg-red-50">
               <IoLogOutOutline className="text-red-500" size={20} />
-              Cerrar Sesión
+              Log Out
             </button>
           </MenuItem>
         </MenuItems>

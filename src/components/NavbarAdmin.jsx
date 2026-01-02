@@ -23,7 +23,7 @@ function NavbarAdmin() {
               <Menu>
                 <MenuButton className="inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold text-gray-700 hover:bg-[var(--gold-accent)]/10 hover:text-[var(--gold-accent)] transition-all duration-200 border border-transparent hover:border-[var(--gold-accent)]/30">
                   <IoHomeSharp size={18}/>
-                  Propiedades
+                  Properties
                   <IoChevronDownSharp className="fill-current" size={14} />
                 </MenuButton>
 
@@ -34,7 +34,7 @@ function NavbarAdmin() {
                   style={{ zIndex: 9999 }}
                 >
                   <div className="px-3 py-2 border-b border-gray-100 mb-1">
-                    <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">Gestión</p>
+                    <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">Management</p>
                   </div>
                   
                   <MenuItem>
@@ -43,7 +43,7 @@ function NavbarAdmin() {
                       <div className="p-1.5 rounded-lg bg-blue-50 group-hover:bg-blue-100 transition-colors">
                         <IoHomeSharp className="text-blue-600" size={16} />
                       </div>
-                      <span className="font-medium">Listar Propiedades</span>
+                      <span className="font-medium">List Properties</span>
                     </button>
                   </MenuItem>
                   
@@ -53,7 +53,7 @@ function NavbarAdmin() {
                       <div className="p-1.5 rounded-lg bg-green-50 group-hover:bg-green-100 transition-colors">
                         <IoBagAdd className="text-green-600" size={16} />
                       </div>
-                      <span className="font-medium">Agregar Propiedad</span>
+                      <span className="font-medium">Add Property</span>
                     </button>
                   </MenuItem>
                   
@@ -63,7 +63,7 @@ function NavbarAdmin() {
                       <div className="p-1.5 rounded-lg bg-purple-50 group-hover:bg-purple-100 transition-colors">
                         <IoCalendarSharp className="text-purple-600" size={16} />
                       </div>
-                      <span className="font-medium">Ver Citas</span>
+                      <span className="font-medium">View Appointments</span>
                     </button>
                   </MenuItem>
                   
@@ -73,7 +73,7 @@ function NavbarAdmin() {
                       <div className="p-1.5 rounded-lg bg-orange-50 group-hover:bg-orange-100 transition-colors">
                         <IoChatbubblesSharp className="text-orange-600" size={16} />
                       </div>
-                      <span className="font-medium">Notificaciones SMS</span>
+                      <span className="font-medium">SMS Notifications</span>
                     </button>
                   </MenuItem>
                   
@@ -86,7 +86,7 @@ function NavbarAdmin() {
                           <div className="p-1.5 rounded-lg bg-red-50 group-hover:bg-red-100 transition-colors">
                             <IoPeopleSharp className="text-red-600" size={16} />
                           </div>
-                          <span className="font-medium">Gestionar Usuarios</span>
+                          <span className="font-medium">Manage Users</span>
                         </button>
                       </MenuItem>
                     </>
@@ -119,7 +119,7 @@ function NavbarAdmin() {
                     <button onClick={ ()=>{navigate('/profile')}} 
                             className="group flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-gray-700 hover:bg-gray-100 data-focus:bg-gray-100 transition-all">
                       <IoSettingsSharp className="text-gray-500 group-hover:text-[var(--gold-accent)]" size={18} />
-                      <span className="font-medium">Mi Perfil</span>
+                      <span className="font-medium">My Profile</span>
                     </button>
                   </MenuItem>
                   
@@ -129,7 +129,7 @@ function NavbarAdmin() {
                     <button onClick={ () => { logOut(); navigate('/'); }} 
                             className="group flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-red-600 hover:bg-red-50 data-focus:bg-red-50 transition-all">
                       <IoLogOutOutline className="text-red-500" size={18} />
-                      <span className="font-semibold">Cerrar Sesión</span>
+                      <span className="font-semibold">Log Out</span>
                     </button>
                   </MenuItem>
                 </MenuItems>

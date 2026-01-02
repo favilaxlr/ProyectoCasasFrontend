@@ -32,7 +32,7 @@ function PropertyCard({ property, compact = false }) {
               />
             ) : (
               <div className="w-28 h-28 bg-gray-200 rounded-lg flex items-center justify-center">
-                <span className="text-gray-400 text-xs">Sin foto</span>
+                <span className="text-gray-400 text-xs">No photo</span>
               </div>
             )}
           </div>
@@ -50,9 +50,9 @@ function PropertyCard({ property, compact = false }) {
                       property.businessMode === 'rent' ? 'bg-green-100 text-green-800' :
                       'bg-gradient-to-r from-purple-100 via-blue-100 to-green-100 text-purple-800'
                     }`}>
-                      {property.businessMode === 'sale' && <><IoCardSharp className="mr-1" />Venta</>}
-                      {property.businessMode === 'rent' && <><IoKeySharp className="mr-1" />Renta</>}
-                      {property.businessMode === 'both' && <><IoBusinessSharp className="mr-1" />Renta/Venta</>}
+                      {property.businessMode === 'sale' && <><IoCardSharp className="mr-1" />Sale</>}
+                      {property.businessMode === 'rent' && <><IoKeySharp className="mr-1" />Rent</>}
+                      {property.businessMode === 'both' && <><IoBusinessSharp className="mr-1" />Rent/Sale</>}
                     </span>
                   )}
                   
@@ -95,9 +95,9 @@ function PropertyCard({ property, compact = false }) {
                   property.status === 'VENDIDA' ? 'bg-red-100 text-red-800 border border-red-300' :
                   'bg-gray-100 text-gray-800'
                 }`}>
-                  {property.status === 'DISPONIBLE' ? 'Disponible' :
-                   property.status === 'EN_CONTRATO' ? 'En Contrato' :
-                   property.status === 'VENDIDA' ? 'Vendida' :
+                  {property.status === 'DISPONIBLE' ? 'Available' :
+                   property.status === 'EN_CONTRATO' ? 'Under Contract' :
+                   property.status === 'VENDIDA' ? 'Sold' :
                    property.status}
                 </span>
               )}
@@ -126,31 +126,31 @@ function PropertyCard({ property, compact = false }) {
         {/* Botones separados debajo - Mejor visibilidad */}
         <div className="flex gap-2 pt-3 border-t border-gray-200">
           {/* Botón Ver Detalles - Visible para todos */}
-          <Tooltip title="Ver detalles completos">
+          <Tooltip title="View full details">
             <Link
               to={'/properties/' + property._id}
               className='flex-1 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors flex items-center justify-center gap-2'
               onClick={(e) => e.stopPropagation()}
             >
               <IoEyeSharp size={16} />
-              Ver detalles
+              View details
             </Link>
           </Tooltip>
           
           {/* Botones de admin/co-admin */}
           {(isAdmin || isCoAdmin) && (
             <>
-              <Tooltip title="Editar propiedad">
+              <Tooltip title="Edit property">
                 <Link
                   to={'/properties/' + property._id}
                   className='bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors flex items-center justify-center gap-1'
                   onClick={(e) => e.stopPropagation()}
                 >
                   <IoPencilSharp size={16} />
-                  Editar
+                  Edit
                 </Link>
               </Tooltip>
-              <Tooltip title="Eliminar propiedad">
+              <Tooltip title="Delete property">
                 <button
                   className='bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors flex items-center justify-center gap-1'
                   onClick={(e) => {
@@ -159,7 +159,7 @@ function PropertyCard({ property, compact = false }) {
                   }}
                 >
                   <IoTrashBinSharp size={16} />
-                  Eliminar
+                  Delete
                 </button>
               </Tooltip>
             </>
@@ -177,14 +177,14 @@ function PropertyCard({ property, compact = false }) {
         </h1>
         {property.availability?.isAvailable && (
           <span className="bg-green-500 text-white px-2 py-1 rounded text-xs">
-            Disponible
+            Available
           </span>
         )}
       </header>
 
       {(isAdmin || isCoAdmin) && (
         <div className="flex gap-x-2 justify-end border-b-2 border-b-slate-200 mb-4 pb-2">
-          <Tooltip title="Vista previa">
+          <Tooltip title="Preview">
             <button
               className='bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm'
               onClick={() => setShowPreview(true)}
@@ -192,7 +192,7 @@ function PropertyCard({ property, compact = false }) {
               <IoEyeSharp />
             </button>
           </Tooltip>
-          <Tooltip title="Eliminar">
+          <Tooltip title="Delete">
             <button
               className='bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm'
               onClick={() => {
@@ -202,7 +202,7 @@ function PropertyCard({ property, compact = false }) {
               <IoTrashBinSharp />
             </button>
           </Tooltip>
-          <Tooltip title="Actualizar">
+          <Tooltip title="Update">
             <button className='bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg text-sm'>
               <Link to={'/properties/' + property._id}>
                 <IoPencilSharp />
@@ -222,7 +222,7 @@ function PropertyCard({ property, compact = false }) {
           />
         ) : (
           <div className="w-full h-48 bg-gray-600 rounded-lg flex items-center justify-center">
-            <span className="text-gray-400">Sin imagen</span>
+            <span className="text-gray-400">No image</span>
           </div>
         )}
       </div>
@@ -231,7 +231,7 @@ function PropertyCard({ property, compact = false }) {
       {(isAdmin || isCoAdmin) && property.createdBy && (
         <div className="bg-gray-700 px-3 py-2 rounded-lg mb-4 text-xs">
           <p className="text-gray-300">
-            Subida por: <span className="font-semibold text-[var(--gold-accent)]">{property.createdBy.username}</span>
+            Uploaded by: <span className="font-semibold text-[var(--gold-accent)]">{property.createdBy.username}</span>
           </p>
         </div>
       )}
@@ -240,11 +240,11 @@ function PropertyCard({ property, compact = false }) {
       {(isAdmin || isCoAdmin) && property.lastModifiedBy && (
         <div className="bg-yellow-900/30 px-3 py-2 rounded-lg mb-4 text-xs border-l-2 border-yellow-500">
           <p className="text-yellow-200">
-            Modificada por: <span className="font-semibold text-yellow-400">{property.lastModifiedBy.username}</span>
+            Modified by: <span className="font-semibold text-yellow-400">{property.lastModifiedBy.username}</span>
           </p>
           {property.updatedAt && (
             <p className="text-yellow-300/70 text-xs mt-1">
-              {new Date(property.updatedAt).toLocaleString('es-MX', {
+              {new Date(property.updatedAt).toLocaleString('en-US', {
                 year: 'numeric',
                 month: 'short',
                 day: 'numeric',
@@ -269,7 +269,7 @@ function PropertyCard({ property, compact = false }) {
           <div className="flex items-center">
             <IoBedSharp className="mr-2" />
             <span className="text-sm">
-              {property.details?.bedrooms} hab, {property.details?.bathrooms} baños
+              {property.details?.bedrooms} beds, {property.details?.bathrooms} baths
             </span>
           </div>
           {property.details?.squareFeet && (
@@ -293,7 +293,7 @@ function PropertyCard({ property, compact = false }) {
           )}
           {property.details?.furnished && (
             <span className="bg-purple-600 text-white px-2 py-1 rounded">
-              Amueblado
+              Furnished
             </span>
           )}
         </div>
@@ -311,10 +311,10 @@ function PropertyCard({ property, compact = false }) {
             
             <div className="flex items-center justify-between mt-2">
               <p className="text-xs text-slate-400">
-                {property.details?.propertyType === 'house' ? 'Casa' :
-                 property.details?.propertyType === 'apartment' ? 'Apartamento' :
-                 property.details?.propertyType === 'condo' ? 'Condominio' :
-                 property.details?.propertyType === 'townhouse' ? 'Casa Adosada' :
+              {property.details?.propertyType === 'house' ? 'House' :
+               property.details?.propertyType === 'apartment' ? 'Apartment' :
+               property.details?.propertyType === 'condo' ? 'Condo' :
+               property.details?.propertyType === 'townhouse' ? 'Townhouse' :
                  property.details?.propertyType}
               </p>
               
@@ -339,7 +339,7 @@ function PropertyCard({ property, compact = false }) {
             to={`/properties/${property._id}`}
             className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm transition-colors"
           >
-            Ver detalles
+            View details
           </Link>
         </div>
       </div>

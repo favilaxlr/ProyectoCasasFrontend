@@ -80,7 +80,7 @@ function LoginPage() {
                   className={`w-full px-4 py-3 bg-gray-50 border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--gold-accent)] focus:border-transparent transition-all duration-300 group-hover:bg-gray-100 ${
                     errors.email ? 'border-red-500 bg-red-50' : 'border-gray-200'
                   }`}
-                  placeholder="tu@email.com"
+                  placeholder="your@email.com"
                   {...register("email")}
                 />
                 <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">

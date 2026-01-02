@@ -26,28 +26,28 @@ function Navbar() {
           to='/properties' 
           className="text-white hover:text-[var(--gold-accent)] font-medium text-base md:text-lg transition-all duration-300 hover:scale-105 relative group"
         >
-          Ver Propiedades
+          View Properties
           <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-[var(--gold-accent)] transition-all duration-300 group-hover:w-full"></span>
         </Link>
         
         <div className="flex flex-col md:flex-row items-center space-y-2 md:space-y-0 md:space-x-3">
-          <Tooltip title="Iniciar Sesión" arrow>
+          <Tooltip title="Sign In" arrow>
             <Link 
               to='/login'
               className="flex items-center space-x-2 btn-primary px-4 md:px-6 py-2 md:py-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105 hover:shadow-lg text-sm md:text-base"
             >
               <IoLogIn size={18} className="md:w-5 md:h-5" />
-              <span>Iniciar Sesión</span>
+              <span>Sign In</span>
             </Link>
           </Tooltip>
           
-          <Tooltip title="Registrarse" arrow>
+          <Tooltip title="Register" arrow>
             <Link 
               to='/register'
               className="flex items-center space-x-2 btn-secondary px-4 md:px-6 py-2 md:py-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105 hover:shadow-lg text-sm md:text-base"
             >
               <IoPersonAdd size={18} className="md:w-5 md:h-5" />
-              <span>Registrarse</span>
+              <span>Register</span>
             </Link>
           </Tooltip>
         </div>

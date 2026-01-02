@@ -89,7 +89,7 @@ function ProfilePage() {
   const handleChangePassword = async () => {
     // Validaciones
     if (!passwordData.currentPassword) {
-      toast.error('Debes ingresar tu contraseña actual');
+      toast.error('You must enter your current password');
       return;
     }
     if (passwordData.newPassword.length < 8) {
