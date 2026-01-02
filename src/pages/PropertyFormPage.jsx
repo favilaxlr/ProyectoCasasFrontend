@@ -34,49 +34,49 @@ function PropertyFormPage() {
 
     // Comodidades predefinidas comunes
     const availableAmenities = [
-        { id: 'pool', label: 'Piscina', icon: <IoWaterSharp /> },
-        { id: 'gym', label: 'Gimnasio', icon: <IoSettingsSharp /> },
-        { id: 'security', label: 'Seguridad 24/7', icon: <IoWarningSharp /> },
-        { id: 'garden', label: 'Jardín', icon: <IoSparklesSharp /> },
-        { id: 'balcony', label: 'Balcón', icon: <IoHomeSharp /> },
-        { id: 'laundry', label: 'Lavandería', icon: <IoSettingsSharp /> },
-        { id: 'ac', label: 'Aire Acondicionado', icon: <IoSettingsSharp /> },
-        { id: 'heating', label: 'Calefacción', icon: <IoSettingsSharp /> },
+        { id: 'pool', label: 'Pool', icon: <IoWaterSharp /> },
+        { id: 'gym', label: 'Gym', icon: <IoSettingsSharp /> },
+        { id: 'security', label: '24/7 Security', icon: <IoWarningSharp /> },
+        { id: 'garden', label: 'Garden', icon: <IoSparklesSharp /> },
+        { id: 'balcony', label: 'Balcony', icon: <IoHomeSharp /> },
+        { id: 'laundry', label: 'Laundry', icon: <IoSettingsSharp /> },
+        { id: 'ac', label: 'Air Conditioning', icon: <IoSettingsSharp /> },
+        { id: 'heating', label: 'Heating', icon: <IoSettingsSharp /> },
         { id: 'internet', label: 'Internet', icon: <IoSettingsSharp /> },
-        { id: 'elevator', label: 'Elevador', icon: <IoSettingsSharp /> },
+        { id: 'elevator', label: 'Elevator', icon: <IoSettingsSharp /> },
     ];
 
     const steps = [
-        { number: 0, title: 'Modalidad de Negocio', icon: <IoBusinessSharp /> },
-        { number: 1, title: 'Información Básica', icon: <IoDocumentTextSharp /> },
-        { number: 2, title: 'Ubicación', icon: <IoLocationSharp /> },
-        { number: 3, title: 'Detalles de la Propiedad', icon: <IoHomeSharp /> },
-        { number: 4, title: businessMode === 'sale' ? 'Información de Venta' : 
-                          businessMode === 'rent' ? 'Información de Renta' : 
-                          'Información de Venta y Renta', icon: <IoCashSharp /> },
-        { number: 5, title: 'Imágenes', icon: <IoCameraSharp /> }
+        { number: 0, title: 'Business Mode', icon: <IoBusinessSharp /> },
+        { number: 1, title: 'Basic Information', icon: <IoDocumentTextSharp /> },
+        { number: 2, title: 'Location', icon: <IoLocationSharp /> },
+        { number: 3, title: 'Property Details', icon: <IoHomeSharp /> },
+        { number: 4, title: businessMode === 'sale' ? 'Sale Information' : 
+                          businessMode === 'rent' ? 'Rent Information' : 
+                          'Sale and Rent Information', icon: <IoCashSharp /> },
+        { number: 5, title: 'Images', icon: <IoCameraSharp /> }
     ];
 
     // Modalidades de negocio disponibles
     const businessModes = [
         {
             value: 'sale',
-            title: 'Venta',
-            description: 'Propiedad exclusivamente para venta',
+            title: 'Sale',
+            description: 'Property exclusively for sale',
             icon: <IoCardSharp />,
             gradient: 'from-blue-500 to-blue-600'
         },
         {
             value: 'rent',
-            title: 'Renta',
-            description: 'Propiedad exclusivamente para renta',
+            title: 'Rent',
+            description: 'Property exclusively for rent',
             icon: <IoKeySharp />,
             gradient: 'from-green-500 to-green-600'
         },
         {
             value: 'both',
-            title: 'Renta/Venta',
-            description: 'Propiedad disponible para renta o venta',
+            title: 'Rent/Sale',
+            description: 'Property available for rent or sale',
             icon: <IoBusinessSharp />,
             gradient: 'from-purple-500 via-blue-500 to-green-500'
         }
@@ -284,20 +284,20 @@ function PropertyFormPage() {
         switch(currentStep) {
             case 0:
                 if (!businessMode) {
-                    toast.error('Por favor selecciona una modalidad de negocio');
+                    toast.error('Please select a business mode');
                     return false;
                 }
                 break;
             case 1:
                 if (!values.title || !values.description) {
-                    toast.error('Por favor completa todos los campos requeridos');
+                    toast.error('Please complete all required fields');
                     return false;
                 }
                 break;
             case 2:
                 if (!values.address?.street || !values.address?.city || 
                     !values.address?.state || !values.address?.zipCode) {
-                    toast.error('Por favor completa la dirección completa');
+                    toast.error('Please complete the full address');
                     return false;
                 }
                 break;
@@ -305,27 +305,27 @@ function PropertyFormPage() {
                 if (!values.details?.propertyType || 
                     values.details?.bedrooms === undefined || 
                     values.details?.bathrooms === undefined) {
-                    toast.error('Por favor completa los detalles de la propiedad');
+                    toast.error('Please complete the property details');
                     return false;
                 }
                 break;
             case 4:
                 // Validar precios según modalidad
                 if (businessMode === 'sale' && !values.price?.sale) {
-                    toast.error('Por favor ingresa el precio de venta');
+                    toast.error('Please enter the sale price');
                     return false;
                 }
                 if (businessMode === 'rent' && (!values.price?.monthlyRent || !values.price?.deposit)) {
-                    toast.error('Por favor completa los datos de renta');
+                    toast.error('Please complete the rent information');
                     return false;
                 }
                 if (businessMode === 'both') {
                     if (!values.price?.sale) {
-                        toast.error('Por favor ingresa el precio de venta');
+                        toast.error('Please enter the sale price');
                         return false;
                     }
                     if (!values.price?.monthlyRent || !values.price?.deposit) {
-                        toast.error('Por favor completa los datos de renta');
+                        toast.error('Please complete the rent information');
                         return false;
                     }
                 }
@@ -502,18 +502,18 @@ function PropertyFormPage() {
                             <div className="animate-fade-in space-y-6">
                                 <div className="border-b pb-4 mb-6">
                                     <h2 className="text-2xl font-bold text-[var(--charcoal)] flex items-center">
-                                        <IoDocumentTextSharp className="mr-3" /> Información Básica
+                                        <IoDocumentTextSharp className="mr-3" /> Basic Information
                                     </h2>
-                                    <p className="text-gray-600 mt-1">Datos principales de la propiedad</p>
+                                    <p className="text-gray-600 mt-1">Main property data</p>
                                 </div>
 
                                 <div>
                                     <label className="block text-sm font-semibold mb-2 text-gray-700">
-                                        Título de la Propiedad *
+                                        Property Title *
                                     </label>
                                     <input
-                                        {...register('title', { required: 'El título es requerido' })}
-                                        placeholder="Ej: Casa moderna en zona residencial"
+                                        {...register('title', { required: 'Title is required' })}
+                                        placeholder="E.g: Modern house in residential area"
                                         className={`w-full border-2 rounded-xl px-4 py-3 transition-all focus:ring-2 focus:ring-[var(--gold-accent)] focus:border-[var(--gold-accent)] ${
                                             errors.title ? 'border-red-500' : 'border-gray-200'
                                         }`}
@@ -527,15 +527,15 @@ function PropertyFormPage() {
 
                                 <div>
                                     <label className="block text-sm font-semibold mb-2 text-gray-700">
-                                        Descripción *
+                                        Description *
                                     </label>
                                     <textarea
                                         {...register('description', { 
-                                            required: 'La descripción es requerida',
-                                            minLength: { value: 10, message: 'Mínimo 10 caracteres' }
+                                            required: 'Description is required',
+                                            minLength: { value: 10, message: 'Minimum 10 characters' }
                                         })}
                                         rows="6"
-                                        placeholder="Describe la propiedad, sus características principales y lo que la hace especial..."
+                                        placeholder="Describe the property, its main features and what makes it special..."
                                         className={`w-full border-2 rounded-xl px-4 py-3 transition-all focus:ring-2 focus:ring-[var(--gold-accent)] focus:border-[var(--gold-accent)] ${
                                             errors.description ? 'border-red-500' : 'border-gray-200'
                                         }`}
@@ -553,19 +553,19 @@ function PropertyFormPage() {
                             <div className="animate-fade-in space-y-6">
                                 <div className="border-b pb-4 mb-6">
                                     <h2 className="text-2xl font-bold text-[var(--charcoal)] flex items-center">
-                                        <IoLocationSharp className="mr-3" /> Ubicación
+                                        <IoLocationSharp className="mr-3" /> Location
                                     </h2>
-                                    <p className="text-gray-600 mt-1">Dirección completa de la propiedad</p>
+                                    <p className="text-gray-600 mt-1">Complete property address</p>
                                 </div>
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div className="md:col-span-2">
                                         <label className="block text-sm font-semibold mb-2 text-gray-700">
-                                            Calle y Número *
+                                            Street and Number *
                                         </label>
                                         <input
-                                            {...register('address.street', { required: 'La calle es requerida' })}
-                                            placeholder="Ej: Calle Principal #123"
+                                            {...register('address.street', { required: 'Street is required' })}
+                                            placeholder="E.g: Main Street #123"
                                             className={`w-full border-2 rounded-xl px-4 py-3 transition-all focus:ring-2 focus:ring-[var(--gold-accent)] focus:border-[var(--gold-accent)] ${
                                                 errors.address?.street ? 'border-red-500' : 'border-gray-200'
                                             }`}
@@ -579,11 +579,11 @@ function PropertyFormPage() {
 
                                     <div>
                                         <label className="block text-sm font-semibold mb-2 text-gray-700">
-                                            Ciudad *
+                                            City *
                                         </label>
                                         <input
-                                            {...register('address.city', { required: 'La ciudad es requerida' })}
-                                            placeholder="Ej: Miami"
+                                            {...register('address.city', { required: 'City is required' })}
+                                            placeholder="E.g: Miami"
                                             className={`w-full border-2 rounded-xl px-4 py-3 transition-all focus:ring-2 focus:ring-[var(--gold-accent)] focus:border-[var(--gold-accent)] ${
                                                 errors.address?.city ? 'border-red-500' : 'border-gray-200'
                                             }`}
@@ -592,11 +592,11 @@ function PropertyFormPage() {
 
                                     <div>
                                         <label className="block text-sm font-semibold mb-2 text-gray-700">
-                                            Estado *
+                                            State *
                                         </label>
                                         <input
-                                            {...register('address.state', { required: 'El estado es requerido' })}
-                                            placeholder="Ej: Florida"
+                                            {...register('address.state', { required: 'State is required' })}
+                                            placeholder="E.g: Florida"
                                             className={`w-full border-2 rounded-xl px-4 py-3 transition-all focus:ring-2 focus:ring-[var(--gold-accent)] focus:border-[var(--gold-accent)] ${
                                                 errors.address?.state ? 'border-red-500' : 'border-gray-200'
                                             }`}
@@ -605,11 +605,11 @@ function PropertyFormPage() {
 
                                     <div>
                                         <label className="block text-sm font-semibold mb-2 text-gray-700">
-                                            Código Postal *
+                                            Zip Code *
                                         </label>
                                         <input
-                                            {...register('address.zipCode', { required: 'El código postal es requerido' })}
-                                            placeholder="Ej: 33101"
+                                            {...register('address.zipCode', { required: 'Zip code is required' })}
+                                            placeholder="E.g: 33101"
                                             className={`w-full border-2 rounded-xl px-4 py-3 transition-all focus:ring-2 focus:ring-[var(--gold-accent)] focus:border-[var(--gold-accent)] ${
                                                 errors.address?.zipCode ? 'border-red-500' : 'border-gray-200'
                                             }`}
@@ -619,7 +619,7 @@ function PropertyFormPage() {
 
                                 <div className="mt-6">
                                     <label className="flex items-center text-sm font-semibold mb-3 text-gray-700">
-                                        <IoMapSharp className="mr-2" /> Ubicación en el Mapa
+                                        <IoMapSharp className="mr-2" /> Location on Map
                                     </label>
                                     <div className="border-2 border-gray-200 rounded-xl overflow-hidden">
                                         <LocationPicker
@@ -676,7 +676,7 @@ function PropertyFormPage() {
                                         />
                                     </div>
                                     <p className="text-xs text-gray-500 mt-2 flex items-center">
-                                        <IoInformationCircleSharp className="mr-1" /> Haz clic en el mapa para seleccionar la ubicación exacta
+                                        <IoInformationCircleSharp className="mr-1" /> Click on the map to select the exact location
                                     </p>
                                 </div>
                             </div>
@@ -686,7 +686,7 @@ function PropertyFormPage() {
                             <div className="animate-fade-in space-y-6">
                                 <div className="border-b pb-4 mb-6">
                                     <h2 className="text-2xl font-bold text-[var(--charcoal)] flex items-center">
-                                        <IoHomeSharp className="mr-3" /> Detalles de la Propiedad
+                                        <IoHomeSharp className="mr-3" /> Property Details
                                     </h2>
                                     <p className="text-gray-600 mt-1">Características y especificaciones</p>
                                 </div>
@@ -726,13 +726,13 @@ function PropertyFormPage() {
                                 <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
                                     <div>
                                         <label className="flex items-center text-sm font-semibold mb-2 text-gray-700">
-                                            <IoBedSharp className="mr-2" /> Habitaciones *
+                                            <IoBedSharp className="mr-2" /> Bedrooms *
                                         </label>
                                         <input
                                             type="number"
                                             {...register('details.bedrooms', { 
-                                                required: 'Requerido',
-                                                min: { value: 0, message: 'Mínimo 0' }
+                                                required: 'Required',
+                                                min: { value: 0, message: 'Minimum 0' }
                                             })}
                                             placeholder="3"
                                             className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 transition-all focus:ring-2 focus:ring-[var(--gold-accent)] focus:border-[var(--gold-accent)]"
@@ -741,14 +741,14 @@ function PropertyFormPage() {
 
                                     <div>
                                         <label className="flex items-center text-sm font-semibold mb-2 text-gray-700">
-                                            <IoWaterSharp className="mr-2" /> Baños *
+                                            <IoWaterSharp className="mr-2" /> Bathrooms *
                                         </label>
                                         <input
                                             type="number"
                                             step="0.5"
                                             {...register('details.bathrooms', { 
-                                                required: 'Requerido',
-                                                min: { value: 0, message: 'Mínimo 0' }
+                                                required: 'Required',
+                                                min: { value: 0, message: 'Minimum 0' }
                                             })}
                                             placeholder="2"
                                             className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 transition-all focus:ring-2 focus:ring-[var(--gold-accent)] focus:border-[var(--gold-accent)]"
@@ -757,7 +757,7 @@ function PropertyFormPage() {
 
                                     <div>
                                         <label className="flex items-center text-sm font-semibold mb-2 text-gray-700">
-                                            <IoResizeSharp className="mr-2" /> Pies Cuadrados
+                                            <IoResizeSharp className="mr-2" /> Square Feet
                                         </label>
                                         <input
                                             type="number"
@@ -769,7 +769,7 @@ function PropertyFormPage() {
 
                                     <div>
                                         <label className="flex items-center text-sm font-semibold mb-2 text-gray-700">
-                                            <IoCalendarSharp className="mr-2" /> Año Construcción
+                                            <IoCalendarSharp className="mr-2" /> Year Built
                                         </label>
                                         <input
                                             type="number"
@@ -792,7 +792,7 @@ function PropertyFormPage() {
                                                 className="w-5 h-5 text-[var(--gold-accent)] rounded focus:ring-[var(--gold-accent)]"
                                             />
                                             <IoCarSharp className="ml-3 mr-2" />
-                                            <span className="text-sm font-medium">Estacionamiento</span>
+                                            <span className="text-sm font-medium">Garage</span>
                                         </label>
 
                                         <label className="flex items-center p-4 border-2 border-gray-200 rounded-xl cursor-pointer hover:border-[var(--gold-accent)] transition-all">
@@ -802,7 +802,7 @@ function PropertyFormPage() {
                                                 className="w-5 h-5 text-[var(--gold-accent)] rounded focus:ring-[var(--gold-accent)]"
                                             />
                                             <IoPawSharp className="ml-3 mr-2" />
-                                            <span className="text-sm font-medium">Acepta Mascotas</span>
+                                            <span className="text-sm font-medium">Pet Friendly</span>
                                         </label>
 
                                         <label className="flex items-center p-4 border-2 border-gray-200 rounded-xl cursor-pointer hover:border-[var(--gold-accent)] transition-all">
@@ -812,7 +812,7 @@ function PropertyFormPage() {
                                                 className="w-5 h-5 text-[var(--gold-accent)] rounded focus:ring-[var(--gold-accent)]"
                                             />
                                             <IoRestaurantSharp className="ml-3 mr-2" />
-                                            <span className="text-sm font-medium">Amueblado</span>
+                                            <span className="text-sm font-medium">Furnished</span>
                                         </label>
                                     </div>
                                 </div>
@@ -897,19 +897,19 @@ function PropertyFormPage() {
                                         {(businessMode === 'sale' || businessMode === 'both') && (
                                     <div className="bg-blue-50 border-2 border-blue-200 rounded-2xl p-6 space-y-6">
                                         <h3 className="text-xl font-bold text-blue-800 flex items-center">
-                                            <IoCardSharp className="mr-2" /> Datos de Venta
+                                            <IoCardSharp className="mr-2" /> Sale Information
                                         </h3>
                                         
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                             <div>
                                                 <label className="block text-sm font-semibold mb-2 text-gray-700">
-                                                    Precio de Venta (USD) *
+                                                    Sale Price (USD) *
                                                 </label>
                                                 <input
                                                     type="number"
                                                     {...register('price.sale', { 
-                                                        required: businessMode !== 'rent' ? 'El precio de venta es requerido' : false,
-                                                        min: { value: 1, message: 'Debe ser mayor a 0' }
+                                                        required: businessMode !== 'rent' ? 'Sale price is required' : false,
+                                                        min: { value: 1, message: 'Must be greater than 0' }
                                                     })}
                                                     placeholder="250000"
                                                     className={`w-full border-2 rounded-xl px-4 py-3 transition-all focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
@@ -925,7 +925,7 @@ function PropertyFormPage() {
 
                                             <div>
                                                 <label className="block text-sm font-semibold mb-2 text-gray-700">
-                                                    Impuestos y Cargos Anuales (USD)
+                                                    Annual Taxes and Fees (USD)
                                                 </label>
                                                 <input
                                                     type="number"
@@ -933,17 +933,17 @@ function PropertyFormPage() {
                                                     placeholder="3000"
                                                     className="w-full border-2 border-gray-300 rounded-xl px-4 py-3 transition-all focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                                                 />
-                                                <p className="text-xs text-gray-500 mt-1">Impuestos prediales, HOA, etc.</p>
+                                                <p className="text-xs text-gray-500 mt-1">Property taxes, HOA, etc.</p>
                                             </div>
 
                                             <div className="md:col-span-2">
                                                 <label className="block text-sm font-semibold mb-2 text-gray-700">
-                                                    Condiciones de Escrituración
+                                                    Closing Conditions
                                                 </label>
                                                 <textarea
                                                     {...register('price.deedConditions')}
                                                     rows="3"
-                                                    placeholder="Ej: Se requiere crédito hipotecario, acepta financiamiento..."
+                                                    placeholder="E.g: Mortgage credit required, financing accepted..."
                                                     className="w-full border-2 border-gray-300 rounded-xl px-4 py-3 transition-all focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                                                 />
                                             </div>
@@ -955,19 +955,19 @@ function PropertyFormPage() {
                                 {(businessMode === 'rent' || businessMode === 'both') && (
                                     <div className="bg-green-50 border-2 border-green-200 rounded-2xl p-6 space-y-6">
                                         <h3 className="text-xl font-bold text-green-800 flex items-center">
-                                            <IoKeySharp className="mr-2" /> Datos de Renta
+                                            <IoKeySharp className="mr-2" /> Rent Information
                                         </h3>
                                         
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                             <div>
                                                 <label className="block text-sm font-semibold mb-2 text-gray-700">
-                                                    Renta Mensual (USD) *
+                                                    Monthly Rent (USD) *
                                                 </label>
                                                 <input
                                                     type="number"
                                                     {...register('price.monthlyRent', { 
-                                                        required: businessMode !== 'sale' ? 'La renta mensual es requerida' : false,
-                                                        min: { value: 1, message: 'Debe ser mayor a 0' }
+                                                        required: businessMode !== 'sale' ? 'Monthly rent is required' : false,
+                                                        min: { value: 1, message: 'Must be greater than 0' }
                                                     })}
                                                     placeholder="1500"
                                                     className={`w-full border-2 rounded-xl px-4 py-3 transition-all focus:ring-2 focus:ring-green-500 focus:border-green-500 ${
@@ -983,13 +983,13 @@ function PropertyFormPage() {
 
                                             <div>
                                                 <label className="block text-sm font-semibold mb-2 text-gray-700">
-                                                    Depósito de Garantía (USD) *
+                                                    Security Deposit (USD) *
                                                 </label>
                                                 <input
                                                     type="number"
                                                     {...register('price.deposit', { 
-                                                        required: businessMode !== 'sale' ? 'El depósito es requerido' : false,
-                                                        min: { value: 0, message: 'Debe ser mayor o igual a 0' }
+                                                        required: businessMode !== 'sale' ? 'Security deposit is required' : false,
+                                                        min: { value: 0, message: 'Must be greater than or equal to 0' }
                                                     })}
                                                     placeholder="1500"
                                                     className={`w-full border-2 rounded-xl px-4 py-3 transition-all focus:ring-2 focus:ring-green-500 focus:border-green-500 ${
@@ -1005,7 +1005,7 @@ function PropertyFormPage() {
 
                                             <div>
                                                 <label className="block text-sm font-semibold mb-2 text-gray-700">
-                                                    Duración Mínima del Contrato (meses)
+                                                    Minimum Lease Duration (months)
                                                 </label>
                                                 <input
                                                     type="number"
@@ -1017,7 +1017,7 @@ function PropertyFormPage() {
 
                                             <div>
                                                 <label className="block text-sm font-semibold mb-2 text-gray-700">
-                                                    Mantenimiento Mensual (USD)
+                                                    Monthly Maintenance (USD)
                                                 </label>
                                                 <input
                                                     type="number"
@@ -1025,17 +1025,17 @@ function PropertyFormPage() {
                                                     placeholder="150"
                                                     className="w-full border-2 border-gray-300 rounded-xl px-4 py-3 transition-all focus:ring-2 focus:ring-green-500 focus:border-green-500"
                                                 />
-                                                <p className="text-xs text-gray-500 mt-1">Cuota de mantenimiento, si aplica</p>
+                                                <p className="text-xs text-gray-500 mt-1">Maintenance fee, if applicable</p>
                                             </div>
 
                                             <div className="md:col-span-2">
                                                 <label className="block text-sm font-semibold mb-2 text-gray-700">
-                                                    Condiciones Adicionales de Renta
+                                                    Additional Rent Conditions
                                                 </label>
                                                 <textarea
                                                     {...register('price.leaseConditions')}
                                                     rows="3"
-                                                    placeholder="Ej: Se requiere aval, referencias laborales, sin mascotas..."
+                                                    placeholder="E.g: Co-signer required, employment references, no pets..."
                                                     className="w-full border-2 border-gray-300 rounded-xl px-4 py-3 transition-all focus:ring-2 focus:ring-green-500 focus:border-green-500"
                                                 />
                                             </div>
@@ -1068,14 +1068,14 @@ function PropertyFormPage() {
                             <div className="animate-fade-in space-y-6">
                                 <div className="border-b pb-4 mb-6">
                                     <h2 className="text-2xl font-bold text-[var(--charcoal)] flex items-center">
-                                        <IoCameraSharp className="mr-3" /> Imágenes de la Propiedad
+                                        <IoCameraSharp className="mr-3" /> Property Images
                                     </h2>
-                                    <p className="text-gray-600 mt-1">Las imágenes ayudan a atraer más interesados</p>
+                                    <p className="text-gray-600 mt-1">Images help attract more interested parties</p>
                                 </div>
 
                                 {isEditing && property && (
                                     <div className="mb-6">
-                                        <h3 className="text-lg font-semibold mb-3 text-gray-700">Imágenes Actuales</h3>
+                                        <h3 className="text-lg font-semibold mb-3 text-gray-700">Current Images</h3>
                                         <PropertyGallery 
                                             property={property} 
                                             isEditable={true}
@@ -1103,13 +1103,13 @@ function PropertyFormPage() {
                                             <IoHelpCircleSharp className="text-2xl text-blue-600" />
                                         </div>
                                         <div>
-                                            <p className="text-sm font-medium text-blue-800">Consejos para mejores imágenes:</p>
+                                            <p className="text-sm font-medium text-blue-800">Tips for better images:</p>
                                             <ul className="text-xs text-blue-700 mt-2 space-y-1">
-                                                <li>• Usa buena iluminación natural</li>
-                                                <li>• Muestra diferentes ángulos de cada habitación</li>
-                                                <li>• Incluye áreas exteriores si las hay</li>
-                                                <li>• Usa los botones para reordenar las imágenes</li>
-                                                <li>• Marca con la estrella la imagen que quieres que aparezca primero</li>
+                                                <li>• Use good natural lighting</li>
+                                                <li>• Show different angles of each room</li>
+                                                <li>• Include outdoor areas if available</li>
+                                                <li>• Use the buttons to reorder images</li>
+                                                <li>• Mark with the star the image you want to appear first</li>
                                             </ul>
                                         </div>
                                     </div>
@@ -1130,7 +1130,7 @@ function PropertyFormPage() {
                             }`}
                         >
                             <IoArrowBackSharp className="mr-2" />
-                            Anterior
+                            Previous
                         </button>
 
                         <div className="flex gap-3">
@@ -1140,7 +1140,7 @@ function PropertyFormPage() {
                                 className="px-6 py-3 bg-gray-200 text-gray-700 rounded-xl font-medium hover:bg-gray-300 transition-all flex items-center"
                             >
                                 <IoCloseSharp className="mr-2" />
-                                Cancelar
+                                Cancel
                             </button>
 
                             {currentStep < steps.length ? (
@@ -1149,7 +1149,7 @@ function PropertyFormPage() {
                                     onClick={nextStep}
                                     className="px-8 py-3 bg-[var(--gold-accent)] text-white rounded-xl font-medium hover:bg-[var(--charcoal)] transition-all flex items-center shadow-lg"
                                 >
-                                    Siguiente
+                                    Next
                                     <IoArrowForwardSharp className="ml-2" />
                                 </button>
                             ) : (
@@ -1161,12 +1161,12 @@ function PropertyFormPage() {
                                     {loading ? (
                                         <>
                                             <div className="loading-spinner h-5 w-5 mr-2 border-white"></div>
-                                            Guardando...
+                                            Saving...
                                         </>
                                     ) : (
                                         <>
                                             <IoSaveSharp className="mr-2" />
-                                            {isEditing ? 'Actualizar Propiedad' : 'Crear Propiedad'}
+                                            {isEditing ? 'Update Property' : 'Create Property'}
                                         </>
                                     )}
                                 </button>

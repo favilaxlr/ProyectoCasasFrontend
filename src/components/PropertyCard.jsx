@@ -274,7 +274,7 @@ function PropertyCard({ property, compact = false }) {
           </div>
           {property.details?.squareFeet && (
             <span className="text-xs text-slate-400">
-              {property.details.squareFeet} pies²
+              {property.details.squareFeet} sq ft
             </span>
           )}
         </div>
@@ -283,7 +283,7 @@ function PropertyCard({ property, compact = false }) {
         <div className="flex flex-wrap gap-2 text-xs">
           {property.details?.parking && (
             <span className="bg-green-600 text-white px-2 py-1 rounded">
-              Estacionamiento
+              Garage
             </span>
           )}
           {property.details?.petFriendly && (

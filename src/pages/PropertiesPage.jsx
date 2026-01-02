@@ -153,7 +153,7 @@ function PropertiesPage() {
                                     {property.details?.squareFeet && (
                                         <div className="flex justify-between">
                                             <span>Área:</span>
-                                            <span className="font-semibold">{property.details.squareFeet.toLocaleString()} pies²</span>
+                                            <span className="font-semibold">{property.details.squareFeet.toLocaleString()} sq ft</span>
                                         </div>
                                     )}
                                     {property.price?.deposit && (
@@ -171,7 +171,7 @@ function PropertiesPage() {
                                 <div className="flex flex-wrap gap-1 mb-3">
                                     {property.details?.parking && (
                                         <span className="bg-green-100 text-green-800 px-2 py-1 rounded text-xs">
-                                            Estacionamiento
+                                            Garage
                                         </span>
                                     )}
                                     {property.details?.petFriendly && (

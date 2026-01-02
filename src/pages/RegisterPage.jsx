@@ -55,8 +55,8 @@ function RegisterPage() {
           <div className="w-16 h-16 md:w-20 md:h-20 mx-auto mb-4 md:mb-6 bg-gradient-to-br from-[var(--gold-accent)] to-yellow-600 rounded-full flex items-center justify-center shadow-2xl transform hover:scale-105 transition-transform duration-300">
             <IoPersonAdd className="w-8 h-8 md:w-10 md:h-10 text-white" />
           </div>
-          <h2 className="text-3xl md:text-4xl font-bold text-[var(--charcoal)] mb-2">¡Únete a nosotros!</h2>
-          <p className="text-gray-600 text-base md:text-lg">Crea tu cuenta en FR Family Investments</p>
+          <h2 className="text-3xl md:text-4xl font-bold text-[var(--charcoal)] mb-2">Join us!</h2>
+          <p className="text-gray-600 text-base md:text-lg">Create your account at FR Family Investments</p>
         </div>
 
         {/* Form Container */}
@@ -79,7 +79,7 @@ function RegisterPage() {
             <div className="space-y-2">
               <label className="text-sm font-semibold text-[var(--charcoal)] flex items-center">
                 <IoPersonSharp className="w-4 h-4 mr-2 text-[var(--gold-accent)]" />
-                Nombre de Usuario
+                Username
               </label>
               <div className="relative group">
                 <input
@@ -87,7 +87,7 @@ function RegisterPage() {
                   className={`w-full px-4 py-3 bg-gray-50 border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--gold-accent)] focus:border-transparent transition-all duration-300 group-hover:bg-gray-100 ${
                     errors.username ? 'border-red-500 bg-red-50' : 'border-gray-200'
                   }`}
-                  placeholder="Tu nombre de usuario"
+                  placeholder="Your username"
                   {...register("username")}
                 />
                 <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
@@ -105,7 +105,7 @@ function RegisterPage() {
             <div className="space-y-2">
               <label className="text-sm font-semibold text-[var(--charcoal)] flex items-center">
                 <IoMailSharp className="w-4 h-4 mr-2 text-[var(--gold-accent)]" />
-                Correo Electrónico
+                Email
               </label>
               <div className="relative group">
                 <input
@@ -131,7 +131,7 @@ function RegisterPage() {
             <div className="space-y-2">
               <label className="text-sm font-semibold text-[var(--charcoal)] flex items-center">
                 <IoCallSharp className="w-4 h-4 mr-2 text-[var(--gold-accent)]" />
-                Teléfono
+                Phone
               </label>
               <div className="phone-input-wrapper">
                 <Controller
@@ -148,7 +148,7 @@ function RegisterPage() {
                       className={`phone-input-custom ${
                         errors.phone ? 'phone-input-error' : ''
                       }`}
-                      placeholder="Selecciona país y número"
+                      placeholder="Select country and number"
                     />
                   )}
                 />
@@ -162,7 +162,7 @@ function RegisterPage() {
             <div className="space-y-2">
               <label className="text-sm font-semibold text-[var(--charcoal)] flex items-center">
                 <IoLockClosedSharp className="w-4 h-4 mr-2 text-[var(--gold-accent)]" />
-                Contraseña
+                Password
               </label>
               <div className="relative group">
                 <input
@@ -194,7 +194,7 @@ function RegisterPage() {
             <div className="space-y-2">
               <label className="text-sm font-semibold text-[var(--charcoal)] flex items-center">
                 <IoLockClosedSharp className="w-4 h-4 mr-2 text-[var(--gold-accent)]" />
-                Confirmar Contraseña
+                Confirm Password
               </label>
               <div className="relative group">
                 <input
@@ -231,12 +231,12 @@ function RegisterPage() {
               {isLoading ? (
                 <div className="flex items-center justify-center">
                   <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-                  Creando cuenta...
+                  Creating account...
                 </div>
               ) : (
                 <div className="flex items-center justify-center">
                   <IoPersonAdd className="w-5 h-5 mr-2" />
-                  Crear Cuenta
+                  Create Account
                 </div>
               )}
             </button>
@@ -247,16 +247,16 @@ function RegisterPage() {
             <div className="bg-blue-50 p-4 rounded-lg mb-4">
               <p className="text-xs text-blue-700 flex items-start">
                 <IoPhonePortraitSharp className="mr-2 mt-0.5 flex-shrink-0" />
-                Al registrarse en FR Family Investments, acepta recibir notificaciones por SMS sobre nuevas propiedades disponibles en Dallas. Estas notificaciones se envían automáticamente a todos los usuarios registrados.
+                By registering with FR Family Investments, you agree to receive SMS notifications about new properties available in Dallas. These notifications are sent automatically to all registered users.
               </p>
             </div>
-            <p className="text-gray-600 mb-4">¿Ya tienes una cuenta?</p>
+            <p className="text-gray-600 mb-4">Already have an account?</p>
             <Link
               to='/login'
               className="inline-flex items-center px-6 py-3 border-2 border-[var(--gold-accent)] text-[var(--gold-accent)] font-semibold rounded-xl hover:bg-[var(--gold-accent)] hover:text-white transform hover:scale-105 transition-all duration-300 shadow-md hover:shadow-lg"
             >
               <IoLogIn className="w-5 h-5 mr-2" />
-              Iniciar Sesión
+              Sign In
             </Link>
           </div>
         </div>

@@ -90,10 +90,10 @@ function HomePage() {
               onChange={(e) => setOperationType(e.target.value)}
               className="bg-transparent text-gray-900 text-sm font-medium focus:outline-none cursor-pointer"
             >
-              <option value="all" className="bg-white text-gray-900">Todos</option>
-              <option value="sale" className="bg-white text-gray-900">Venta</option>
-              <option value="rent" className="bg-white text-gray-900">Renta</option>
-              <option value="both" className="bg-white text-gray-900">Renta/Venta</option>
+              <option value="all" className="bg-white text-gray-900">All</option>
+              <option value="sale" className="bg-white text-gray-900">Sale</option>
+              <option value="rent" className="bg-white text-gray-900">Rent</option>
+              <option value="both" className="bg-white text-gray-900">Rent/Sale</option>
             </select>
           </div>
 
@@ -105,8 +105,8 @@ function HomePage() {
               onChange={(e) => setSortOption(e.target.value)}
               className="bg-transparent text-gray-900 text-sm font-medium focus:outline-none cursor-pointer"
             >
-              <option value="price-low" className="bg-white text-gray-900">$ Menor a Mayor</option>
-              <option value="price-high" className="bg-white text-gray-900">$ Mayor a Menor</option>
+              <option value="price-low" className="bg-white text-gray-900">$ Low to High</option>
+              <option value="price-high" className="bg-white text-gray-900">$ High to Low</option>
             </select>
           </div>
 
@@ -147,7 +147,7 @@ function HomePage() {
                     : 'hover:bg-[var(--gold-accent)] hover:text-white'
                 }`}
               >
-                Mapa
+                Map
               </button>
               <button 
                 onClick={() => setMapStyle('satellite')}
@@ -157,7 +157,7 @@ function HomePage() {
                     : 'hover:bg-[var(--gold-accent)] hover:text-white'
                 }`}
               >
-                Satélite
+                Satellite
               </button>
             </div>
           </div>
@@ -168,7 +168,7 @@ function HomePage() {
           <div className="p-4">
             <div className="flex justify-between items-center mb-4 pb-2 border-b border-gray-200">
               <h2 className="text-lg font-semibold text-[var(--charcoal)]">
-                {sortedProperties.length} Propiedades
+                {sortedProperties.length} Properties
               </h2>
               <div className="text-sm text-gray-500 font-medium">
                 {selectedMarket}
@@ -183,13 +183,13 @@ function HomePage() {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                     </svg>
                   </div>
-                  <h3 className="text-xl font-semibold text-gray-700 mb-2">No hay propiedades disponibles</h3>
-                  <p className="text-gray-500 mb-4">Intenta ajustar los filtros de búsqueda</p>
+                  <h3 className="text-xl font-semibold text-gray-700 mb-2">No properties available</h3>
+                  <p className="text-gray-500 mb-4">Try adjusting the search filters</p>
                   <div className="inline-flex items-center px-4 py-2 bg-gray-50 rounded-lg text-sm text-gray-600">
                     <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                     </svg>
-                    Cambia el mercado o criterios de ordenación
+                    Change the market or sorting criteria
                   </div>
                 </div>
               ) : (

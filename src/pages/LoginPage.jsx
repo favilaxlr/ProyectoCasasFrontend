@@ -48,8 +48,8 @@ function LoginPage() {
           <div className="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-[var(--gold-accent)] to-yellow-600 rounded-full flex items-center justify-center shadow-2xl transform hover:scale-105 transition-transform duration-300">
             <IoLogIn className="w-10 h-10 text-white" />
           </div>
-          <h2 className="text-4xl font-bold text-[var(--charcoal)] mb-2">Bienvenido</h2>
-          <p className="text-gray-600 text-lg">Inicia sesión en FR Family Investments</p>
+          <h2 className="text-4xl font-bold text-[var(--charcoal)] mb-2">Welcome</h2>
+          <p className="text-gray-600 text-lg">Sign in to FR Family Investments</p>
         </div>
 
         {/* Form Container */}
@@ -72,7 +72,7 @@ function LoginPage() {
             <div className="space-y-2">
               <label className="text-sm font-semibold text-[var(--charcoal)] flex items-center">
                 <IoMailSharp className="w-4 h-4 mr-2 text-[var(--gold-accent)]" />
-                Correo Electrónico
+                Email
               </label>
               <div className="relative group">
                 <input
@@ -98,7 +98,7 @@ function LoginPage() {
             <div className="space-y-2">
               <label className="text-sm font-semibold text-[var(--charcoal)] flex items-center">
                 <IoLockClosedSharp className="w-4 h-4 mr-2 text-[var(--gold-accent)]" />
-                Contraseña
+                Password
               </label>
               <div className="relative group">
                 <input
@@ -135,26 +135,25 @@ function LoginPage() {
               {isLoading ? (
                 <div className="flex items-center justify-center">
                   <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-                  Iniciando sesión...
+                  Signing in...
                 </div>
               ) : (
                 <div className="flex items-center justify-center">
                   <IoLogIn className="w-5 h-5 mr-2" />
-                  Iniciar Sesión
+                  Sign In
                 </div>
               )}
             </button>
           </form>
 
-          {/* Register Link */}
           <div className="text-center pt-6 border-t border-gray-100">
-            <p className="text-gray-600 mb-4">¿No tienes una cuenta?</p>
+            <p className="text-gray-600 mb-4">Don't have an account?</p>
             <Link
               to='/register'
               className="inline-flex items-center px-6 py-3 border-2 border-[var(--gold-accent)] text-[var(--gold-accent)] font-semibold rounded-xl hover:bg-[var(--gold-accent)] hover:text-white transform hover:scale-105 transition-all duration-300 shadow-md hover:shadow-lg"
             >
               <IoPersonAdd className="w-5 h-5 mr-2" />
-              Crear Cuenta
+              Create Account
             </Link>
           </div>
         </div>

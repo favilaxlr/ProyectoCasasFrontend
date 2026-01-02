@@ -2,35 +2,35 @@ import { z } from 'zod';
 
 export const registerSchema = z.object({
     username: z
-        .string('Nombre de usuario requerido')
-        .min(5, 'El nombre de usuario debe tener al menos 5 caracteres')
-        .max(20, 'El nombre de usuario no puede tener mas de 20 caracteres')
-        .regex(/^[a-zA-Z0-9_]+$/, 'El nombre de usuario solo puede contener letras numeros y guiones bajos'),
+        .string('Username required')
+        .min(5, 'Username must be at least 5 characters')
+        .max(20, 'Username cannot be more than 20 characters')
+        .regex(/^[a-zA-Z0-9_]+$/, 'Username can only contain letters, numbers, and underscores'),
 
     email:z.email({
-        error: (email) => email.input === undefined ? "Email es requerido"
-                                                    : "Formato de email invalido"
+        error: (email) => email.input === undefined ? "Email is required"
+                                                    : "Invalid email format"
     }),
     
     phone: z
-        .string('Teléfono requerido')
-        .min(1, 'El teléfono es requerido')
+        .string('Phone required')
+        .min(1, 'Phone is required')
         .refine((value) => {
             // Validar formato internacional E.164 (+[codigo_pais][numero])
             const phoneRegex = /^\+[1-9]\d{1,14}$/;
             return phoneRegex.test(value);
-        }, 'Por favor selecciona un país y ingresa un número válido'),
+        }, 'Please select a country and enter a valid number'),
         
     password: z
-        .string('Contraseña requerida')
-        .min(6, 'El password debe tener al menos 6 caracteres')
-        .max(20, 'Password demasiado largo'),
+        .string('Password required')
+        .min(6, 'Password must be at least 6 characters')
+        .max(20, 'Password too long'),
 
         confirm: z
-            .string('Confirma la contraseña')
-            .min(6, 'La confirmacion debe tener al menos 6 caracteres')
+            .string('Confirm password')
+            .min(6, 'Confirmation must be at least 6 characters')
 })
     .refine((data) => data.password === data.confirm, {
-        message: "Las contraseñas no coinciden",
+        message: "Passwords do not match",
         path: ["confirm"],
     });

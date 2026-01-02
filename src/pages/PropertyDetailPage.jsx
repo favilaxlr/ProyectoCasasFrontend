@@ -30,15 +30,15 @@ function PropertyDetailPage() {
         loadProperty();
     }, [id]);
 
-    if (loading) return <div className="flex justify-center p-8">Cargando...</div>;
-    if (!property) return <div className="flex justify-center p-8">Propiedad no encontrada</div>;
+    if (loading) return <div className="flex justify-center p-8">Loading...</div>;
+    if (!property) return <div className="flex justify-center p-8">Property not found</div>;
 
     const getPropertyTypeLabel = (type) => {
         const types = {
-            house: 'Casa',
-            apartment: 'Apartamento',
-            condo: 'Condominio',
-            townhouse: 'Casa Adosada'
+            house: 'House',
+            apartment: 'Apartment',
+            condo: 'Condo',
+            townhouse: 'Townhouse'
         };
         return types[type] || type;
     };
@@ -129,7 +129,7 @@ function PropertyDetailPage() {
                         </div>
                     ) : (
                         <div className="w-full h-96 bg-gray-200 rounded-lg flex items-center justify-center">
-                            <span className="text-gray-500">Sin imágenes</span>
+                            <span className="text-gray-500">No images</span>
                         </div>
                     )}
                 </div>
@@ -147,19 +147,19 @@ function PropertyDetailPage() {
                                 {property.businessMode === 'sale' && (
                                     <>
                                         <IoCardSharp className="mr-2" />
-                                        Venta
+                                        Sale
                                     </>
                                 )}
                                 {property.businessMode === 'rent' && (
                                     <>
                                         <IoKeySharp className="mr-2" />
-                                        Renta
+                                        Rent
                                     </>
                                 )}
                                 {property.businessMode === 'both' && (
                                     <>
                                         <IoBusinessSharp className="mr-2" />
-                                        Renta/Venta
+                                        Rent/Sale
                                     </>
                                 )}
                             </span>
@@ -172,13 +172,13 @@ function PropertyDetailPage() {
                             <div className="bg-blue-50 p-4 rounded-lg mb-4">
                                 <div className="flex items-center justify-center mb-2">
                                     <IoCardSharp className="text-blue-600 text-2xl mr-2" />
-                                    <h3 className="text-lg font-bold text-blue-800">Información de Venta</h3>
+                                    <h3 className="text-lg font-bold text-blue-800">Sale Information</h3>
                                 </div>
                                 <div className="text-center">
                                     <p className="text-3xl font-bold text-blue-600 mb-1">
                                         ${property.price.sale.toLocaleString()}
                                     </p>
-                                    <p className="text-sm text-gray-600">Precio de Venta</p>
+                                    <p className="text-sm text-gray-600">Sale Price</p>
                                 </div>
                             </div>
 
@@ -187,13 +187,13 @@ function PropertyDetailPage() {
                                 <div className="bg-blue-50 p-3 rounded-lg mb-4 text-sm">
                                     {property.price.taxes && (
                                         <div className="mb-2">
-                                            <span className="font-semibold text-blue-800">Impuestos anuales:</span>
+                                            <span className="font-semibold text-blue-800">Annual taxes:</span>
                                             <span className="text-gray-700 ml-2">${property.price.taxes.toLocaleString()}</span>
                                         </div>
                                     )}
                                     {property.price.deedConditions && (
                                         <div>
-                                            <span className="font-semibold text-blue-800 block mb-1">Condiciones:</span>
+                                            <span className="font-semibold text-blue-800 block mb-1">Conditions:</span>
                                             <p className="text-gray-700 text-xs whitespace-pre-line">{property.price.deedConditions}</p>
                                         </div>
                                     )}
@@ -208,32 +208,32 @@ function PropertyDetailPage() {
                             <div className="bg-green-50 p-4 rounded-lg mb-4">
                                 <div className="flex items-center justify-center mb-2">
                                     <IoKeySharp className="text-green-600 text-2xl mr-2" />
-                                    <h3 className="text-lg font-bold text-green-800">Información de Renta</h3>
+                                    <h3 className="text-lg font-bold text-green-800">Rent Information</h3>
                                 </div>
                                 <div className="text-center mb-3">
                                     <p className="text-3xl font-bold text-green-600 mb-1">
                                         ${property.price.monthlyRent.toLocaleString()}/mes
                                     </p>
-                                    <p className="text-sm text-gray-600">Renta Mensual</p>
+                                    <p className="text-sm text-gray-600">Monthly Rent</p>
                                 </div>
                                 
                                 {/* Detalles de renta */}
                                 <div className="space-y-2 text-sm">
                                     {property.price.deposit !== undefined && (
                                         <div className="flex justify-between items-center bg-white p-2 rounded">
-                                            <span className="text-gray-600">Depósito:</span>
+                                            <span className="text-gray-600">Deposit:</span>
                                             <span className="font-semibold text-green-700">${property.price.deposit.toLocaleString()}</span>
                                         </div>
                                     )}
                                     {property.price.leaseDuration && (
                                         <div className="flex justify-between items-center bg-white p-2 rounded">
-                                            <span className="text-gray-600">Contrato mínimo:</span>
-                                            <span className="font-semibold text-green-700">{property.price.leaseDuration} meses</span>
+                                            <span className="text-gray-600">Minimum contract:</span>
+                                            <span className="font-semibold text-green-700">{property.price.leaseDuration} months</span>
                                         </div>
                                     )}
                                     {property.price.maintenance && (
                                         <div className="flex justify-between items-center bg-white p-2 rounded">
-                                            <span className="text-gray-600">Mantenimiento:</span>
+                                            <span className="text-gray-600">Maintenance:</span>
                                             <span className="font-semibold text-green-700">${property.price.maintenance.toLocaleString()}/mes</span>
                                         </div>
                                     )}
@@ -243,7 +243,7 @@ function PropertyDetailPage() {
                             {/* Condiciones de renta */}
                             {property.price.leaseConditions && (
                                 <div className="bg-green-50 p-3 rounded-lg mb-4 text-sm">
-                                    <span className="font-semibold text-green-800 block mb-1">Condiciones de Renta:</span>
+                                    <span className="font-semibold text-green-800 block mb-1">Rent Conditions:</span>
                                     <p className="text-gray-700 text-xs whitespace-pre-line">{property.price.leaseConditions}</p>
                                 </div>
                             )}
@@ -303,46 +303,46 @@ function PropertyDetailPage() {
                         <div className="text-center p-3 bg-blue-50 rounded">
                             <IoBedSharp className="mx-auto text-2xl text-blue-600 mb-1" />
                             <p className="font-semibold">{property.details?.bedrooms || 0}</p>
-                            <p className="text-sm text-gray-600">Habitaciones</p>
+                            <p className="text-sm text-gray-600">Bedrooms</p>
                         </div>
                         <div className="text-center p-3 bg-blue-50 rounded">
                             <IoHomeSharp className="mx-auto text-2xl text-blue-600 mb-1" />
                             <p className="font-semibold">{property.details?.bathrooms || 0}</p>
-                            <p className="text-sm text-gray-600">Baños</p>
+                            <p className="text-sm text-gray-600">Bathrooms</p>
                         </div>
                     </div>
 
                     {/* Información adicional */}
                     <div className="space-y-3 text-sm">
                         <div className="flex justify-between">
-                            <span className="text-gray-600">Tipo:</span>
+                            <span className="text-gray-600">Type:</span>
                             <span className="font-semibold">{getPropertyTypeLabel(property.details?.propertyType)}</span>
                         </div>
                         {property.details?.squareFeet && (
                             <div className="flex justify-between">
-                                <span className="text-gray-600">Área:</span>
-                                <span className="font-semibold">{property.details.squareFeet.toLocaleString()} pies²</span>
+                                <span className="text-gray-600">Area:</span>
+                                <span className="font-semibold">{property.details.squareFeet.toLocaleString()} sq ft</span>
                             </div>
                         )}
                         {property.details?.yearBuilt && (
                             <div className="flex justify-between">
-                                <span className="text-gray-600">Año construido:</span>
+                                <span className="text-gray-600">Year built:</span>
                                 <span className="font-semibold">{property.details.yearBuilt}</span>
                             </div>
                         )}
                         <div className="flex justify-between">
-                            <span className="text-gray-600">Estacionamiento:</span>
+                            <span className="text-gray-600">Garage:</span>
                             <span className={`font-semibold ${property.details?.parking ? 'text-green-600' : 'text-red-600'}`}>
                                 {property.details?.parking ? (
                                     <IoCheckmarkCircleSharp className="inline" />
                                 ) : (
                                     <IoCloseCircleSharp className="inline" />
                                 )}
-                                {property.details?.parking ? ' Sí' : ' No'}
+                                {property.details?.parking ? ' Yes' : ' No'}
                             </span>
                         </div>
                         <div className="flex justify-between">
-                            <span className="text-gray-600">Mascotas:</span>
+                            <span className="text-gray-600">Pets:</span>
                             <span className={`font-semibold ${property.details?.petFriendly ? 'text-green-600' : 'text-red-600'}`}>
                                 {property.details?.petFriendly ? (
                                     <IoPawSharp className="inline" />
@@ -360,7 +360,7 @@ function PropertyDetailPage() {
                                 ) : (
                                     <IoCloseCircleSharp className="inline" />
                                 )}
-                                {property.details?.furnished ? ' Sí' : ' No'}
+                                {property.details?.furnished ? ' Yes' : ' No'}
                             </span>
                         </div>
                     </div>
