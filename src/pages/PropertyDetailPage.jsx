@@ -4,6 +4,8 @@ import { getPropertyRequest, changePropertyStatusRequest } from '../api/properti
 import AppointmentForm from '../components/AppointmentForm';
 import PropertyStatus from '../components/PropertyStatus';
 import ReviewsSection from '../components/ReviewsSection';
+import DocumentUploader from '../components/DocumentUploader';
+import OfferChat from '../components/OfferChat';
 import { useAuth } from '../context/AuthContext';
 import { toast } from 'react-toastify';
 import { IoLocationSharp, IoBedSharp, IoCarSharp, IoHomeSharp, IoCalendarSharp, IoPawSharp, IoCheckmarkCircleSharp, IoCloseCircleSharp, IoPencilSharp, IoTimeSharp, IoSwapHorizontalSharp, IoCashSharp, IoKeySharp, IoBusinessSharp, IoCardSharp, IoDocumentTextSharp } from 'react-icons/io5';
@@ -11,10 +13,20 @@ import { IoLocationSharp, IoBedSharp, IoCarSharp, IoHomeSharp, IoCalendarSharp, 
 function PropertyDetailPage() {
     const { id } = useParams();
     const navigate = useNavigate();
-    const { isCoAdmin, isAdmin } = useAuth();
+    const { isCoAdmin, isAdmin, isAuthenticated } = useAuth();
     const [property, setProperty] = useState(null);
     const [loading, setLoading] = useState(true);
     const [selectedImage, setSelectedImage] = useState(0);
+    const [showOfferModal, setShowOfferModal] = useState(false);
+
+    const handleMakeOfferClick = () => {
+        if (!isAuthenticated) {
+            toast.info('Please log in or register to make an offer');
+            navigate('/login', { state: { from: `/properties/${id}` } });
+            return;
+        }
+        setShowOfferModal(true);
+    };
 
     useEffect(() => {
         const loadProperty = async () => {
@@ -183,8 +195,14 @@ function PropertyDetailPage() {
                             </div>
 
                             {/* Additional sale information */}
-                            {(property.price.taxes || property.price.deedConditions) && (
+                            {(property.price.arv || property.price.taxes || property.price.deedConditions) && (
                                 <div className="bg-blue-50 p-3 rounded-lg mb-4 text-sm">
+                                    {property.price.arv && (
+                                        <div className="mb-2">
+                                            <span className="font-semibold text-blue-800">ARV (After Repair Value):</span>
+                                            <span className="text-gray-700 ml-2">${property.price.arv.toLocaleString()}</span>
+                                        </div>
+                                    )}
                                     {property.price.taxes && (
                                         <div className="mb-2">
                                             <span className="font-semibold text-blue-800">Annual taxes:</span>
@@ -379,6 +397,16 @@ function PropertyDetailPage() {
                 </div>
             </div>
 
+            {/* Documentos de la propiedad - ARRIBA de la descripción */}
+            <DocumentUploader
+                propertyId={id}
+                documents={property.documents || []}
+                onDocumentsChange={(updatedDocuments) => {
+                    setProperty({ ...property, documents: updatedDocuments });
+                }}
+                isAdminOrCoAdmin={isAdmin || isCoAdmin}
+            />
+
             {/* Descripción */}
             <div className="bg-white p-6 rounded-lg shadow-lg mb-8">
                 <h2 className="text-2xl font-semibold mb-4">Description</h2>
@@ -427,10 +455,40 @@ function PropertyDetailPage() {
 
             {/* Appointment scheduling form - Only if available and NOT admin/co-admin */}
             {property.status === 'DISPONIBLE' && !isCoAdmin && !isAdmin && (
-                <div className="bg-gradient-to-r from-blue-50 to-green-50 p-6 rounded-lg shadow-lg">
+                <div className="bg-gradient-to-r from-blue-50 to-green-50 p-6 rounded-lg shadow-lg mb-6">
                     <h3 className="text-2xl font-semibold mb-4 text-center">Interested in this property?</h3>
                     <p className="text-gray-600 text-center mb-6">Schedule an appointment to visit it</p>
                     <AppointmentForm propertyId={property._id} />
+                </div>
+            )}
+
+            {/* Offer button for users */}
+            {property.status === 'DISPONIBLE' && !isCoAdmin && !isAdmin && (
+                <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-6 rounded-lg shadow-lg mb-6">
+                    <h3 className="text-2xl font-semibold mb-4 text-center">Want to make an offer?</h3>
+                    <p className="text-gray-600 text-center mb-6">Submit your offer and start a conversation with the property manager</p>
+                    <div className="flex justify-center">
+                        <button
+                            onClick={handleMakeOfferClick}
+                            className="bg-green-600 text-white px-8 py-3 rounded-lg hover:bg-green-700 transition-colors flex items-center text-lg font-semibold"
+                        >
+                            <IoCashSharp className="mr-2 text-xl" />
+                            Make an Offer
+                        </button>
+                    </div>
+                </div>
+            )}
+
+            {/* Offer Modal */}
+            {showOfferModal && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+                    <div className="max-w-2xl w-full">
+                        <OfferChat
+                            propertyId={property._id}
+                            propertyTitle={property.title}
+                            onClose={() => setShowOfferModal(false)}
+                        />
+                    </div>
                 </div>
             )}
 

@@ -1,7 +1,7 @@
 import {Link, useNavigate} from 'react-router';
 import { useAuth } from '../context/AuthContext';
 import Logo from './Logo';
-import { IoPerson, IoChevronDownSharp, IoBagOutline, IoLogOutOutline, IoCartOutline} from 'react-icons/io5'
+import { IoPerson, IoChevronDownSharp, IoBagOutline, IoLogOutOutline, IoCartOutline, IoCashOutline} from 'react-icons/io5'
 import {Menu, MenuButton, MenuItem, MenuItems} from '@headlessui/react';
 
 function NavbarUser() {
@@ -37,6 +37,13 @@ function NavbarUser() {
                     className="group flex w-full items-center gap-2 rounded-lg px-3 py-1.5 text-gray-700 hover:bg-gray-100 data-focus:bg-gray-100">
               <IoCartOutline className="text-gray-500" size={20} />
               My Appointments
+            </button>
+          </MenuItem>
+          <MenuItem>
+            <button onClick={ ()=>{navigate('/my-offers')}} 
+                    className="group flex w-full items-center gap-2 rounded-lg px-3 py-1.5 text-gray-700 hover:bg-gray-100 data-focus:bg-gray-100">
+              <IoCashOutline className="text-gray-500" size={20} />
+              My Offers
             </button>
           </MenuItem>
         </MenuItems>

@@ -202,6 +202,7 @@ function PropertyFormPage() {
                 // Campos de venta (si businessMode es 'sale' o 'both')
                 if (businessMode === 'sale' || businessMode === 'both') {
                     if (data.price.sale) formData.append('price.sale', Number(data.price.sale));
+                    if (data.price.arv) formData.append('price.arv', Number(data.price.arv));
                     if (data.price.taxes) formData.append('price.taxes', Number(data.price.taxes));
                     if (data.price.deedConditions) formData.append('price.deedConditions', data.price.deedConditions);
                 }
@@ -921,6 +922,19 @@ function PropertyFormPage() {
                                                         <IoWarningSharp className="mr-1" /> {errors.price.sale.message}
                                                     </p>
                                                 )}
+                                            </div>
+
+                                            <div>
+                                                <label className="block text-sm font-semibold mb-2 text-gray-700">
+                                                    ARV - After Repair Value (USD)
+                                                </label>
+                                                <input
+                                                    type="number"
+                                                    {...register('price.arv')}
+                                                    placeholder="300000"
+                                                    className="w-full border-2 border-gray-300 rounded-xl px-4 py-3 transition-all focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                                />
+                                                <p className="text-xs text-gray-500 mt-1">Estimated value after repairs/renovations</p>
                                             </div>
 
                                             <div>

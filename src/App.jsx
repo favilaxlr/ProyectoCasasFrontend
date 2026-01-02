@@ -24,6 +24,10 @@ import AdminAppointmentsPage from './pages/AdminAppointmentsPage';
 import MyAppointmentsPage from './pages/MyAppointmentsPage';
 import NotificationsPage from './pages/NotificationsPage';
 import ConfirmAppointmentPage from './pages/ConfirmAppointmentPage';
+import UserOffersPage from './pages/UserOffersPage';
+import UserOfferDetailPage from './pages/UserOfferDetailPage';
+import AdminOffersPage from './pages/AdminOffersPage';
+import AdminOfferDetailPage from './pages/AdminOfferDetailPage';
 
 function App() {
   const [toastTheme, setToastTheme] = useState('light');
@@ -77,11 +81,15 @@ function App() {
                 <Route element={<ProtectedRoute />}>
                   <Route path='/profile' element={<ProfilePage/>} />
                   <Route path='/my-appointments' element={<MyAppointmentsPage/>} />
+                  <Route path='/my-offers' element={<UserOffersPage/>} />
+                  <Route path='/my-offers/:id' element={<UserOfferDetailPage/>} />
                   <Route path='/admin/properties' element={<PropertiesPage/>} />
                   <Route path='/admin/add-property' element={<PropertyFormPage/>} />
                   <Route path='/admin/properties/edit/:id' element={<PropertyFormPage/>} />
                   <Route path='/admin/appointments' element={<AdminAppointmentsPage />} />
                   <Route path='/admin/notifications' element={<NotificationsPage />} />
+                  <Route path='/admin/offers' element={<AdminOffersPage />} />
+                  <Route path='/admin/offers/:id' element={<AdminOfferDetailPage />} />
                 </Route>
 
                 {/* Rutas solo para Admin */}

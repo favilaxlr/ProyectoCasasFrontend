@@ -1,7 +1,7 @@
 import {Link, useNavigate} from 'react-router';
 import { useAuth } from '../context/AuthContext';
 import Logo from './Logo';
-import { IoPerson, IoLogOutOutline, IoChevronDownSharp, IoBagAdd, IoHomeSharp, IoCalendarSharp, IoChatbubblesSharp, IoPeopleSharp, IoSettingsSharp} from 'react-icons/io5'
+import { IoPerson, IoLogOutOutline, IoChevronDownSharp, IoBagAdd, IoHomeSharp, IoCalendarSharp, IoChatbubblesSharp, IoPeopleSharp, IoSettingsSharp, IoCashSharp} from 'react-icons/io5'
 import {Menu, MenuButton, MenuItem, MenuItems} from '@headlessui/react';
 
 function NavbarAdmin() {
@@ -64,6 +64,16 @@ function NavbarAdmin() {
                         <IoCalendarSharp className="text-purple-600" size={16} />
                       </div>
                       <span className="font-medium">View Appointments</span>
+                    </button>
+                  </MenuItem>
+                  
+                  <MenuItem>
+                    <button onClick={ ()=>{navigate('/admin/offers')}} 
+                            className="group flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-gray-700 hover:bg-[var(--gold-accent)]/10 hover:text-[var(--gold-accent)] data-focus:bg-[var(--gold-accent)]/10 transition-all">
+                      <div className="p-1.5 rounded-lg bg-green-50 group-hover:bg-green-100 transition-colors">
+                        <IoCashSharp className="text-green-600" size={16} />
+                      </div>
+                      <span className="font-medium">Manage Offers</span>
                     </button>
                   </MenuItem>
                   
