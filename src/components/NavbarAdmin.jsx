@@ -258,6 +258,5 @@ function NavbarAdmin() {
     </nav>
   )
 }
-}
 
 export default NavbarAdmin
