@@ -3,10 +3,35 @@ import { useAuth } from '../context/AuthContext';
 import Logo from './Logo';
 import { IoPerson, IoChevronDownSharp, IoBagOutline, IoLogOutOutline, IoCartOutline, IoCashOutline} from 'react-icons/io5'
 import {Menu, MenuButton, MenuItem, MenuItems} from '@headlessui/react';
+import { useState, useEffect } from 'react';
+import { getUserOffersRequest } from '../api/offers';
 
 function NavbarUser() {
   const {user, logOut} = useAuth();
   const navigate = useNavigate();
+  const [myOffersCount, setMyOffersCount] = useState(0);
+
+  // Obtener el conteo de ofertas del usuario
+  useEffect(() => {
+    const fetchMyOffers = async () => {
+      try {
+        const res = await getUserOffersRequest();
+        // Contar ofertas con respuestas nuevas (in_progress)
+        const activeOffers = res.data.filter(offer => 
+          offer.status === 'in_progress' || offer.status === 'pending'
+        );
+        setMyOffersCount(activeOffers.length);
+      } catch (error) {
+        console.error('Error fetching offers:', error);
+      }
+    };
+
+    fetchMyOffers();
+    // Actualizar cada 30 segundos
+    const interval = setInterval(fetchMyOffers, 30000);
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <nav className="navbar my-3 mx-3 flex justify-between items-center py-5 px-10 rounded-lg shadow-lg bg-gradient-to-r from-gray-900 to-gray-800">
        <Link to='/' className="hover:scale-105 transition-transform duration-300">
@@ -44,6 +69,11 @@ function NavbarUser() {
                     className="group flex w-full items-center gap-2 rounded-lg px-3 py-1.5 text-gray-700 hover:bg-gray-100 data-focus:bg-gray-100">
               <IoCashOutline className="text-gray-500" size={20} />
               My Offers
+              {myOffersCount > 0 && (
+                <span className="ml-auto bg-red-500 text-white text-xs font-bold rounded-full px-2 py-0.5 min-w-[20px] text-center">
+                  {myOffersCount}
+                </span>
+              )}
             </button>
           </MenuItem>
         </MenuItems>

@@ -3,10 +3,12 @@ import { useAuth } from '../context/AuthContext';
 import Logo from './Logo';
 import { IoPerson, IoLogOutOutline, IoChevronDownSharp, IoBagAdd, IoHomeSharp, IoCalendarSharp, IoChatbubblesSharp, IoPeopleSharp, IoSettingsSharp, IoCashSharp} from 'react-icons/io5'
 import {Menu, MenuButton, MenuItem, MenuItems} from '@headlessui/react';
+import { useNotificationCount } from '../hooks/useNotificationCount';
 
 function NavbarAdmin() {
   const {user, logOut} = useAuth();
   const navigate = useNavigate();
+  const { pendingOffersCount } = useNotificationCount();
   return (
     <nav className="sticky top-0 backdrop-blur-lg bg-white/95 border-b border-gray-200 shadow-sm" style={{ zIndex: 10000 }}>
       <div className="w-full px-6 py-4">
@@ -74,6 +76,11 @@ function NavbarAdmin() {
                         <IoCashSharp className="text-green-600" size={16} />
                       </div>
                       <span className="font-medium">Manage Offers</span>
+                      {pendingOffersCount > 0 && (
+                        <span className="ml-auto bg-red-500 text-white text-xs font-bold rounded-full px-2 py-0.5 min-w-[20px] text-center">
+                          {pendingOffersCount}
+                        </span>
+                      )}
                     </button>
                   </MenuItem>
                   

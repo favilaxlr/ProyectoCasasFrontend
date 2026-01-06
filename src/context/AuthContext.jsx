@@ -193,10 +193,19 @@ export const AuthProvider = ({ children }) => {
 
     // Función para autenticar usuario después de verificación
     const authenticateUser = (userData) => {
+        // Guardar token si viene en la respuesta
+        const token = userData.token || Cookies.get('token');
+        if (token) {
+            localStorage.setItem('token', token);
+        }
+        
         setUser(userData);
         setIsAuthenticated(true);
-        setIsAdmin(userData.role === 'admin');
-        setIsCoAdmin(userData.role === 'co-admin');
+        
+        // Verificar roles correctamente (userData.role puede ser un objeto o string)
+        const userRole = typeof userData.role === 'object' ? userData.role.role : userData.role;
+        setIsAdmin(userRole === 'admin');
+        setIsCoAdmin(userRole === 'co-admin');
         setErrors([]);
     }
 
