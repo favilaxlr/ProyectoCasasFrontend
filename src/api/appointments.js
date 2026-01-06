@@ -25,3 +25,6 @@ export const getAvailableSlotsRequest = (propertyId, date) =>
 
 export const getUserAppointmentsRequest = () => 
     axios.get('/my-appointments');
+
+export const deleteAllAppointmentsRequest = () => 
+    axios.delete('/appointments/clear-all');

@@ -4,12 +4,17 @@ import {
     confirmAppointmentAdminRequest,
     assignAppointmentRequest,
     completeAppointmentRequest,
-    cancelAppointmentRequest 
+    cancelAppointmentRequest,
+    deleteAllAppointmentsRequest
 } from '../api/appointments';
+import { useAuth } from '../context/AuthContext';
+import { toast } from 'react-toastify';
 
 function AdminAppointments() {
+    const { user } = useAuth();
     const [appointments, setAppointments] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [deletingAll, setDeletingAll] = useState(false);
     const [filters, setFilters] = useState({
         status: '',
         startDate: '',
@@ -88,6 +93,62 @@ function AdminAppointments() {
             'cancelled': 'Cancelled'
         };
         return texts[status] || status;
+    };
+
+    const handleDeleteAll = async () => {
+        if (!user || user.role?.role !== 'admin') {
+            toast.error('Only main admin can delete all appointments');
+            return;
+        }
+
+        const confirmDelete = window.confirm(
+            `⚠️ WARNING: This will permanently delete ALL ${appointments.length} appointments from the database.\n\nThis action CANNOT be undone!\n\nAre you absolutely sure?`
+        );
+{/* Header con botón de borrar (solo para admin principal) */}
+            {user?.role?.role === 'admin' && appointments.length > 0 && (
+                <div className="flex justify-end">
+                    <button
+                        onClick={handleDeleteAll}
+                        disabled={deletingAll}
+                        className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                    >
+                        {deletingAll ? (
+                            <>
+                                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                                Deleting...
+                            </>
+                        ) : (
+                            <>
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                </svg>
+                                Delete All Appointments
+                            </>
+                        )}
+                    </button>
+                </div>
+            )}
+
+            
+        if (!confirmDelete) return;
+
+        const doubleConfirm = window.confirm(
+            'Please confirm one more time.\n\nDelete ALL appointments permanently?'
+        );
+
+        if (!doubleConfirm) return;
+
+        setDeletingAll(true);
+        try {
+            const response = await deleteAllAppointmentsRequest();
+            toast.success(`Successfully deleted ${response.data.deletedCount} appointments`);
+            loadAppointments();
+        } catch (error) {
+            console.error('Error deleting appointments:', error);
+            toast.error('Error deleting appointments');
+        } finally {
+            setDeletingAll(false);
+        }
     };
 
     const formatDateTime = (date, time) => {
