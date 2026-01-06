@@ -1,25 +1,28 @@
 import {Link, useNavigate} from 'react-router';
 import { useAuth } from '../context/AuthContext';
 import Logo from './Logo';
-import { IoPerson, IoLogOutOutline, IoChevronDownSharp, IoBagAdd, IoHomeSharp, IoCalendarSharp, IoChatbubblesSharp, IoPeopleSharp, IoSettingsSharp, IoCashSharp} from 'react-icons/io5'
+import { IoPerson, IoLogOutOutline, IoChevronDownSharp, IoBagAdd, IoHomeSharp, IoCalendarSharp, IoChatbubblesSharp, IoPeopleSharp, IoSettingsSharp, IoCashSharp, IoMenu, IoClose} from 'react-icons/io5'
 import {Menu, MenuButton, MenuItem, MenuItems} from '@headlessui/react';
 import { useNotificationCount } from '../hooks/useNotificationCount';
+import { useState } from 'react';
 
 function NavbarAdmin() {
   const {user, logOut} = useAuth();
   const navigate = useNavigate();
   const { pendingOffersCount } = useNotificationCount();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  
   return (
     <nav className="sticky top-0 backdrop-blur-lg bg-white/95 border-b border-gray-200 shadow-sm" style={{ zIndex: 10000 }}>
-      <div className="w-full px-6 py-4">
+      <div className="w-full px-3 md:px-6 py-3 md:py-4">
         <div className="flex justify-between items-center">
           {/* Logo */}
           <Link to='/' className="hover:scale-105 transition-transform duration-300">
-            <Logo size="medium" />
+            <Logo size="small" className="md:size-medium" />
           </Link>
 
-          {/* Navigation Items */}
-          <ul className="flex gap-3 items-center">
+          {/* Desktop Navigation Items */}
+          <ul className="hidden lg:flex gap-3 items-center">
             {/* Propiedades Menu */}
             <li className="relative">
               <Menu>
@@ -153,10 +156,108 @@ function NavbarAdmin() {
               </Menu>
             </li>
           </ul>
+
+          {/* Mobile Menu Button */}
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="lg:hidden text-gray-700 p-2 hover:bg-gray-100 rounded-lg transition-colors"
+          >
+            {mobileMenuOpen ? <IoClose size={28} /> : <IoMenu size={28} />}
+          </button>
         </div>
+
+        {/* Mobile Menu */}
+        {mobileMenuOpen && (
+          <div className="lg:hidden mt-4 pb-4 space-y-2 border-t border-gray-200 pt-4 animate-fade-in">
+            {/* Properties Section */}
+            <div className="space-y-1">
+              <p className="text-xs font-bold text-gray-500 uppercase tracking-wider px-3 mb-2">Management</p>
+              
+              <button
+                onClick={() => { navigate('/admin/properties'); setMobileMenuOpen(false); }}
+                className="w-full flex items-center gap-3 px-3 py-2.5 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <IoHomeSharp size={18} className="text-blue-600" />
+                <span className="font-medium">List Properties</span>
+              </button>
+
+              <button
+                onClick={() => { navigate('/admin/add-property'); setMobileMenuOpen(false); }}
+                className="w-full flex items-center gap-3 px-3 py-2.5 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <IoBagAdd size={18} className="text-green-600" />
+                <span className="font-medium">Add Property</span>
+              </button>
+
+              <button
+                onClick={() => { navigate('/admin/appointments'); setMobileMenuOpen(false); }}
+                className="w-full flex items-center gap-3 px-3 py-2.5 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <IoCalendarSharp size={18} className="text-purple-600" />
+                <span className="font-medium">View Appointments</span>
+              </button>
+
+              <button
+                onClick={() => { navigate('/admin/offers'); setMobileMenuOpen(false); }}
+                className="w-full flex items-center gap-3 px-3 py-2.5 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors relative"
+              >
+                <IoCashSharp size={18} className="text-green-600" />
+                <span className="font-medium">Manage Offers</span>
+                {pendingOffersCount > 0 && (
+                  <span className="ml-auto bg-red-500 text-white text-xs font-bold rounded-full px-2 py-0.5 min-w-[20px] text-center">
+                    {pendingOffersCount}
+                  </span>
+                )}
+              </button>
+
+              <button
+                onClick={() => { navigate('/admin/notifications'); setMobileMenuOpen(false); }}
+                className="w-full flex items-center gap-3 px-3 py-2.5 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <IoChatbubblesSharp size={18} className="text-orange-600" />
+                <span className="font-medium">SMS Notifications</span>
+              </button>
+
+              {user.role?.role === 'admin' && (
+                <button
+                  onClick={() => { navigate('/admin/users'); setMobileMenuOpen(false); }}
+                  className="w-full flex items-center gap-3 px-3 py-2.5 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+                >
+                  <IoPeopleSharp size={18} className="text-red-600" />
+                  <span className="font-medium">Manage Users</span>
+                </button>
+              )}
+            </div>
+
+            {/* User Section */}
+            <div className="border-t border-gray-200 pt-3 mt-3 space-y-1">
+              <div className="px-3 py-2">
+                <p className="text-sm font-semibold text-gray-900">{user.username}</p>
+                <p className="text-xs text-gray-500">{user.email}</p>
+              </div>
+
+              <button
+                onClick={() => { navigate('/profile'); setMobileMenuOpen(false); }}
+                className="w-full flex items-center gap-3 px-3 py-2.5 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <IoSettingsSharp size={18} />
+                <span className="font-medium">My Profile</span>
+              </button>
+
+              <button
+                onClick={() => { logOut(); navigate('/'); setMobileMenuOpen(false); }}
+                className="w-full flex items-center gap-3 px-3 py-2.5 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+              >
+                <IoLogOutOutline size={18} />
+                <span className="font-semibold">Log Out</span>
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </nav>
   )
+}
 }
 
 export default NavbarAdmin
