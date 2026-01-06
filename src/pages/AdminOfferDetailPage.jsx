@@ -171,8 +171,11 @@ function AdminOfferDetailPage() {
                         <div className="mt-3 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border-2 border-blue-200">
                             <div className="flex items-center gap-3 mb-3">
                                 <img
-                                    src={offer.user.profileImage?.url || 'https://via.placeholder.com/60'}
+                                    src={offer.user.profileImage?.url || `https://ui-avatars.com/api/?name=${encodeURIComponent(offer.user.username)}&background=random&color=fff&size=128`}
                                     alt={offer.user.username}
+                                    onError={(e) => {
+                                        e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(offer.user.username)}&background=random&color=fff&size=128`;
+                                    }}
                                     className="w-14 h-14 rounded-full object-cover border-2 border-blue-300"
                                 />
                                 <div>
@@ -243,7 +246,7 @@ function AdminOfferDetailPage() {
                 <div className="border-2 border-gray-200 rounded-lg p-4 mb-4 h-96 overflow-y-auto bg-gray-50">
                     {offer.messages?.map((msg, index) => {
                         const isAdmin = msg.sender._id === offer.assignedTo._id || msg.sender._id === offer.assignedTo;
-                        const senderImage = msg.sender.profileImage?.url || 'https://via.placeholder.com/40';
+                        const senderImage = msg.sender.profileImage?.url || `https://ui-avatars.com/api/?name=${encodeURIComponent(msg.sender.username)}&background=random&color=fff&size=128`;
                         return (
                             <div
                                 key={index}
@@ -253,8 +256,9 @@ function AdminOfferDetailPage() {
                                     <img
                                         src={senderImage}
                                         alt={msg.sender.username}
-                                        className="w-8 h-8 rounded-full object-cover flex-shrink-0 border-2 border-gray-300"
-                                    />
+                                        className="w-8 h-8 rounded-full object-cover flex-shrink-0 border-2 border-gray-300"                                        onError={(e) => {
+                                            e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(msg.sender.username)}&background=random&color=fff&size=128`;
+                                        }}                                    />
                                 )}
                                 <div
                                     className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
@@ -276,6 +280,9 @@ function AdminOfferDetailPage() {
                                         src={senderImage}
                                         alt={msg.sender.username}
                                         className="w-8 h-8 rounded-full object-cover flex-shrink-0 border-2 border-blue-300"
+                                        onError={(e) => {
+                                            e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(msg.sender.username)}&background=random&color=fff&size=128`;
+                                        }}
                                     />
                                 )}
                             </div>

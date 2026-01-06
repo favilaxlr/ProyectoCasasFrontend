@@ -190,7 +190,7 @@ function UserOfferDetailPage() {
                 <div className="border-2 border-gray-200 rounded-lg p-4 mb-4 h-96 overflow-y-auto bg-gray-50">
                     {offer.messages?.map((msg, index) => {
                         const isMe = msg.sender._id === offer.user._id || msg.sender._id === offer.user;
-                        const senderImage = msg.sender.profileImage?.url || 'https://via.placeholder.com/40';
+                        const senderImage = msg.sender.profileImage?.url || `https://ui-avatars.com/api/?name=${encodeURIComponent(msg.sender.username)}&background=random&color=fff&size=128`;
                         return (
                             <div
                                 key={index}
@@ -201,6 +201,9 @@ function UserOfferDetailPage() {
                                         src={senderImage}
                                         alt={msg.sender.username}
                                         className="w-8 h-8 rounded-full object-cover flex-shrink-0"
+                                        onError={(e) => {
+                                            e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(msg.sender.username)}&background=random&color=fff&size=128`;
+                                        }}
                                     />
                                 )}
                                 <div
@@ -223,6 +226,9 @@ function UserOfferDetailPage() {
                                         src={senderImage}
                                         alt={msg.sender.username}
                                         className="w-8 h-8 rounded-full object-cover flex-shrink-0"
+                                        onError={(e) => {
+                                            e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(msg.sender.username)}&background=random&color=fff&size=128`;
+                                        }}
                                     />
                                 )}
                             </div>
