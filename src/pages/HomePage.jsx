@@ -113,9 +113,16 @@ function HomePage() {
           {/* Info del usuario - Más compacto */}
           {user && (
             <div className="flex items-center gap-2 bg-white/90 px-3 py-2 rounded-lg border border-gray-300 shadow-sm">
-              <IoPersonCircleOutline className="text-[var(--gold-accent)] text-xl" />
+              <img 
+                src={user.profileImage?.url || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.username)}&background=random&color=fff&size=128`}
+                alt={user.username}
+                className="w-8 h-8 rounded-full object-cover border-2 border-[var(--gold-accent)]"
+                onError={(e) => {
+                  e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.username)}&background=random&color=fff&size=128`;
+                }}
+              />
               <div className="text-gray-900">
-                <div className="text-sm font-medium">{user.name}</div>
+                <div className="text-sm font-medium">{user.username}</div>
               </div>
             </div>
           )}
