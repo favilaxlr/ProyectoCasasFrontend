@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { MapContainer, TileLayer, Marker, useMapEvents, useMap } from 'react-leaflet';
 import L from 'leaflet';
-import 'leaflet/dist/leaflet.css';
+
 import { geocodeAddress, searchLocations, reverseGeocode } from '../utils/geocoding';
 import { IoCloseSharp, IoSearchSharp } from 'react-icons/io5';
 

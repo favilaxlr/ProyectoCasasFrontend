@@ -3,7 +3,8 @@ import { useAuth } from '../context/AuthContext'
 import { getAllPropertiesRequest } from '../api/properties'
 import PropertyCard from '../components/PropertyCard'
 import InteractiveMap from '../components/InteractiveMap'
-import { IoLocationSharp, IoFunnelSharp, IoPersonCircleOutline, IoBusinessSharp, IoCardSharp, IoKeySharp } from 'react-icons/io5'
+import Logo from '../components/Logo'
+import { IoLocationSharp, IoFunnelSharp, IoBusinessSharp, IoGlobeOutline, IoEarthSharp, IoCloseSharp, IoMenuSharp } from 'react-icons/io5'
 
 function HomePage() {
   const { user } = useAuth()
@@ -13,6 +14,7 @@ function HomePage() {
   const [selectedProperty, setSelectedProperty] = useState(null)
   const [mapStyle, setMapStyle] = useState('osm') // 'osm' o 'satellite'
   const [operationType, setOperationType] = useState('all') // 'all', 'sale', 'rent', 'both'
+  const [isPanelOpen, setIsPanelOpen] = useState(true)
 
   useEffect(() => {
     loadProperties()
@@ -57,71 +59,64 @@ function HomePage() {
 
   return (
     <div className="h-screen flex flex-col">
-      {/* Header Rediseñado - Más limpio y compacto */}
-      <div className="main-header px-6 py-3 flex justify-between items-center flex-shrink-0 border-b border-gray-200 bg-white/95 backdrop-blur-sm shadow-sm">
-        {/* Logo */}
-        <div className="flex items-center">
-          <h1 className="text-xl font-bold text-[var(--gold-accent)] tracking-wide">
-            FR FAMILY INVESTMENTS
-          </h1>
-        </div>
-        
-        {/* Controles centrales - Más compactos */}
-        <div className="flex items-center gap-4">
-          {/* Selector de Mercado con icono */}
-          <div className="flex items-center gap-2 bg-white/90 px-3 py-2 rounded-lg border border-gray-300 hover:border-[var(--gold-accent)] transition-all shadow-sm">
-            <IoLocationSharp className="text-[var(--gold-accent)] text-lg" />
-            <select 
-              value={selectedMarket} 
-              onChange={(e) => setSelectedMarket(e.target.value)}
-              className="bg-transparent text-gray-900 text-sm font-medium focus:outline-none cursor-pointer"
-            >
-              <option value="Dallas" className="bg-white text-gray-900">Dallas</option>
-              <option value="Houston" className="bg-white text-gray-900">Houston</option>
-              <option value="Austin" className="bg-white text-gray-900">Austin</option>
-            </select>
-          </div>
-          
-          {/* Filtro de Tipo de Operación */}
-          <div className="flex items-center gap-2 bg-white/90 px-3 py-2 rounded-lg border border-gray-300 hover:border-[var(--gold-accent)] transition-all shadow-sm">
-            <IoBusinessSharp className="text-[var(--gold-accent)] text-lg" />
-            <select 
-              value={operationType} 
-              onChange={(e) => setOperationType(e.target.value)}
-              className="bg-transparent text-gray-900 text-sm font-medium focus:outline-none cursor-pointer"
-            >
-              <option value="all" className="bg-white text-gray-900">All</option>
-              <option value="sale" className="bg-white text-gray-900">Sale</option>
-              <option value="rent" className="bg-white text-gray-900">Rent</option>
-              <option value="both" className="bg-white text-gray-900">Rent/Sale</option>
-            </select>
+      {/* Header con Filtros - Responsive */}
+      <div className="main-header px-4 md:px-6 py-3 md:py-4 flex-shrink-0 border-b border-gray-200 bg-white shadow-sm">
+        <div className="flex justify-between items-center gap-4">
+          {/* Controles centrales - Todos en una línea */}
+          <div className="flex items-center gap-2 md:gap-3 overflow-x-auto scrollbar-hide">
+            {/* Selector de Mercado */}
+            <div className="flex items-center gap-2 bg-white px-2 md:px-3 py-2 rounded-lg border border-gray-300 hover:border-[var(--gold-accent)] transition-all shadow-sm">
+              <IoLocationSharp className="text-[var(--gold-accent)] text-lg flex-shrink-0" />
+              <select 
+                value={selectedMarket} 
+                onChange={(e) => setSelectedMarket(e.target.value)}
+                className="bg-transparent text-gray-900 text-xs md:text-sm font-medium focus:outline-none cursor-pointer"
+              >
+                <option value="Dallas">Dallas</option>
+              </select>
+            </div>
+            
+            {/* Filtro de Tipo de Operación */}
+            <div className="flex items-center gap-2 bg-white px-2 md:px-3 py-2 rounded-lg border border-gray-300 hover:border-[var(--gold-accent)] transition-all shadow-sm">
+              <IoBusinessSharp className="text-[var(--gold-accent)] text-lg flex-shrink-0" />
+              <select 
+                value={operationType} 
+                onChange={(e) => setOperationType(e.target.value)}
+                className="bg-transparent text-gray-900 text-xs md:text-sm font-medium focus:outline-none cursor-pointer"
+              >
+                <option value="all">All</option>
+                <option value="sale">Sale</option>
+                <option value="rent">Rent</option>
+                <option value="both">Rent/Sale</option>
+              </select>
+            </div>
+
+            {/* Selector de Ordenamiento */}
+            <div className="flex items-center gap-2 bg-white px-2 md:px-3 py-2 rounded-lg border border-gray-300 hover:border-[var(--gold-accent)] transition-all shadow-sm">
+              <IoFunnelSharp className="text-[var(--gold-accent)] text-lg flex-shrink-0" />
+              <select 
+                value={sortOption} 
+                onChange={(e) => setSortOption(e.target.value)}
+                className="bg-transparent text-gray-900 text-xs md:text-sm font-medium focus:outline-none cursor-pointer"
+              >
+                <option value="price-low">$ Low → High</option>
+                <option value="price-high">$ High → Low</option>
+              </select>
+            </div>
           </div>
 
-          {/* Selector de Ordenamiento con icono */}
-          <div className="flex items-center gap-2 bg-white/90 px-3 py-2 rounded-lg border border-gray-300 hover:border-[var(--gold-accent)] transition-all shadow-sm">
-            <IoFunnelSharp className="text-[var(--gold-accent)] text-lg" />
-            <select 
-              value={sortOption} 
-              onChange={(e) => setSortOption(e.target.value)}
-              className="bg-transparent text-gray-900 text-sm font-medium focus:outline-none cursor-pointer"
-            >
-              <option value="price-low" className="bg-white text-gray-900">$ Low to High</option>
-              <option value="price-high" className="bg-white text-gray-900">$ High to Low</option>
-            </select>
-          </div>
-
-          {/* Info del usuario - Más compacto */}
+          {/* Usuario - Siempre a la derecha */}
           {user && (
-            <div className="flex items-center gap-2 bg-white/90 px-3 py-2 rounded-lg border border-gray-300 shadow-sm">
+            <div className="flex items-center gap-2 bg-white px-2 md:px-3 py-2 rounded-lg border border-gray-300 shadow-sm flex-shrink-0">
               <img 
                 src={user.profileImage?.url || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.username)}&background=random&color=fff&size=128`}
                 alt={user.username}
-                className="w-8 h-8 rounded-full object-cover border-2 border-[var(--gold-accent)]"
+                className="w-7 h-7 md:w-8 md:h-8 rounded-full object-cover border-2 border-[var(--gold-accent)]"
                 onError={(e) => {
                   e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.username)}&background=random&color=fff&size=128`;
                 }}
               />
-              <div className="text-gray-900">
+              <div className="text-gray-900 hidden md:block">
                 <div className="text-sm font-medium">{user.username}</div>
               </div>
             </div>
@@ -129,10 +124,10 @@ function HomePage() {
         </div>
       </div>
 
-      {/* Main Split View */}
-      <div className="flex-1 flex overflow-hidden">
-        {/* Map Panel - Left Side (70%) */}
-        <div className="w-[70%] relative h-full">
+      {/* Main Container con Mapa Full Screen y Panel Flotante */}
+      <div className="flex-1 relative overflow-hidden">
+        {/* Mapa Full Screen */}
+        <div className="absolute inset-0">
           <InteractiveMap 
             properties={sortedProperties}
             selectedProperty={selectedProperty}
@@ -148,41 +143,61 @@ function HomePage() {
             <div className="flex">
               <button 
                 onClick={() => setMapStyle('osm')}
-                className={`px-6 py-3 text-sm font-medium border-r border-gray-200 transition-all duration-300 rounded-l-xl ${
+                className={`px-6 py-3 text-sm font-medium border-r border-gray-200 transition-all duration-300 rounded-l-xl flex items-center gap-2 ${
                   mapStyle === 'osm' 
                     ? 'bg-[var(--gold-accent)] text-white' 
                     : 'hover:bg-[var(--gold-accent)] hover:text-white'
                 }`}
               >
+                <IoGlobeOutline className="text-lg" />
                 Map
               </button>
               <button 
                 onClick={() => setMapStyle('satellite')}
-                className={`px-6 py-3 text-sm font-medium transition-all duration-300 rounded-r-xl ${
+                className={`px-6 py-3 text-sm font-medium transition-all duration-300 rounded-r-xl flex items-center gap-2 ${
                   mapStyle === 'satellite' 
                     ? 'bg-[var(--gold-accent)] text-white' 
                     : 'hover:bg-[var(--gold-accent)] hover:text-white'
                 }`}
               >
+                <IoEarthSharp className="text-lg" />
                 Satellite
               </button>
             </div>
           </div>
         </div>
 
-        {/* Properties Panel - Right Side (30%) */}
-        <div className="w-[30%] property-list overflow-y-auto h-full">
-          <div className="p-4">
-            <div className="flex justify-between items-center mb-4 pb-2 border-b border-gray-200">
-              <h2 className="text-lg font-semibold text-[var(--charcoal)]">
-                {sortedProperties.length} Properties
-              </h2>
-              <div className="text-sm text-gray-500 font-medium">
-                {selectedMarket}
+        {/* Botón Toggle Panel (Solo visible cuando el panel está cerrado) */}
+        {!isPanelOpen && (
+          <button 
+            onClick={() => setIsPanelOpen(true)}
+            className="absolute left-6 top-6 z-[1001] bg-white hover:bg-[var(--gold-accent)] text-gray-700 hover:text-white p-3 rounded-xl shadow-lg transition-all duration-300 border border-gray-200 max-md:left-4 max-md:top-4"
+          >
+            <IoMenuSharp className="text-2xl" />
+          </button>
+        )}
+
+        {/* Panel Flotante de Propiedades - Izquierda */}
+        {isPanelOpen && (
+          <div className="absolute left-6 top-6 bottom-6 w-[32rem] bg-white rounded-xl shadow-2xl z-[1000] overflow-hidden border border-gray-200 animate-slide-in-left md:left-6 md:top-6 md:bottom-6 md:w-[32rem] max-md:left-0 max-md:top-0 max-md:bottom-0 max-md:right-0 max-md:w-full max-md:rounded-none">
+            {/* Header del Panel */}
+            <div className="bg-white border-b border-gray-200 px-4 py-3 flex justify-between items-center">
+              <div>
+                <h2 className="text-lg font-bold text-[var(--charcoal)]">
+                  {sortedProperties.length} Properties
+                </h2>
+                <p className="text-sm text-gray-500">{selectedMarket}</p>
               </div>
+              <button 
+                onClick={() => setIsPanelOpen(false)}
+                className="text-gray-600 hover:bg-gray-100 p-2 rounded-lg transition-all duration-200"
+              >
+                <IoCloseSharp className="text-xl" />
+              </button>
             </div>
-            
-            <div className="space-y-3">
+
+            {/* Lista de Propiedades */}
+            <div className="h-[calc(100%-4rem)] overflow-y-auto p-4 space-y-3 property-list">
               {sortedProperties.length === 0 ? (
                 <div className="text-center py-16">
                   <div className="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center">
@@ -192,12 +207,6 @@ function HomePage() {
                   </div>
                   <h3 className="text-xl font-semibold text-gray-700 mb-2">No properties available</h3>
                   <p className="text-gray-500 mb-4">Try adjusting the search filters</p>
-                  <div className="inline-flex items-center px-4 py-2 bg-gray-50 rounded-lg text-sm text-gray-600">
-                    <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                    </svg>
-                    Change the market or sorting criteria
-                  </div>
                 </div>
               ) : (
                 sortedProperties.map((property) => (
@@ -214,7 +223,7 @@ function HomePage() {
               )}
             </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   )

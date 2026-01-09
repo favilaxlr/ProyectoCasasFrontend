@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router';
 import { getPropertyRequest } from '../api/properties';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
-import 'leaflet/dist/leaflet.css';
+
 
 // Fix para iconos
 delete L.Icon.Default.prototype._getIconUrl;

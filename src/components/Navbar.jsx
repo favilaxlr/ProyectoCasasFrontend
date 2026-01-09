@@ -19,9 +19,10 @@ function Navbar() {
     
   return (
     <nav className="navbar my-2 mx-2 md:my-3 md:mx-3 flex flex-col md:flex-row justify-between items-center py-3 md:py-6 px-4 md:px-10 rounded-xl shadow-2xl backdrop-blur-sm relative">
-      <div className="flex justify-between items-center w-full md:w-auto">
+      <div className="flex justify-between items-center w-full md:w-auto gap-4">
+        {/* Logo como botón */}
         <Link to='/' className="hover:scale-105 transition-transform duration-300">
-          <Logo size="small" className="md:size-medium" />
+          <Logo size="medium" />
         </Link>
         
         {/* Mobile Menu Button */}

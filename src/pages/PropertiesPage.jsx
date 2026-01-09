@@ -2,11 +2,17 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router';
 import { getPropertiesRequest, deletePropertyRequest, changePropertyStatusRequest } from '../api/properties';
 import { toast } from 'react-toastify';
-import { IoSwapHorizontalSharp } from 'react-icons/io5';
+import { IoSwapHorizontalSharp, IoFunnelSharp, IoBusinessSharp, IoGlobeOutline, IoEarthSharp } from 'react-icons/io5';
+import InteractiveMap from '../components/InteractiveMap';
 
 function PropertiesPage() {
     const [properties, setProperties] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [viewMode, setViewMode] = useState('grid'); // 'grid' o 'map'
+    const [sortOption, setSortOption] = useState('price-low');
+    const [operationType, setOperationType] = useState('all'); // 'all', 'sale', 'rent', 'both'
+    const [mapStyle, setMapStyle] = useState('osm'); // 'osm' o 'satellite'
+    const [selectedProperty, setSelectedProperty] = useState(null);
 
     useEffect(() => {
         loadProperties();
@@ -49,22 +55,100 @@ function PropertiesPage() {
 
     if (loading) return <div className="flex justify-center p-8">Loading...</div>;
 
+    // Filtrar por tipo de operación
+    const filteredProperties = properties.filter(property => {
+        if (operationType === 'all') return true
+        if (operationType === 'sale') {
+            return !property.businessMode || property.businessMode === 'sale' || property.businessMode === 'both'
+        }
+        if (operationType === 'rent') {
+            return property.businessMode === 'rent' || property.businessMode === 'both'
+        }
+        if (operationType === 'both') {
+            return property.businessMode === 'both'
+        }
+        return true
+    })
+
+    // Ordenar propiedades
+    const sortedProperties = [...filteredProperties].sort((a, b) => {
+        if (sortOption === 'price-low') return (a.price?.sale || 0) - (b.price?.sale || 0)
+        if (sortOption === 'price-high') return (b.price?.sale || 0) - (a.price?.sale || 0)
+        return 0
+    })
+
     return (
         <div className="page-container max-w-7xl mx-auto p-6">
-            <div className="flex justify-between items-center mb-6 animate-slide-in-left">
+            <div className="flex justify-between items-center mb-6 animate-slide-in-left flex-wrap gap-4">
                 <h1 className="text-3xl font-bold text-[var(--charcoal)]">Properties</h1>
-                <Link
-                    to="/admin/add-property"
-                    className="btn-secondary-animated"
-                >
-                    <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                    </svg>
-                    New Property
-                </Link>
+                
+                {/* Controles */}
+                <div className="flex items-center gap-3 flex-wrap">
+                    {/* Filtro de Tipo de Operación */}
+                    <div className="flex items-center gap-2 bg-white px-3 py-2 rounded-lg border border-gray-300 shadow-sm">
+                        <IoBusinessSharp className="text-[var(--gold-accent)] text-lg" />
+                        <select 
+                            value={operationType} 
+                            onChange={(e) => setOperationType(e.target.value)}
+                            className="bg-transparent text-gray-900 text-sm font-medium focus:outline-none cursor-pointer"
+                        >
+                            <option value="all">All Types</option>
+                            <option value="sale">Sale</option>
+                            <option value="rent">Rent</option>
+                            <option value="both">Rent/Sale</option>
+                        </select>
+                    </div>
+
+                    {/* Selector de Ordenamiento */}
+                    <div className="flex items-center gap-2 bg-white px-3 py-2 rounded-lg border border-gray-300 shadow-sm">
+                        <IoFunnelSharp className="text-[var(--gold-accent)] text-lg" />
+                        <select 
+                            value={sortOption} 
+                            onChange={(e) => setSortOption(e.target.value)}
+                            className="bg-transparent text-gray-900 text-sm font-medium focus:outline-none cursor-pointer"
+                        >
+                            <option value="price-low">$ Low to High</option>
+                            <option value="price-high">$ High to Low</option>
+                        </select>
+                    </div>
+
+                    {/* Toggle Vista Grid/Mapa */}
+                    <div className="flex bg-white rounded-lg border border-gray-300 shadow-sm overflow-hidden">
+                        <button
+                            onClick={() => setViewMode('grid')}
+                            className={`px-4 py-2 text-sm font-medium transition-all ${
+                                viewMode === 'grid' 
+                                    ? 'bg-[var(--gold-accent)] text-white' 
+                                    : 'text-gray-700 hover:bg-gray-100'
+                            }`}
+                        >
+                            Grid
+                        </button>
+                        <button
+                            onClick={() => setViewMode('map')}
+                            className={`px-4 py-2 text-sm font-medium transition-all ${
+                                viewMode === 'map' 
+                                    ? 'bg-[var(--gold-accent)] text-white' 
+                                    : 'text-gray-700 hover:bg-gray-100'
+                            }`}
+                        >
+                            Map
+                        </button>
+                    </div>
+                    
+                    <Link
+                        to="/admin/add-property"
+                        className="btn-secondary-animated"
+                    >
+                        <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                        </svg>
+                        New Property
+                    </Link>
+                </div>
             </div>
 
-            {properties.length === 0 ? (
+            {sortedProperties.length === 0 ? (
                 <div className="text-center py-16 animate-fade-in">
                     <div className="w-24 h-24 mx-auto mb-6 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center animate-float">
                         <svg className="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -83,9 +167,51 @@ function PropertiesPage() {
                         Create First Property
                     </Link>
                 </div>
+            ) : viewMode === 'map' ? (
+                /* Vista de Mapa */
+                <div className="h-[calc(100vh-200px)] relative rounded-xl overflow-hidden">
+                    <InteractiveMap 
+                        properties={sortedProperties}
+                        selectedProperty={selectedProperty}
+                        onPropertyClick={setSelectedProperty}
+                        center={[32.7767, -96.7970]}
+                        zoom={11}
+                        height="100%"
+                        mapStyle={mapStyle}
+                    />
+                    
+                    {/* Map Style Controls - Flotante */}
+                    <div className="absolute top-6 right-6 bg-white/95 backdrop-blur-md rounded-xl shadow-2xl border border-white/20 z-[1000]">
+                        <div className="flex">
+                            <button 
+                                onClick={() => setMapStyle('osm')}
+                                className={`px-6 py-3 text-sm font-medium border-r border-gray-200 transition-all duration-300 rounded-l-xl flex items-center gap-2 ${
+                                    mapStyle === 'osm' 
+                                        ? 'bg-[var(--gold-accent)] text-white' 
+                                        : 'hover:bg-[var(--gold-accent)] hover:text-white'
+                                }`}
+                            >
+                                <IoGlobeOutline className="text-lg" />
+                                Map
+                            </button>
+                            <button 
+                                onClick={() => setMapStyle('satellite')}
+                                className={`px-6 py-3 text-sm font-medium transition-all duration-300 rounded-r-xl flex items-center gap-2 ${
+                                    mapStyle === 'satellite' 
+                                        ? 'bg-[var(--gold-accent)] text-white' 
+                                        : 'hover:bg-[var(--gold-accent)] hover:text-white'
+                                }`}
+                            >
+                                <IoEarthSharp className="text-lg" />
+                                Satellite
+                            </button>
+                        </div>
+                    </div>
+                </div>
             ) : (
+                /* Vista de Grid */
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {properties.map((property, index) => (
+                    {sortedProperties.map((property, index) => (
                         <div key={property._id} className={`card-animated hover-lift stagger-item bg-white rounded-xl shadow-lg overflow-hidden`} style={{animationDelay: `${index * 0.1}s`}}>
                             {property.images && property.images.length > 0 ? (
                                 <img

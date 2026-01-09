@@ -3,7 +3,6 @@ import MarkerClusterGroup from 'react-leaflet-cluster';
 import { useEffect } from 'react';
 import { Link } from 'react-router';
 import L from 'leaflet';
-import 'leaflet/dist/leaflet.css';
 import 'leaflet.markercluster/dist/MarkerCluster.css';
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
 
@@ -221,14 +220,59 @@ function InteractiveMap({
                   </p>
                   
                   <div className="mb-3">
-                    <span className="text-xl font-bold text-green-600">
-                      ${property.price.rent?.toLocaleString()}
-                    </span>
-                    <span className="text-sm text-gray-500">/mes</span>
-                    {property.price?.deposit && (
-                      <p className="text-xs text-gray-500">
-                        Depósito: ${property.price.deposit.toLocaleString()}
-                      </p>
+                    {/* Business Mode Badge */}
+                    {property.businessMode && (
+                      <div className="mb-2">
+                        <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold ${
+                          property.businessMode === 'sale' ? 'bg-blue-100 text-blue-800' :
+                          property.businessMode === 'rent' ? 'bg-green-100 text-green-800' :
+                          'bg-purple-100 text-purple-800'
+                        }`}>
+                          {property.businessMode === 'sale' && 'For Sale'}
+                          {property.businessMode === 'rent' && 'For Rent'}
+                          {property.businessMode === 'both' && 'Rent/Sale'}
+                        </span>
+                      </div>
+                    )}
+                    
+                    {/* Mostrar precios según businessMode */}
+                    {property.businessMode === 'both' && property.price?.sale && property.price?.monthlyRent ? (
+                      <div className="space-y-1">
+                        <div>
+                          <span className="text-lg font-bold text-blue-600">
+                            ${property.price.sale.toLocaleString()}
+                          </span>
+                          <span className="text-xs text-gray-500 ml-1">/sale</span>
+                        </div>
+                        <div>
+                          <span className="text-lg font-bold text-green-600">
+                            ${property.price.monthlyRent.toLocaleString()}
+                          </span>
+                          <span className="text-xs text-gray-500 ml-1">/month</span>
+                        </div>
+                      </div>
+                    ) : (
+                      <>
+                        {/* Precio de venta */}
+                        {(!property.businessMode || property.businessMode === 'sale') && property.price?.sale && (
+                          <div>
+                            <span className="text-xl font-bold text-blue-600">
+                              ${property.price.sale.toLocaleString()}
+                            </span>
+                            <span className="text-sm text-gray-500 ml-1">/sale</span>
+                          </div>
+                        )}
+                        
+                        {/* Precio de renta */}
+                        {property.businessMode === 'rent' && property.price?.monthlyRent && (
+                          <div>
+                            <span className="text-xl font-bold text-green-600">
+                              ${property.price.monthlyRent.toLocaleString()}
+                            </span>
+                            <span className="text-sm text-gray-500 ml-1">/month</span>
+                          </div>
+                        )}
+                      </>
                     )}
                   </div>
                   

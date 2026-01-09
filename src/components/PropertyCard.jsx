@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useProperties } from '../context/PropertyContext';
 import { useAuth } from '../context/AuthContext';
 import { Link } from 'react-router';
-import { IoTrashBinSharp, IoPencilSharp, IoLocationSharp, IoBedSharp, IoEyeSharp, IoCardSharp, IoKeySharp, IoBusinessSharp } from 'react-icons/io5';
+import { IoTrashBinSharp, IoPencilSharp, IoLocationSharp, IoBedSharp, IoEyeSharp, IoCardSharp, IoKeySharp, IoBusinessSharp, IoHomeSharp } from 'react-icons/io5';
 import Tooltip from '@mui/material/Tooltip';
 import PropertyPreviewModal from './PropertyPreviewModal';
 
@@ -16,33 +16,35 @@ function PropertyCard({ property, compact = false }) {
 
   if (compact) {
     return (
-      <div className="card p-5 hover:shadow-xl transition-shadow">
-        <div className="flex space-x-4 mb-3">
+      <div className="card p-3 md:p-5 hover:shadow-xl transition-shadow overflow-hidden">
+        <div className="flex flex-col md:flex-row md:space-x-4 space-y-3 md:space-y-0 mb-3 min-w-0">
           {/* Imagen compacta */}
-          <div className="flex-shrink-0">
+          <div className="flex-shrink-0 w-full md:w-40 lg:w-48">
             {mainImage ? (
-              <img
-                src={mainImage.url}
-                alt={property.title}
-                className="w-28 h-28 object-cover rounded-lg cursor-pointer"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setShowPreview(true);
-                }}
-              />
+              <div className="w-full h-48 md:h-32 lg:h-36 rounded-lg overflow-hidden bg-gray-50 shadow-md flex items-center justify-center">
+                <img
+                  src={mainImage.url}
+                  alt={property.title}
+                  className="max-w-full max-h-full object-contain cursor-pointer"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setShowPreview(true);
+                  }}
+                />
+              </div>
             ) : (
-              <div className="w-28 h-28 bg-gray-200 rounded-lg flex items-center justify-center">
+              <div className="w-full h-48 md:h-32 lg:h-36 bg-gray-200 rounded-lg flex items-center justify-center">
                 <span className="text-gray-400 text-xs">No photo</span>
               </div>
             )}
           </div>
           
           {/* Información compacta */}
-          <div className="flex-1 min-w-0">
-            <div className="flex justify-between items-start mb-2">
+          <div className="flex-1 min-w-0 flex flex-col overflow-hidden">
+            <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-2 mb-2 min-w-0">
               {/* Show price according to modality and only if AVAILABLE */}
               {property.status === 'DISPONIBLE' && (
-                <div className="flex flex-col gap-1">
+                <div className="flex flex-col gap-1 flex-shrink-0 min-w-0">
                   {/* Badge de modalidad */}
                   {property.businessMode && (
                     <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold ${
@@ -56,30 +58,35 @@ function PropertyCard({ property, compact = false }) {
                     </span>
                   )}
                   
-                  {/* Para Renta/Venta, mostrar ambos precios en línea */}
+                  {/* Para Renta/Venta, mostrar ambos precios apilados en móvil */}
                   {property.businessMode === 'both' && property.price?.sale && property.price?.monthlyRent ? (
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <h3 className="text-lg font-bold text-blue-600">
-                        ${property.price.sale.toLocaleString()}
-                      </h3>
-                      <span className="text-gray-400 font-bold">/</span>
-                      <h3 className="text-lg font-bold text-green-600">
-                        ${property.price.monthlyRent.toLocaleString()}/mes
-                      </h3>
+                    <div className="flex flex-col gap-1 min-w-0">
+                      <div className="flex items-center gap-1 min-w-0">
+                        <span className="text-xs text-blue-500 font-semibold flex-shrink-0">Sale:</span>
+                        <h3 className="text-sm md:text-base lg:text-lg font-bold text-blue-600 truncate">
+                          ${property.price.sale.toLocaleString()}
+                        </h3>
+                      </div>
+                      <div className="flex items-center gap-1 min-w-0">
+                        <span className="text-xs text-green-500 font-semibold flex-shrink-0">Rent:</span>
+                        <h3 className="text-sm md:text-base lg:text-lg font-bold text-green-600 truncate">
+                          ${property.price.monthlyRent.toLocaleString()}/mo
+                        </h3>
+                      </div>
                     </div>
                   ) : (
                     <>
                       {/* Precio de venta (solo cuando NO es 'both') */}
                       {(!property.businessMode || property.businessMode === 'sale') && property.price?.sale && (
-                        <h3 className="text-xl font-bold text-blue-600">
+                        <h3 className="text-base md:text-lg lg:text-xl font-bold text-blue-600 truncate">
                           ${property.price.sale.toLocaleString()}
                         </h3>
                       )}
                       
                       {/* Precio de renta (solo cuando NO es 'both') */}
                       {property.businessMode === 'rent' && property.price?.monthlyRent && (
-                        <h3 className="text-xl font-bold text-green-600">
-                          ${property.price.monthlyRent.toLocaleString()}/mes
+                        <h3 className="text-base md:text-lg lg:text-xl font-bold text-green-600 truncate">
+                          ${property.price.monthlyRent.toLocaleString()}/mo
                         </h3>
                       )}
                     </>
@@ -89,7 +96,7 @@ function PropertyCard({ property, compact = false }) {
               
               {/* Estado siempre visible para todos */}
               {property.status && (
-                <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                <span className={`px-2 md:px-3 py-1 rounded-full text-xs font-semibold flex-shrink-0 self-start ${
                   property.status === 'DISPONIBLE' ? 'bg-green-100 text-green-800 border border-green-300' :
                   property.status === 'EN_CONTRATO' ? 'bg-orange-100 text-orange-800 border border-orange-300' :
                   property.status === 'VENDIDA' ? 'bg-red-100 text-red-800 border border-red-300' :
@@ -103,7 +110,7 @@ function PropertyCard({ property, compact = false }) {
               )}
             </div>
             
-            <p className="text-base text-gray-600 truncate mb-2 font-medium">
+            <p className="text-sm md:text-base text-gray-600 mb-2 font-medium line-clamp-1">
               {property.address?.street}, {property.address?.city}
             </p>
 
@@ -115,25 +122,35 @@ function PropertyCard({ property, compact = false }) {
               <p className="text-xs text-yellow-600 truncate mb-1">Modified by: {property.lastModifiedBy.username}</p>
             )}
             
-            <div className="flex items-center text-sm text-gray-600 space-x-4 font-medium">
-              <span>{property.details?.bedrooms || 0} Beds</span>
-              <span>{property.details?.bathrooms || 0} Baths</span>
-              <span>{property.details?.area || 0} Sq. Ft.</span>
+            <div className="flex items-center text-xs md:text-sm text-gray-600 gap-2 md:gap-4 font-medium flex-wrap">
+              <span className="flex items-center gap-1 whitespace-nowrap">
+                <IoBedSharp className="text-[var(--gold-accent)]" />
+                {property.details?.bedrooms || 0} Beds
+              </span>
+              <span className="flex items-center gap-1 whitespace-nowrap">
+                <IoBusinessSharp className="text-[var(--gold-accent)]" />
+                {property.details?.bathrooms || 0} Baths
+              </span>
+              <span className="flex items-center gap-1 whitespace-nowrap">
+                <IoLocationSharp className="text-[var(--gold-accent)]" />
+                {property.details?.squareFeet || 0} Sq. Ft.
+              </span>
             </div>
           </div>
         </div>
 
         {/* Botones separados debajo - Mejor visibilidad */}
-        <div className="flex gap-2 pt-3 border-t border-gray-200">
+        <div className="flex flex-wrap gap-2 pt-3 border-t border-gray-200">
           {/* View Details Button - Visible for everyone */}
           <Tooltip title="View full details">
             <Link
               to={'/properties/' + property._id}
-              className='flex-1 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors flex items-center justify-center gap-2'
+              className='flex-1 min-w-[120px] bg-blue-500 hover:bg-blue-600 text-white px-3 md:px-4 py-2 rounded-lg text-xs md:text-sm font-semibold transition-colors flex items-center justify-center gap-1 md:gap-2'
               onClick={(e) => e.stopPropagation()}
             >
               <IoEyeSharp size={16} />
-              View details
+              <span className="hidden md:inline">View details</span>
+              <span className="md:hidden">View</span>
             </Link>
           </Tooltip>
           
@@ -143,23 +160,23 @@ function PropertyCard({ property, compact = false }) {
               <Tooltip title="Edit property">
                 <Link
                   to={'/properties/' + property._id}
-                  className='bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors flex items-center justify-center gap-1'
+                  className='bg-green-500 hover:bg-green-600 text-white px-3 md:px-4 py-2 rounded-lg text-xs md:text-sm font-semibold transition-colors flex items-center justify-center gap-1 whitespace-nowrap'
                   onClick={(e) => e.stopPropagation()}
                 >
                   <IoPencilSharp size={16} />
-                  Edit
+                  <span className="hidden md:inline">Edit</span>
                 </Link>
               </Tooltip>
               <Tooltip title="Delete property">
                 <button
-                  className='bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors flex items-center justify-center gap-1'
+                  className='bg-red-500 hover:bg-red-600 text-white px-3 md:px-4 py-2 rounded-lg text-xs md:text-sm font-semibold transition-colors flex items-center justify-center gap-1 whitespace-nowrap'
                   onClick={(e) => {
                     e.stopPropagation();
                     deleteProperty(property._id);
                   }}
                 >
                   <IoTrashBinSharp size={16} />
-                  Delete
+                  <span className="hidden md:inline">Delete</span>
                 </button>
               </Tooltip>
             </>
