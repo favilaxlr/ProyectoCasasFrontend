@@ -226,21 +226,8 @@ function PropertiesPage() {
                             )}
                             
                             <div className="p-4">
-                                <h3 className="text-lg font-semibold mb-2">{property.title}</h3>
-                                <p className="text-gray-600 text-sm mb-2 line-clamp-2">{property.description}</p>
-
-                                {property.createdBy?.username && (
-                                    <p className="text-xs text-gray-500 mb-1">Uploaded by: {property.createdBy.username}</p>
-                                )}
-
-                                {property.lastModifiedBy?.username && (
-                                    <p className="text-xs text-yellow-700 mb-2">Modified by: {property.lastModifiedBy.username}</p>
-                                )}
-                                
-                                <div className="flex justify-between items-center mb-3">
-                                    <span className="text-xl font-bold text-green-600">
-                                        ${property.price?.sale?.toLocaleString()}
-                                    </span>
+                                <div className="flex justify-between items-start mb-2">
+                                    <h3 className="text-lg font-semibold flex-1">{property.title}</h3>
                                     <select
                                         value={property.status}
                                         onChange={(e) => handleStatusChange(property._id, e.target.value)}
@@ -257,6 +244,93 @@ function PropertiesPage() {
                                     </select>
                                 </div>
 
+                                {/* Business Mode Badge - Inferir si no está definido */}
+                                {(() => {
+                                    let mode = property.businessMode;
+                                    // Si no tiene businessMode, inferirlo de los precios disponibles
+                                    if (!mode) {
+                                        if (property.price?.sale && property.price?.monthlyRent) {
+                                            mode = 'both';
+                                        } else if (property.price?.monthlyRent) {
+                                            mode = 'rent';
+                                        } else if (property.price?.sale) {
+                                            mode = 'sale';
+                                        }
+                                    }
+                                    
+                                    if (mode) {
+                                        return (
+                                            <div className="mb-2">
+                                                <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-bold ${
+                                                    mode === 'sale' ? 'bg-blue-100 text-blue-800' :
+                                                    mode === 'rent' ? 'bg-green-100 text-green-800' :
+                                                    'bg-purple-100 text-purple-800'
+                                                }`}>
+                                                    {mode === 'sale' && '🏷️ For Sale'}
+                                                    {mode === 'rent' && '🔑 For Rent'}
+                                                    {mode === 'both' && '💼 Rent/Sale'}
+                                                </span>
+                                            </div>
+                                        );
+                                    }
+                                    return null;
+                                })()}
+                                
+                                {/* Precios - Mostrar siempre el precio disponible */}
+                                <div className="mb-3 min-h-[60px] flex items-center">
+                                    {(() => {
+                                        const mode = property.businessMode || 
+                                            (property.price?.sale && property.price?.monthlyRent ? 'both' :
+                                             property.price?.monthlyRent ? 'rent' : 'sale');
+                                        
+                                        if (mode === 'both') {
+                                            return (
+                                                <div className="space-y-1 w-full">
+                                                    {property.price?.sale && (
+                                                        <div className="flex items-center gap-2">
+                                                            <span className="text-xs text-blue-600 font-semibold">Sale:</span>
+                                                            <span className="text-xl font-bold text-blue-600">
+                                                                ${property.price.sale.toLocaleString()}
+                                                            </span>
+                                                        </div>
+                                                    )}
+                                                    {property.price?.monthlyRent && (
+                                                        <div className="flex items-center gap-2">
+                                                            <span className="text-xs text-green-600 font-semibold">Rent:</span>
+                                                            <span className="text-xl font-bold text-green-600">
+                                                                ${property.price.monthlyRent.toLocaleString()}/mo
+                                                            </span>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            );
+                                        } else if (mode === 'rent' && property.price?.monthlyRent) {
+                                            return (
+                                                <span className="text-2xl font-bold text-green-600">
+                                                    ${property.price.monthlyRent.toLocaleString()}/mo
+                                                </span>
+                                            );
+                                        } else if (property.price?.sale) {
+                                            return (
+                                                <span className="text-2xl font-bold text-blue-600">
+                                                    ${property.price.sale.toLocaleString()}
+                                                </span>
+                                            );
+                                        }
+                                        return null;
+                                    })()}
+                                </div>
+
+                                <p className="text-gray-600 text-sm mb-2 line-clamp-2">{property.description}</p>
+
+                                {property.createdBy?.username && (
+                                    <p className="text-xs text-gray-500 mb-1">Uploaded by: {property.createdBy.username}</p>
+                                )}
+
+                                {property.lastModifiedBy?.username && (
+                                    <p className="text-xs text-yellow-700 mb-2">Modified by: {property.lastModifiedBy.username}</p>
+                                )}
+                                
                                 <div className="text-sm text-gray-600 mb-3 space-y-1">
                                     <div className="flex justify-between">
                                         <span>Bedrooms:</span>

@@ -36,6 +36,71 @@
   box-shadow: 0 3px 14px rgba(0, 0, 0, 0.15);
 }
 
+/* Mejoras específicas para móviles en Split view */
+@media (max-width: 768px) {
+  /* Asegurar que los popups se vean correctamente en móviles */
+  .leaflet-popup {
+    z-index: 9000 !important;
+  }
+  
+  /* Permitir interacción con el mapa mientras el popup está abierto */
+  .leaflet-popup-pane {
+    pointer-events: none !important;
+  }
+  
+  .leaflet-popup-content-wrapper,
+  .leaflet-popup-tip,
+  .leaflet-popup-close-button {
+    pointer-events: auto !important;
+  }
+  
+  .leaflet-popup-content-wrapper {
+    max-width: calc(100vw - 40px) !important;
+    border-radius: 16px;
+  }
+  
+  .leaflet-popup-content {
+    margin: 0 !important;
+    max-width: 100%;
+  }
+  
+  /* Hacer el popup más grande y legible en móviles */
+  .custom-leaflet-popup .leaflet-popup-content-wrapper {
+    padding: 4px;
+  }
+  
+  /* Hacer el botón X más grande y fácil de clickear en móviles */
+  .leaflet-popup-close-button {
+    width: 32px !important;
+    height: 32px !important;
+    font-size: 24px !important;
+    padding: 0 !important;
+    line-height: 32px !important;
+  }
+  
+  /* Asegurar que el navbar móvil esté por encima de todo */
+  nav {
+    position: relative;
+    z-index: 10000 !important;
+  }
+  
+  /* Mejorar controles del mapa en móviles */
+  .leaflet-control-zoom {
+    margin-top: 80px !important;
+  }
+  
+  .leaflet-top.leaflet-right {
+    top: 80px !important;
+  }
+}
+
+/* Bajar controles de zoom en Desktop únicamente */
+@media (min-width: 769px) {
+  .leaflet-left .leaflet-control-zoom {
+    margin-top: 80px !important;
+  }
+}
+
 :root {
   /* Paleta FR Family Investments */
   --gold-accent: #C8A452;    /* Gold Accent - botones primarios */

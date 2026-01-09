@@ -168,7 +168,8 @@ function NavbarAdmin() {
 
         {/* Mobile Menu */}
         {mobileMenuOpen && (
-          <div className="lg:hidden mt-4 pb-4 space-y-2 border-t border-gray-200 pt-4 animate-fade-in">
+          <div className="fixed top-[70px] left-2 right-2 bg-white rounded-xl shadow-2xl border border-gray-200 lg:hidden z-[9999] max-h-[calc(100vh-80px)] overflow-y-auto animate-fade-in">
+            <div className="p-4 space-y-2">
             {/* Properties Section */}
             <div className="space-y-1">
               <p className="text-xs font-bold text-gray-500 uppercase tracking-wider px-3 mb-2">Management</p>
@@ -251,6 +252,7 @@ function NavbarAdmin() {
                 <IoLogOutOutline size={18} />
                 <span className="font-semibold">Log Out</span>
               </button>
+            </div>
             </div>
           </div>
         )}

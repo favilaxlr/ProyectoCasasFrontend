@@ -103,7 +103,7 @@ function AllPropertiesPage() {
       ) : viewMode === 'split' ? (
         // Split View: Map + List
         <div className="flex flex-1 flex-col md:flex-row h-[calc(100vh-200px)]">
-          <div className="w-full md:w-7/12 h-64 md:h-full">
+          <div className="w-full md:w-7/12 h-[35vh] md:h-full">
             <InteractiveMap 
               properties={filteredProperties}
               selectedProperty={selectedProperty}
@@ -111,9 +111,10 @@ function AllPropertiesPage() {
               center={[32.7767, -96.7970]}
               zoom={11}
               height="100%"
+              isSplitView={true}
             />
           </div>
-          <div className="w-full md:w-5/12 h-full md:h-full overflow-y-scroll p-4 bg-gray-50 scrollbar-visible">
+          <div className="w-full md:w-5/12 flex-1 md:h-full overflow-y-auto p-2 md:p-4 bg-gray-50 scrollbar-visible">
             <style>{`
               .scrollbar-visible::-webkit-scrollbar {
                 width: 12px;

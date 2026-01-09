@@ -258,7 +258,7 @@ function PropertyDetailPage() {
                     onClick={() => setShowGalleryModal(false)}
                 >
                     {/* Header con contador y botón cerrar */}
-                    <div className="absolute top-0 left-0 right-0 p-6 flex justify-between items-center bg-gradient-to-b from-black/80 to-transparent z-10">
+                    <div className="absolute top-0 left-0 right-0 pt-20 md:pt-6 px-6 pb-6 flex justify-between items-center bg-gradient-to-b from-black/80 to-transparent z-10">
                         <div className="text-white text-lg font-semibold">
                             {selectedImage + 1} / {property.images.length}
                         </div>

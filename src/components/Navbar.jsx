@@ -18,7 +18,7 @@ function Navbar() {
             return <NavbarUser/>
     
   return (
-    <nav className="navbar my-2 mx-2 md:my-3 md:mx-3 flex flex-col md:flex-row justify-between items-center py-3 md:py-6 px-4 md:px-10 rounded-xl shadow-2xl backdrop-blur-sm relative">
+    <nav className="navbar my-2 mx-2 md:my-3 md:mx-3 flex flex-col md:flex-row justify-between items-center py-3 md:py-6 px-4 md:px-10 rounded-xl shadow-2xl backdrop-blur-sm relative z-[10000]">
       <div className="flex justify-between items-center w-full md:w-auto gap-4">
         {/* Logo como botón */}
         <Link to='/' className="hover:scale-105 transition-transform duration-300">

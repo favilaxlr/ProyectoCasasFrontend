@@ -34,7 +34,7 @@ function NavbarUser() {
   }, []);
 
   return (
-    <nav className="navbar my-2 mx-2 md:my-3 md:mx-3 flex justify-between items-center py-3 px-4 md:py-5 md:px-10 rounded-lg shadow-lg bg-gradient-to-r from-gray-900 to-gray-800">
+    <nav className="navbar my-2 mx-2 md:my-3 md:mx-3 flex justify-between items-center py-3 px-4 md:py-5 md:px-10 rounded-lg shadow-lg bg-gradient-to-r from-gray-900 to-gray-800 relative z-[10000]">
        <Link to='/' className="hover:scale-105 transition-transform duration-300">
          <Logo size="small" className="md:size-medium" />
        </Link>
@@ -125,7 +125,7 @@ function NavbarUser() {
 
        {/* Mobile Menu */}
        {mobileMenuOpen && (
-         <div className="absolute top-full left-0 right-0 mt-2 mx-2 bg-white rounded-xl shadow-2xl border border-gray-200 md:hidden z-50 overflow-hidden animate-fade-in">
+         <div className="fixed top-[70px] left-2 right-2 bg-white rounded-xl shadow-2xl border border-gray-200 md:hidden z-[9999] overflow-hidden animate-fade-in max-h-[calc(100vh-80px)] overflow-y-auto">
            <div className="p-4 space-y-2">
              <button
                onClick={() => { navigate('/properties'); setMobileMenuOpen(false); }}
