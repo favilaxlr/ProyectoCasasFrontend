@@ -34,7 +34,7 @@ function NavbarUser() {
   }, []);
 
   return (
-    <nav className="navbar my-2 mx-2 md:my-3 md:mx-3 flex justify-between items-center py-3 px-4 md:py-5 md:px-10 rounded-lg shadow-lg relative z-[10000]">
+    <nav className="navbar flex justify-between items-center py-3 px-4 md:my-3 md:mx-3 md:py-5 md:px-10 md:rounded-lg shadow-lg sticky top-0 z-[10000]">
        <Link to='/' className="hover:scale-105 transition-transform duration-300 mx-auto md:absolute md:left-1/2 md:transform md:-translate-x-1/2">
          <Logo size="small" className="md:size-medium" />
        </Link>

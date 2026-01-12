@@ -58,29 +58,26 @@ function HomePage() {
   })
 
   return (
-    <div className="h-screen flex flex-col">
+    <div className="flex flex-col" style={{ height: 'calc(100vh - 70px)' }}>
       {/* Header con Filtros - Responsive */}
-      <div className="main-header px-4 md:px-6 py-3 md:py-4 flex-shrink-0 border-b border-gray-700/50 shadow-sm">
-        <div className="flex justify-between items-center gap-4">
-          {/* Controles centrales - Izquierda en móvil, Derecha en desktop */}
-          <div className="flex items-center gap-2 md:gap-3 overflow-x-auto scrollbar-hide md:ml-auto">
-            {/* Filtro de Tipo de Operación */}
-            <div className="flex items-center gap-1 md:gap-2 bg-white px-1.5 md:px-3 py-2 rounded-lg border border-gray-300 hover:border-[var(--gold-accent)] transition-all shadow-sm flex-shrink-0">
-              <IoBusinessSharp className="text-[var(--gold-accent)] text-base md:text-lg flex-shrink-0" />
-              <select 
-                value={operationType} 
-                onChange={(e) => setOperationType(e.target.value)}
-                className="bg-transparent text-gray-900 text-xs md:text-sm font-medium focus:outline-none cursor-pointer pr-0"
-              >
-                <option value="all">All</option>
-                <option value="sale">Sale</option>
-                <option value="rent">Rent</option>
-                <option value="both">Rent/Sale</option>
-              </select>
-            </div>
+      <div className="main-header px-4 md:px-6 py-3 md:py-4 flex-shrink-0 border-b border-gray-700/50 shadow-sm relative z-[100]">
+        <div className="flex justify-end items-center gap-2 md:gap-4">
+          {/* Filtro de Tipo de Operación */}
+          <div className="flex items-center gap-1 md:gap-2 bg-white px-1.5 md:px-3 py-2 rounded-lg border border-gray-300 hover:border-[var(--gold-accent)] transition-all shadow-sm flex-shrink-0">
+            <IoBusinessSharp className="text-[var(--gold-accent)] text-base md:text-lg flex-shrink-0" />
+            <select 
+              value={operationType} 
+              onChange={(e) => setOperationType(e.target.value)}
+              className="bg-transparent text-gray-900 text-xs md:text-sm font-medium focus:outline-none cursor-pointer pr-0"
+            >
+              <option value="all">All</option>
+              <option value="sale">Sale</option>
+              <option value="rent">Rent</option>
+              <option value="both">Rent/Sale</option>
+            </select>
           </div>
 
-          {/* Usuario - Siempre a la derecha */}
+          {/* Usuario - Al lado del filtro */}
           {user && (
             <div className="flex items-center gap-2 bg-white px-2 md:px-3 py-2 rounded-lg border border-gray-300 shadow-sm flex-shrink-0">
               <img 

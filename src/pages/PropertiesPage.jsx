@@ -116,38 +116,42 @@ function PropertiesPage() {
                     </div>
 
                     {/* Segunda fila en móvil: Toggle Vista */}
-                    <div className="flex bg-white rounded-lg border border-gray-300 shadow-sm overflow-hidden flex-shrink-0 w-full md:w-auto">
-                        <button
-                            onClick={() => setViewMode('grid')}
-                            className={`px-4 py-2 text-sm font-medium transition-all ${
-                                viewMode === 'grid' 
-                                    ? 'bg-[var(--gold-accent)] text-white' 
-                                    : 'text-gray-700 hover:bg-gray-100'
-                            }`}
-                        >
-                            Grid
-                        </button>
-                        <button
-                            onClick={() => setViewMode('map')}
-                            className={`px-4 py-2 text-sm font-medium transition-all ${
-                                viewMode === 'map' 
-                                    ? 'bg-[var(--gold-accent)] text-white' 
-                                    : 'text-gray-700 hover:bg-gray-100'
-                            }`}
-                        >
-                            Map
-                        </button>
+                    <div className="flex justify-center md:justify-start">
+                        <div className="flex bg-white rounded-lg border border-gray-300 shadow-sm overflow-hidden flex-shrink-0">
+                            <button
+                                onClick={() => setViewMode('grid')}
+                                className={`px-4 py-2 text-sm font-medium transition-all ${
+                                    viewMode === 'grid' 
+                                        ? 'bg-[var(--gold-accent)] text-white' 
+                                        : 'text-gray-700 hover:bg-gray-100'
+                                }`}
+                            >
+                                Grid
+                            </button>
+                            <button
+                                onClick={() => setViewMode('map')}
+                                className={`px-4 py-2 text-sm font-medium transition-all ${
+                                    viewMode === 'map' 
+                                        ? 'bg-[var(--gold-accent)] text-white' 
+                                        : 'text-gray-700 hover:bg-gray-100'
+                                }`}
+                            >
+                                Map
+                            </button>
+                        </div>
                     </div>
                     
-                    <Link
-                        to="/admin/add-property"
-                        className="btn-secondary-animated"
-                    >
-                        <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                        </svg>
-                        New Property
-                    </Link>
+                    <div className="flex justify-center md:justify-start">
+                        <Link
+                            to="/admin/add-property"
+                            className="btn-secondary-animated"
+                        >
+                            <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                            </svg>
+                            New Property
+                        </Link>
+                    </div>
                 </div>
             </div>
 

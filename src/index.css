@@ -280,6 +280,8 @@ body {
   background: var(--soft-black);
   border: none;
   box-shadow: none;
+  position: relative;
+  z-index: 100;
 }
 
 .market-selector, .sort-selector {
