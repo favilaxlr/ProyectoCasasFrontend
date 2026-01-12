@@ -20,7 +20,7 @@ const createHouseIcon = (color = '#4CAF50', isSelected = false) => {
           <path fill="${color}" stroke="#fff" stroke-width="0.5"
                 d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
         </svg>
-        ${isSelected ? '<div style="position: absolute; top: -8px; right: -8px; width: 16px; height: 16px; background: #FFD700; border: 2px solid white; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.3);"></div>' : ''}
+        ${isSelected ? '<div style="position: absolute; top: -8px; right: -8px; width: 16px; height: 16px; background: #1b6487; border: 2px solid white; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.3);"></div>' : ''}
       </div>
     `,
     iconSize: [size, size],
@@ -408,7 +408,7 @@ function InteractiveMap({
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" 
                        width="${size}" height="${size}" 
                        style="filter: drop-shadow(0px 4px 8px rgba(0,0,0,0.4)); display: block;">
-                    <path fill="#C8A452" stroke="#fff" stroke-width="0.8"
+                    <path fill="#1b6487" stroke="#fff" stroke-width="0.8"
                           d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
                   </svg>
                   <!-- Número de propiedades - Centrado en el área de la casa -->

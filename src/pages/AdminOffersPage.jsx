@@ -105,7 +105,7 @@ function AdminOffersPage() {
                         <div>
                             <Link
                                 to={`/properties/${offer.property._id}`}
-                                className="text-xl font-bold text-gray-800 hover:text-green-600 transition-colors"
+                                className="text-xl font-bold text-gray-800 hover:text-[var(--gold-accent)] transition-colors"
                             >
                                 {offer.property.title}
                             </Link>
@@ -120,9 +120,9 @@ function AdminOffersPage() {
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                        <div className="bg-green-50 p-3 rounded-lg">
+                        <div className="bg-blue-50 p-3 rounded-lg">
                             <p className="text-sm text-gray-600">Offer Amount</p>
-                            <p className="text-2xl font-bold text-green-600">
+                            <p className="text-2xl font-bold text-[var(--gold-accent)]">
                                 ${offer.offerAmount?.toLocaleString()}
                             </p>
                         </div>
@@ -151,7 +151,7 @@ function AdminOffersPage() {
                             <button
                                 onClick={() => handleTakeOffer(offer._id)}
                                 disabled={takingOffer === offer._id}
-                                className="flex-1 bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition-colors disabled:bg-gray-400 flex items-center justify-center"
+                                className="flex-1 bg-[var(--gold-accent)] text-white py-2 rounded-lg hover:bg-[#145a75] transition-colors disabled:bg-gray-400 flex items-center justify-center"
                             >
                                 {takingOffer === offer._id ? (
                                     <>
@@ -168,7 +168,7 @@ function AdminOffersPage() {
                         ) : (
                             <Link
                                 to={`/admin/offers/${offer._id}`}
-                                className="flex-1 bg-green-600 text-white text-center py-2 rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center"
+                                className="flex-1 bg-[var(--gold-accent)] text-white text-center py-2 rounded-lg hover:bg-[#145a75] transition-colors flex items-center justify-center"
                             >
                                 <IoChatbubbleEllipsesOutline className="mr-2" />
                                 View Conversation
@@ -191,7 +191,7 @@ function AdminOffersPage() {
         return (
             <div className="max-w-6xl mx-auto p-6">
                 <div className="flex justify-center items-center h-64">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600"></div>
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[var(--gold-accent)]"></div>
                 </div>
             </div>
         );
@@ -199,12 +199,12 @@ function AdminOffersPage() {
 
     return (
         <div className="max-w-6xl mx-auto p-6">
-            <div className="mb-6">
-                <h1 className="text-3xl font-bold flex items-center">
-                    <IoCashOutline className="mr-3 text-green-600" />
+            <div className="bg-[var(--soft-black)] px-6 py-4 -mx-6 -mt-6 mb-6">
+                <h1 className="text-3xl font-bold flex items-center text-white">
+                    <IoCashOutline className="mr-3 text-[var(--gold-accent)]" />
                     Manage Offers
                 </h1>
-                <p className="text-gray-600 mt-2">Review and respond to property offers</p>
+                <p className="text-gray-400 mt-2">Review and respond to property offers</p>
             </div>
 
             {/* Tabs */}
@@ -213,8 +213,8 @@ function AdminOffersPage() {
                     onClick={() => setActiveTab('pending')}
                     className={`px-6 py-3 font-semibold transition-all ${
                         activeTab === 'pending'
-                            ? 'text-green-600 border-b-4 border-green-600 -mb-0.5'
-                            : 'text-gray-600 hover:text-green-600'
+                            ? 'text-[var(--gold-accent)] border-b-4 border-[var(--gold-accent)] -mb-0.5'
+                            : 'text-gray-600 hover:text-[var(--gold-accent)]'
                     }`}
                 >
                     Pending Offers
@@ -228,8 +228,8 @@ function AdminOffersPage() {
                     onClick={() => setActiveTab('assigned')}
                     className={`px-6 py-3 font-semibold transition-all ${
                         activeTab === 'assigned'
-                            ? 'text-green-600 border-b-4 border-green-600 -mb-0.5'
-                            : 'text-gray-600 hover:text-green-600'
+                            ? 'text-[var(--gold-accent)] border-b-4 border-[var(--gold-accent)] -mb-0.5'
+                            : 'text-gray-600 hover:text-[var(--gold-accent)]'
                     }`}
                 >
                     My Assigned Offers

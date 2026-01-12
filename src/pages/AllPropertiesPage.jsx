@@ -3,7 +3,7 @@ import { useNavigate } from "react-router";
 import { useProperties } from "../context/PropertyContext";
 import PropertyCard from '../components/PropertyCard';
 import InteractiveMap from '../components/InteractiveMap';
-import { IoArrowBack, IoMapSharp, IoListSharp } from 'react-icons/io5';
+import { IoArrowBack, IoMapSharp, IoListSharp, IoFunnelSharp, IoBusinessSharp } from 'react-icons/io5';
 
 function AllPropertiesPage() {
   const navigate = useNavigate();
@@ -16,12 +16,20 @@ function AllPropertiesPage() {
   });
   const [viewMode, setViewMode] = useState('split'); // 'split', 'list', 'map'
   const [selectedProperty, setSelectedProperty] = useState(null);
+  const [sortOption, setSortOption] = useState('price-low');
+  const [operationType, setOperationType] = useState('all');
 
   useEffect(() => {
     getAllProperties();
   }, []);
 
   const filteredProperties = properties.filter(property => {
+    // Filtro por tipo de operación
+    if (operationType === 'sale' && !(property.businessMode === 'sale' || property.businessMode === 'both' || !property.businessMode)) return false;
+    if (operationType === 'rent' && !(property.businessMode === 'rent' || property.businessMode === 'both')) return false;
+    if (operationType === 'both' && property.businessMode !== 'both') return false;
+    
+    // Otros filtros
     if (filters.minPrice && property.price?.sale < parseInt(filters.minPrice)) return false;
     if (filters.maxPrice && property.price?.sale > parseInt(filters.maxPrice)) return false;
     if (filters.bedrooms && property.details?.bedrooms !== parseInt(filters.bedrooms)) return false;
@@ -29,10 +37,16 @@ function AllPropertiesPage() {
     return true;
   });
 
+  const sortedProperties = [...filteredProperties].sort((a, b) => {
+    if (sortOption === 'price-low') return (a.price?.sale || 0) - (b.price?.sale || 0);
+    if (sortOption === 'price-high') return (b.price?.sale || 0) - (a.price?.sale || 0);
+    return 0;
+  });
+
   return (
     <div className="h-screen flex flex-col">
       {/* Header */}
-      <div className="bg-gradient-to-r from-[var(--charcoal)] to-[var(--charcoal)]/80 px-4 md:px-6 py-4 flex flex-col md:flex-row justify-between items-start md:items-center shadow-lg gap-4 md:gap-0">
+      <div className="bg-[var(--soft-black)] px-4 md:px-6 py-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 md:gap-0">
         <div className="flex items-center gap-4">
           <button
             onClick={() => navigate(-1)}
@@ -41,49 +55,84 @@ function AllPropertiesPage() {
             <IoArrowBack size={20} />
             <span>Back</span>
           </button>
-          <h1 className="text-2xl md:text-3xl font-bold text-[var(--gold-accent)]">
+          <h1 className="text-xl md:text-2xl font-bold text-white tracking-wide" style={{ fontFamily: "'Arial', sans-serif" }}>
             Available Properties
           </h1>
         </div>
         
         {/* View Mode Buttons */}
-        <div className="flex gap-2 flex-wrap">
-          <button
-            onClick={() => setViewMode('split')}
-            className={`flex items-center gap-2 px-3 md:px-4 py-2 rounded-lg font-medium transition-all text-sm md:text-base ${
-              viewMode === 'split' 
-                ? 'bg-[var(--gold-accent)] text-white' 
-                : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-            }`}
-          >
-            <IoMapSharp size={16} className="md:w-5 md:h-5" />
-            <span className="hidden sm:inline">Split View</span>
-            <span className="sm:hidden">Split</span>
-          </button>
-          <button
-            onClick={() => setViewMode('list')}
-            className={`flex items-center gap-2 px-3 md:px-4 py-2 rounded-lg font-medium transition-all text-sm md:text-base ${
-              viewMode === 'list' 
-                ? 'bg-[var(--gold-accent)] text-white' 
-                : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-            }`}
-          >
-            <IoListSharp size={16} className="md:w-5 md:h-5" />
-            <span className="hidden sm:inline">List</span>
-            <span className="sm:hidden">List</span>
-          </button>
-          <button
-            onClick={() => setViewMode('map')}
-            className={`flex items-center gap-2 px-3 md:px-4 py-2 rounded-lg font-medium transition-all text-sm md:text-base ${
-              viewMode === 'map' 
-                ? 'bg-[var(--gold-accent)] text-white' 
-                : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-            }`}
-          >
-            <IoMapSharp size={16} className="md:w-5 md:h-5" />
-            <span className="hidden sm:inline">Full Map</span>
-            <span className="sm:hidden">Map</span>
-          </button>
+        <div className="flex flex-col md:flex-row gap-2 md:items-center">
+          {/* Primera fila en móvil: Tipo de operación y botones de vista */}
+          <div className="flex gap-2 items-center">
+            {/* Filtro de Tipo de Operación */}
+            <div className="flex items-center gap-1 md:gap-2 bg-white px-1.5 md:px-3 py-2 rounded-lg border border-gray-300 hover:border-[var(--gold-accent)] transition-all shadow-sm flex-shrink-0">
+              <IoBusinessSharp className="text-[var(--gold-accent)] text-base md:text-lg flex-shrink-0" />
+              <select 
+                value={operationType} 
+                onChange={(e) => setOperationType(e.target.value)}
+                className="bg-transparent text-gray-900 text-xs md:text-sm font-medium focus:outline-none cursor-pointer pr-0"
+              >
+                <option value="all">All</option>
+                <option value="sale">Sale</option>
+                <option value="rent">Rent</option>
+                <option value="both">Rent/Sale</option>
+              </select>
+            </div>
+            
+            <button
+              onClick={() => setViewMode('split')}
+              className={`flex items-center gap-2 px-3 md:px-4 py-2 rounded-lg font-medium transition-all text-sm md:text-base flex-shrink-0 ${
+                viewMode === 'split' 
+                  ? 'bg-[var(--gold-accent)] text-white' 
+                  : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+              }`}
+            >
+              <IoMapSharp size={16} className="md:w-5 md:h-5" />
+              <span className="hidden sm:inline">Split View</span>
+              <span className="sm:hidden">Split</span>
+            </button>
+            <button
+              onClick={() => setViewMode('list')}
+              className={`flex items-center gap-2 px-3 md:px-4 py-2 rounded-lg font-medium transition-all text-sm md:text-base flex-shrink-0 ${
+                viewMode === 'list' 
+                  ? 'bg-[var(--gold-accent)] text-white' 
+                  : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+              }`}
+            >
+              <IoListSharp size={16} className="md:w-5 md:h-5" />
+              <span className="hidden sm:inline">List</span>
+              <span className="sm:hidden">List</span>
+            </button>
+            <button
+              onClick={() => setViewMode('map')}
+              className={`flex items-center gap-2 px-3 md:px-4 py-2 rounded-lg font-medium transition-all text-sm md:text-base flex-shrink-0 ${
+                viewMode === 'map' 
+                  ? 'bg-[var(--gold-accent)] text-white' 
+                  : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+              }`}
+            >
+              <IoMapSharp size={16} className="md:w-5 md:h-5" />
+              <span className="hidden sm:inline">Full Map</span>
+              <span className="sm:hidden">Map</span>
+            </button>
+          </div>
+          
+          {/* Segunda fila en móvil: Selector de Ordenamiento (solo visible en list y split) */}
+          {(viewMode === 'list' || viewMode === 'split') && (
+            <div className="flex justify-center md:justify-start">
+              <div className="flex items-center gap-1 md:gap-2 bg-white px-2 md:px-3 py-1.5 md:py-2 rounded-lg border border-gray-300 hover:border-[var(--gold-accent)] transition-all shadow-sm">
+                <IoFunnelSharp className="text-[var(--gold-accent)] text-sm md:text-lg flex-shrink-0" />
+                <select 
+                  value={sortOption} 
+                  onChange={(e) => setSortOption(e.target.value)}
+                  className="bg-transparent text-gray-900 text-xs md:text-sm font-medium focus:outline-none cursor-pointer"
+                >
+                  <option value="price-low">$ Low → High</option>
+                  <option value="price-high">$ High → Low</option>
+                </select>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
@@ -132,8 +181,8 @@ function AllPropertiesPage() {
               }
             `}</style>
             <div className="space-y-4">
-              {filteredProperties.length > 0 ? (
-                filteredProperties.map(property => (
+              {sortedProperties.length > 0 ? (
+                sortedProperties.map(property => (
                   <div
                     key={property._id}
                     onClick={() => setSelectedProperty(property)}
@@ -205,8 +254,8 @@ function AllPropertiesPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredProperties.length > 0 ? (
-              filteredProperties.map(property => (
+            {sortedProperties.length > 0 ? (
+              sortedProperties.map(property => (
                 <PropertyCard key={property._id} property={property} />
               ))
             ) : (

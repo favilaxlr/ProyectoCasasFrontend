@@ -78,42 +78,45 @@ function PropertiesPage() {
     })
 
     return (
-        <div className="page-container max-w-7xl mx-auto p-6">
-            <div className="flex justify-between items-center mb-6 animate-slide-in-left flex-wrap gap-4">
-                <h1 className="text-3xl font-bold text-[var(--charcoal)]">Properties</h1>
+        <div className="min-h-screen bg-gray-50">
+            <div className="bg-[var(--soft-black)] px-6 py-4 mb-6 flex justify-between items-center flex-wrap gap-4">
+                <h1 className="text-3xl font-bold text-white">Properties</h1>
                 
                 {/* Controles */}
-                <div className="flex items-center gap-3 flex-wrap">
-                    {/* Filtro de Tipo de Operación */}
-                    <div className="flex items-center gap-2 bg-white px-3 py-2 rounded-lg border border-gray-300 shadow-sm">
-                        <IoBusinessSharp className="text-[var(--gold-accent)] text-lg" />
-                        <select 
-                            value={operationType} 
-                            onChange={(e) => setOperationType(e.target.value)}
-                            className="bg-transparent text-gray-900 text-sm font-medium focus:outline-none cursor-pointer"
-                        >
-                            <option value="all">All Types</option>
-                            <option value="sale">Sale</option>
-                            <option value="rent">Rent</option>
-                            <option value="both">Rent/Sale</option>
-                        </select>
+                <div className="flex flex-col md:flex-row items-stretch md:items-center gap-3 w-full md:w-auto">
+                    {/* Primera fila en móvil: Filtros */}
+                    <div className="flex items-center gap-3 w-full md:w-auto">
+                        {/* Filtro de Tipo de Operación */}
+                        <div className="flex items-center gap-2 bg-white px-3 py-2 rounded-lg border border-gray-300 shadow-sm min-w-[140px] flex-shrink-0">
+                            <IoBusinessSharp className="text-[var(--gold-accent)] text-lg flex-shrink-0" />
+                            <select 
+                                value={operationType} 
+                                onChange={(e) => setOperationType(e.target.value)}
+                                className="bg-transparent text-gray-900 text-sm font-medium focus:outline-none cursor-pointer w-full"
+                            >
+                                <option value="all">All Types</option>
+                                <option value="sale">Sale</option>
+                                <option value="rent">Rent</option>
+                                <option value="both">Rent/Sale</option>
+                            </select>
+                        </div>
+
+                        {/* Selector de Ordenamiento */}
+                        <div className="flex items-center gap-2 bg-white px-3 py-2 rounded-lg border border-gray-300 shadow-sm min-w-[160px] flex-shrink-0">
+                            <IoFunnelSharp className="text-[var(--gold-accent)] text-lg flex-shrink-0" />
+                            <select 
+                                value={sortOption} 
+                                onChange={(e) => setSortOption(e.target.value)}
+                                className="bg-transparent text-gray-900 text-sm font-medium focus:outline-none cursor-pointer w-full"
+                            >
+                                <option value="price-low">$ Low to High</option>
+                                <option value="price-high">$ High to Low</option>
+                            </select>
+                        </div>
                     </div>
 
-                    {/* Selector de Ordenamiento */}
-                    <div className="flex items-center gap-2 bg-white px-3 py-2 rounded-lg border border-gray-300 shadow-sm">
-                        <IoFunnelSharp className="text-[var(--gold-accent)] text-lg" />
-                        <select 
-                            value={sortOption} 
-                            onChange={(e) => setSortOption(e.target.value)}
-                            className="bg-transparent text-gray-900 text-sm font-medium focus:outline-none cursor-pointer"
-                        >
-                            <option value="price-low">$ Low to High</option>
-                            <option value="price-high">$ High to Low</option>
-                        </select>
-                    </div>
-
-                    {/* Toggle Vista Grid/Mapa */}
-                    <div className="flex bg-white rounded-lg border border-gray-300 shadow-sm overflow-hidden">
+                    {/* Segunda fila en móvil: Toggle Vista */}
+                    <div className="flex bg-white rounded-lg border border-gray-300 shadow-sm overflow-hidden flex-shrink-0 w-full md:w-auto">
                         <button
                             onClick={() => setViewMode('grid')}
                             className={`px-4 py-2 text-sm font-medium transition-all ${
@@ -148,8 +151,9 @@ function PropertiesPage() {
                 </div>
             </div>
 
-            {sortedProperties.length === 0 ? (
-                <div className="text-center py-16 animate-fade-in">
+            <div className="max-w-7xl mx-auto px-6">
+                {sortedProperties.length === 0 ? (
+                    <div className="text-center py-16 animate-fade-in">
                     <div className="w-24 h-24 mx-auto mb-6 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center animate-float">
                         <svg className="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
@@ -411,6 +415,7 @@ function PropertiesPage() {
                     ))}
                 </div>
             )}
+            </div>
         </div>
     );
 }

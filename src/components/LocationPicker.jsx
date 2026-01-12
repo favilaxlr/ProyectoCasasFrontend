@@ -203,9 +203,9 @@ function LocationPicker({
           <div 
             ref={resultsRef}
             className="absolute w-full mt-2 bg-white border-2 border-[var(--gold-accent)] rounded-lg shadow-2xl max-h-80 overflow-y-auto"
-            style={{ zIndex: 9999 }}
+            style={{ zIndex: 10001 }}
           >
-            <div className="sticky top-0 bg-gradient-to-r from-[var(--gold-accent)]/10 to-transparent p-3 border-b border-gray-100 z-10">
+            <div className="sticky top-0 bg-[var(--gold-accent)]/10 p-3 border-b border-gray-100 z-10">
               <p className="text-xs text-gray-600 font-semibold px-2">
                 ✨ {searchResults.length} ubicación{searchResults.length !== 1 ? 'es' : ''} encontrada{searchResults.length !== 1 ? 's' : ''}
               </p>
@@ -214,7 +214,7 @@ function LocationPicker({
               <button
                 key={index}
                 onClick={() => handleSelectLocation(result)}
-                className="w-full text-left px-5 py-4 hover:bg-gradient-to-r hover:from-[var(--gold-accent)]/10 hover:to-transparent border-b border-gray-100 last:border-b-0 transition-all duration-200 group"
+                className="w-full text-left px-5 py-4 hover:bg-[var(--gold-accent)]/10 border-b border-gray-100 last:border-b-0 transition-all duration-200 group"
               >
                 <div className="flex items-start gap-3">
                   <div className="text-2xl group-hover:scale-110 transition-transform duration-200">📍</div>
@@ -273,7 +273,7 @@ function LocationPicker({
       </div>
 
       {/* Información de ubicación actual */}
-      <div className="bg-gradient-to-r from-[var(--gold-accent)]/10 to-transparent p-4 rounded-lg border-l-4 border-[var(--gold-accent)]">
+      <div className="bg-[var(--gold-accent)]/10 p-4 rounded-lg border-l-4 border-[var(--gold-accent)]">
         <p className="text-sm font-semibold text-gray-800 mb-2">
           📍 Ubicación seleccionada:
         </p>

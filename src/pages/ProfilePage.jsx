@@ -170,7 +170,7 @@ function ProfilePage() {
       </div>
 
       {/* Profile Picture Card */}
-      <div className="bg-white rounded-lg shadow-lg mb-6 border-t-4" style={{ borderColor: '#C8A452' }}>
+      <div className="bg-white rounded-lg shadow-lg mb-6 border-t-4 border-[var(--gold-accent)]">
         <div className="p-6">
           <h2 className="text-xl font-semibold mb-4" style={{ color: '#3C3C3C' }}>Profile Picture</h2>
           <div className="flex items-center gap-6">
@@ -190,8 +190,7 @@ function ProfilePage() {
               {/* Camera button to change photo */}
               <label 
                 htmlFor="profileImageInput" 
-                className="absolute bottom-0 right-0 text-white p-2 rounded-full cursor-pointer hover:opacity-90 transition-all"
-                style={{ backgroundColor: '#C8A452' }}
+                className="absolute bottom-0 right-0 bg-[var(--gold-accent)] hover:bg-[#145a75] text-white p-2 rounded-full cursor-pointer transition-all"
               >
                 <IoCameraSharp size={20} />
                 <input
@@ -214,7 +213,7 @@ function ProfilePage() {
       </div>
 
       {/* Personal Information Card */}
-      <div className="bg-white rounded-lg shadow-lg mb-6 border-t-4" style={{ borderColor: '#C8A452' }}>
+      <div className="bg-white rounded-lg shadow-lg mb-6 border-t-4 border-[var(--gold-accent)]">
         <div className="p-6 border-b border-gray-200 flex justify-between items-center">
           <div>
             <h2 className="text-2xl font-semibold" style={{ color: '#3C3C3C' }}>Personal Information</h2>
@@ -223,8 +222,7 @@ function ProfilePage() {
           {!isEditing && (
             <button
               onClick={() => setIsEditing(true)}
-              className="text-white px-4 py-2 rounded-lg font-medium transition-all hover:opacity-90"
-              style={{ backgroundColor: '#C8A452' }}
+              className="bg-[var(--gold-accent)] hover:bg-[#145a75] text-white px-4 py-2 rounded-lg font-medium transition-all"
             >
               Edit
             </button>
@@ -234,7 +232,7 @@ function ProfilePage() {
         <div className="p-6 space-y-4">
           {/* User Role */}
           <div className="flex items-center space-x-3 p-4 rounded-lg" style={{ backgroundColor: '#F5F5F5' }}>
-            <IoShieldCheckmarkSharp size={24} style={{ color: '#C8A452' }} />
+            <IoShieldCheckmarkSharp size={24} className="text-[var(--gold-accent)]" />
             <div className="flex-1">
               <p className="text-sm text-gray-600">User Role</p>
               <p className="text-lg font-semibold" style={{ color: '#3C3C3C' }}>
@@ -248,7 +246,7 @@ function ProfilePage() {
             {/* Username */}
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2 flex items-center">
-                <IoPersonSharp className="mr-2" style={{ color: '#C8A452' }} />
+                <IoPersonSharp className="mr-2 text-[var(--gold-accent)]" />
                 Username
               </label>
               <input
@@ -265,7 +263,7 @@ function ProfilePage() {
             {/* Email */}
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2 flex items-center">
-                <IoMailSharp className="mr-2" style={{ color: '#C8A452' }} />
+                <IoMailSharp className="mr-2 text-[var(--gold-accent)]" />
                 Email
               </label>
               <input
@@ -282,7 +280,7 @@ function ProfilePage() {
             {/* Phone */}
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2 flex items-center">
-                <IoPhonePortraitSharp className="mr-2" style={{ color: '#C8A452' }} />
+                <IoPhonePortraitSharp className="mr-2 text-[var(--gold-accent)]" />
                 Phone
               </label>
               <input
@@ -304,8 +302,7 @@ function ProfilePage() {
               <button
                 onClick={handleSaveProfile}
                 disabled={loading}
-                className="text-white px-6 py-2 rounded-lg font-medium transition-all hover:opacity-90 disabled:opacity-50 flex items-center"
-                style={{ backgroundColor: '#C8A452' }}
+                className="bg-[var(--gold-accent)] hover:bg-[#145a75] text-white px-6 py-2 rounded-lg font-medium transition-all disabled:opacity-50 flex items-center"
               >
                 <IoCheckmarkCircleSharp className="mr-2" />
                 {loading ? 'Saving...' : 'Save Changes'}
@@ -330,7 +327,7 @@ function ProfilePage() {
       </div>
 
       {/* Security Card */}
-      <div className="bg-white rounded-lg shadow-lg border-t-4" style={{ borderColor: '#C8A452' }}>
+      <div className="bg-white rounded-lg shadow-lg border-t-4 border-[var(--gold-accent)]">
         <div className="p-6 border-b border-gray-200 flex justify-between items-center">
           <div>
             <h2 className="text-2xl font-semibold flex items-center" style={{ color: '#3C3C3C' }}>
@@ -342,8 +339,7 @@ function ProfilePage() {
           {!isChangingPassword && (
             <button
               onClick={() => setIsChangingPassword(true)}
-              className="text-white px-4 py-2 rounded-lg font-medium transition-all hover:opacity-90"
-              style={{ backgroundColor: '#C8A452' }}
+              className="bg-[var(--gold-accent)] hover:bg-[#145a75] text-white px-4 py-2 rounded-lg font-medium transition-all"
             >
               Change Password
             </button>
@@ -405,8 +401,7 @@ function ProfilePage() {
                 <button
                   onClick={handleChangePassword}
                   disabled={loading}
-                  className="text-white px-6 py-2 rounded-lg font-medium transition-all hover:opacity-90 disabled:opacity-50 flex items-center"
-                  style={{ backgroundColor: '#C8A452' }}
+                  className="bg-[var(--gold-accent)] hover:bg-[#145a75] text-white px-6 py-2 rounded-lg font-medium transition-all disabled:opacity-50 flex items-center"
                 >
                   <IoCheckmarkCircleSharp className="mr-2" />
                   {loading ? 'Updating...' : 'Update Password'}

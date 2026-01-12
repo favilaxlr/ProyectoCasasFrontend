@@ -89,7 +89,7 @@ function UserOfferDetailPage() {
         return (
             <div className="max-w-4xl mx-auto p-6">
                 <div className="flex justify-center items-center h-64">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600"></div>
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[var(--gold-accent)]"></div>
                 </div>
             </div>
         );
@@ -100,7 +100,7 @@ function UserOfferDetailPage() {
             <div className="max-w-4xl mx-auto p-6">
                 <div className="bg-white rounded-lg shadow-lg p-12 text-center">
                     <h2 className="text-2xl font-bold text-gray-400">Offer not found</h2>
-                    <Link to="/my-offers" className="text-green-600 hover:underline mt-4 inline-block">
+                    <Link to="/my-offers" className="text-[var(--gold-accent)] hover:underline mt-4 inline-block">
                         Back to My Offers
                     </Link>
                 </div>
@@ -111,16 +111,16 @@ function UserOfferDetailPage() {
     return (
         <div className="max-w-4xl mx-auto p-6">
             {/* Header */}
-            <div className="mb-6">
+            <div className="bg-[var(--soft-black)] px-6 py-4 -mx-6 -mt-6 mb-6">
                 <Link
                     to="/my-offers"
-                    className="inline-flex items-center text-green-600 hover:text-green-700 mb-4"
+                    className="inline-flex items-center text-[var(--gold-accent)] hover:text-[#145a75] mb-4"
                 >
                     <IoArrowBackSharp className="mr-2" />
                     Back to My Offers
                 </Link>
-                <h1 className="text-3xl font-bold flex items-center">
-                    <IoCashOutline className="mr-3 text-green-600" />
+                <h1 className="text-3xl font-bold flex items-center text-white">
+                    <IoCashOutline className="mr-3 text-[var(--gold-accent)]" />
                     Offer Conversation
                 </h1>
             </div>
@@ -140,7 +140,7 @@ function UserOfferDetailPage() {
                     <div className="flex-1">
                         <Link
                             to={`/properties/${offer.property._id}`}
-                            className="text-2xl font-bold text-gray-800 hover:text-green-600 transition-colors flex items-center"
+                            className="text-2xl font-bold text-gray-800 hover:text-[var(--gold-accent)] transition-colors flex items-center"
                         >
                             {offer.property.title}
                             <IoHomeOutline className="ml-2" />

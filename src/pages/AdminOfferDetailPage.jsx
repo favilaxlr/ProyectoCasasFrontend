@@ -108,7 +108,7 @@ function AdminOfferDetailPage() {
         return (
             <div className="max-w-4xl mx-auto p-6">
                 <div className="flex justify-center items-center h-64">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600"></div>
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[var(--gold-accent)]"></div>
                 </div>
             </div>
         );
@@ -119,7 +119,7 @@ function AdminOfferDetailPage() {
             <div className="max-w-4xl mx-auto p-6">
                 <div className="bg-white rounded-lg shadow-lg p-12 text-center">
                     <h2 className="text-2xl font-bold text-gray-400">Offer not found or not assigned to you</h2>
-                    <Link to="/admin/offers" className="text-green-600 hover:underline mt-4 inline-block">
+                    <Link to="/admin/offers" className="text-[var(--gold-accent)] hover:underline mt-4 inline-block">
                         Back to Offers
                     </Link>
                 </div>
@@ -130,16 +130,16 @@ function AdminOfferDetailPage() {
     return (
         <div className="max-w-4xl mx-auto p-6">
             {/* Header */}
-            <div className="mb-6">
+            <div className="bg-[var(--soft-black)] px-6 py-4 -mx-6 -mt-6 mb-6">
                 <Link
                     to="/admin/offers"
-                    className="inline-flex items-center text-green-600 hover:text-green-700 mb-4"
+                    className="inline-flex items-center text-[var(--gold-accent)] hover:text-[#145a75] mb-4"
                 >
                     <IoArrowBackSharp className="mr-2" />
                     Back to Offers
                 </Link>
-                <h1 className="text-3xl font-bold flex items-center">
-                    <IoCashOutline className="mr-3 text-green-600" />
+                <h1 className="text-3xl font-bold flex items-center text-white">
+                    <IoCashOutline className="mr-3 text-[var(--gold-accent)]" />
                     Offer Management
                 </h1>
             </div>
@@ -159,7 +159,7 @@ function AdminOfferDetailPage() {
                     <div className="flex-1">
                         <Link
                             to={`/properties/${offer.property._id}`}
-                            className="text-2xl font-bold text-gray-800 hover:text-green-600 transition-colors flex items-center"
+                            className="text-2xl font-bold text-gray-800 hover:text-[var(--gold-accent)] transition-colors flex items-center"
                         >
                             {offer.property.title}
                             <IoHomeOutline className="ml-2" />
@@ -168,7 +168,7 @@ function AdminOfferDetailPage() {
                             {offer.property.address?.street}, {offer.property.address?.city}, {offer.property.address?.state}
                         </p>
 
-                        <div className="mt-3 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border-2 border-blue-200">
+                        <div className="mt-3 p-4 bg-gray-100 rounded-lg border-2 border-gray-300">
                             <div className="flex items-center gap-3 mb-3">
                                 <img
                                     src={offer.user.profileImage?.url || `https://ui-avatars.com/api/?name=${encodeURIComponent(offer.user.username)}&background=random&color=fff&size=128`}
@@ -176,7 +176,7 @@ function AdminOfferDetailPage() {
                                     onError={(e) => {
                                         e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(offer.user.username)}&background=random&color=fff&size=128`;
                                     }}
-                                    className="w-14 h-14 rounded-full object-cover border-2 border-blue-300"
+                                    className="w-14 h-14 rounded-full object-cover border-2 border-gray-300"
                                 />
                                 <div>
                                     <p className="text-xs text-gray-600 uppercase tracking-wide">Offered by</p>
@@ -224,7 +224,7 @@ function AdminOfferDetailPage() {
                                     value={offer.status}
                                     onChange={(e) => handleStatusChange(e.target.value)}
                                     disabled={updatingStatus}
-                                    className="flex-1 border-2 border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-green-500 focus:border-green-500 disabled:bg-gray-100"
+                                    className="flex-1 border-2 border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-[var(--gold-accent)] focus:border-[var(--gold-accent)] disabled:bg-gray-100"
                                 >
                                     <option value="in_progress">In Progress</option>
                                     <option value="accepted">Accepted</option>

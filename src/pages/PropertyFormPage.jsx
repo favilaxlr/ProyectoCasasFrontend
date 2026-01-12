@@ -357,7 +357,7 @@ function PropertyFormPage() {
     const propertyType = watch('details.propertyType');
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-8 px-4">
+        <div className="min-h-screen bg-gray-50 py-8 px-4">
             <div className="max-w-5xl mx-auto">
                 <div className="animate-slide-in-left mb-8 text-center">
                     <h1 className="text-4xl font-bold text-[var(--charcoal)] mb-2 flex items-center justify-center">

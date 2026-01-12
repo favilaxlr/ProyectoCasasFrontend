@@ -24,7 +24,7 @@ function PropertyPreviewModal({ isOpen, onClose, propertyId }) {
 
   return (
     <div 
-      className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4"
+      className="fixed inset-0 bg-black bg-opacity-50 z-[10002] flex items-center justify-center p-4"
       onClick={handleBackdropClick}
     >
       <div className="bg-white rounded-lg shadow-2xl max-w-6xl w-full max-h-[90vh] overflow-hidden relative">

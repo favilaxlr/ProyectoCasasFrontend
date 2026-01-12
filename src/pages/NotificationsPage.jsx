@@ -65,7 +65,7 @@ function NotificationsPage() {
             case 'failed':
                 return <IoCloseCircleSharp className="text-red-500" />;
             case 'in_progress':
-                return <IoTimeSharp className="text-yellow-500" />;
+                return <IoTimeSharp className="text-[var(--gold-accent)]" />;
             default:
                 return <IoWarningSharp className="text-gray-500" />;
         }
@@ -91,7 +91,7 @@ function NotificationsPage() {
     if (loading) {
         return (
             <div className="flex justify-center items-center h-64">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2" style={{ borderColor: '#C8A452' }}></div>
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[var(--gold-accent)]"></div>
             </div>
         );
     }
@@ -105,8 +105,7 @@ function NotificationsPage() {
                 </div>
                 <button
                     onClick={() => loadData(true)}
-                    className="text-white px-6 py-3 rounded-lg hover:opacity-90 flex items-center font-semibold transition-all"
-                    style={{ backgroundColor: '#C8A452' }}
+                    className="bg-[var(--gold-accent)] text-white px-6 py-3 rounded-lg hover:bg-[#145a75] flex items-center font-semibold transition-all"
                 >
                     <IoRefreshSharp className="mr-2" />
                     Update
@@ -116,12 +115,12 @@ function NotificationsPage() {
             {/* Estadísticas */}
             {stats && (
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                    <div className="bg-white p-6 rounded-lg shadow-lg border-l-4" style={{ borderColor: '#C8A452' }}>
+                    <div className="bg-white p-6 rounded-lg shadow-lg border-l-4 border-[var(--gold-accent)]">
                         <div className="flex items-center">
-                            <IoStatsChartSharp className="text-3xl mr-4" style={{ color: '#C8A452' }} />
+                            <IoStatsChartSharp className="text-3xl text-[var(--gold-accent)] mr-4" />
                             <div>
                                 <h3 className="text-lg font-semibold text-gray-700">Total Users</h3>
-                                <p className="text-3xl font-bold" style={{ color: '#C8A452' }}>{stats.totalUsers}</p>
+                                <p className="text-3xl font-bold text-[var(--gold-accent)]">{stats.totalUsers}</p>
                                 <p className="text-sm text-gray-500">Users registered with phone</p>
                             </div>
                         </div>
@@ -243,8 +242,7 @@ function NotificationsPage() {
                                                 <button
                                                     onClick={() => handleResend(notification._id)}
                                                     disabled={resending === notification._id}
-                                                    className="text-white px-3 py-1 rounded hover:opacity-90 disabled:opacity-50 font-medium transition-all"
-                                                    style={{ backgroundColor: '#C8A452' }}
+                                                    className="bg-[var(--gold-accent)] text-white px-3 py-1 rounded hover:bg-[#145a75] disabled:opacity-50 font-medium transition-all"
                                                 >
                                                     {resending === notification._id ? (
                                                         <div className="flex items-center">
@@ -341,12 +339,12 @@ function NotificationsPage() {
             </div>
 
             {/* Información del Sistema */}
-            <div className="mt-8 rounded-lg p-6 border-l-4" style={{ backgroundColor: '#F5F5F5', borderColor: '#C8A452' }}>
-                <h3 className="text-lg font-semibold mb-3 flex items-center" style={{ color: '#3C3C3C' }}>
-                    <IoPhonePortraitSharp className="mr-2" style={{ color: '#C8A452' }} />
+            <div className="mt-8 bg-gray-50 rounded-lg p-6 border-l-4 border-[var(--gold-accent)]">
+                <h3 className="text-lg font-semibold mb-3 flex items-center text-gray-800">
+                    <IoPhonePortraitSharp className="mr-2 text-[var(--gold-accent)]" />
                     Automatic Notification System
                 </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm" style={{ color: '#3C3C3C' }}>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-800">
                     <div>
                         <h4 className="font-semibold mb-2">How it works:</h4>
                         <ul className="space-y-1">

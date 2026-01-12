@@ -103,7 +103,7 @@
 
 :root {
   /* Paleta FR Family Investments */
-  --gold-accent: #C8A452;    /* Gold Accent - botones primarios */
+  --gold-accent: #1b6487;    /* Blue Accent - botones primarios */
   --charcoal: #3C3C3C;       /* Charcoal - texto principal */
   --soft-black: #1F1F1F;     /* Soft Black - encabezados */
   --clean-white: #FFFFFF;    /* Clean White - fondos principales */
@@ -167,9 +167,11 @@ html, body, #root {
 }
 
 body {
-  background: var(--light-gray);
+  background: #f9fafb;
   color: var(--charcoal);
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  margin: 0;
+  padding: 0;
 }
 
 .btn-primary {
@@ -203,9 +205,10 @@ body {
 }
 
 .navbar {
-  background: linear-gradient(135deg, var(--soft-black) 0%, #2d2d2d 50%, var(--charcoal) 100%);
-  @apply text-white border border-gray-700/30;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+  background: var(--soft-black);
+  @apply text-white;
+  box-shadow: none;
+  border-bottom: 1px solid white;
 }
 
 .status-disponible {
@@ -225,7 +228,7 @@ body {
 
 /* Split View Layout Styles */
 .map-placeholder {
-  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #f1f5f9 100%);
+  background: #1F1F1F;
   @apply relative overflow-hidden;
   position: relative;
 }
@@ -237,8 +240,7 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  background: radial-gradient(circle at 30% 20%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
-              radial-gradient(circle at 70% 80%, rgba(16, 185, 129, 0.1) 0%, transparent 50%);
+  background: transparent;
   pointer-events: none;
 }
 
@@ -275,9 +277,9 @@ body {
 
 /* Header Styles */
 .main-header {
-  background: linear-gradient(135deg, var(--soft-black) 0%, #2d2d2d 100%);
-  @apply shadow-2xl border-b border-gray-700/50;
-  backdrop-filter: blur(10px);
+  background: var(--soft-black);
+  border: none;
+  box-shadow: none;
 }
 
 .market-selector, .sort-selector {
@@ -414,8 +416,8 @@ body {
 }
 
 .btn-primary-animated {
-  @apply w-full bg-gradient-to-r from-[var(--gold-accent)] to-yellow-600 text-white font-bold py-4 px-6 rounded-xl;
-  @apply hover:from-yellow-600 hover:to-[var(--gold-accent)] focus:outline-none focus:ring-4 focus:ring-yellow-300;
+  @apply w-full bg-[var(--gold-accent)] text-white font-bold py-4 px-6 rounded-xl;
+  @apply hover:bg-[#165474] focus:outline-none focus:ring-4 focus:ring-blue-300;
   @apply transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl;
   @apply disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none;
 }
@@ -1446,7 +1448,7 @@ body {
   width: 100%;
   height: 100%;
   background: rgba(0, 0, 0, 0.95);
-  z-index: 9999;
+  z-index: 10002;
   display: flex;
   flex-direction: column;
   align-items: center;

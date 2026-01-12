@@ -67,10 +67,12 @@ function UsersManagementPage() {
 
     return (
         <div className="max-w-6xl mx-auto p-6">
-            <h1 className="text-4xl font-bold mb-2" style={{ color: '#1F1F1F' }}>User Management</h1>
-            <p className="text-gray-600 mb-6">Assign and manage administrator and co-administrator roles</p>
+            <div className="bg-[var(--soft-black)] px-6 py-4 -mx-6 -mt-6 mb-6">
+                <h1 className="text-4xl font-bold mb-2 text-white">User Management</h1>
+                <p className="text-gray-400 mt-2">Assign and manage administrator and co-administrator roles</p>
+            </div>
             
-            <div className="bg-white rounded-lg shadow overflow-hidden border-t-4" style={{ borderColor: '#C8A452' }}>
+            <div className="bg-white rounded-lg shadow overflow-hidden border-t-4 border-[var(--gold-accent)]">
                 <table className="min-w-full divide-y divide-gray-200">
                     <thead style={{ backgroundColor: '#F5F5F5' }}>
                         <tr>
@@ -153,12 +155,12 @@ function UsersManagementPage() {
 
             {/* Delete confirmation modal */}
             {showDeleteModal && (
-                <div className="fixed inset-0 overflow-y-auto" style={{ zIndex: 9999 }}>
+                <div className="fixed inset-0 overflow-y-auto" style={{ zIndex: 10002 }}>
                     <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
                         {/* Overlay */}
                         <div 
                             className="fixed inset-0 transition-opacity bg-gray-900 bg-opacity-50"
-                            style={{ zIndex: 9998 }}
+                            style={{ zIndex: 10001 }}
                             onClick={closeDeleteModal}
                         ></div>
 
@@ -166,7 +168,7 @@ function UsersManagementPage() {
                         <span className="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
 
                         {/* Modal */}
-                        <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full relative" style={{ zIndex: 9999 }}>
+                        <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full relative" style={{ zIndex: 10002 }}>
                             {/* Header */}
                             <div className="bg-gradient-to-r from-red-500 to-red-600 px-6 py-4">
                                 <div className="flex items-center justify-between">

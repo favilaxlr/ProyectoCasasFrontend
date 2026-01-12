@@ -34,13 +34,13 @@ function NavbarUser() {
   }, []);
 
   return (
-    <nav className="navbar my-2 mx-2 md:my-3 md:mx-3 flex justify-between items-center py-3 px-4 md:py-5 md:px-10 rounded-lg shadow-lg bg-gradient-to-r from-gray-900 to-gray-800 relative z-[10000]">
-       <Link to='/' className="hover:scale-105 transition-transform duration-300">
+    <nav className="navbar my-2 mx-2 md:my-3 md:mx-3 flex justify-between items-center py-3 px-4 md:py-5 md:px-10 rounded-lg shadow-lg relative z-[10000]">
+       <Link to='/' className="hover:scale-105 transition-transform duration-300 mx-auto md:absolute md:left-1/2 md:transform md:-translate-x-1/2">
          <Logo size="small" className="md:size-medium" />
        </Link>
        
        {/* Desktop Menu */}
-       <ul className="hidden md:flex gap-x-4 items-center">
+       <ul className="hidden md:flex gap-x-4 items-center ml-auto">
         <li>
         <Menu>
         <MenuButton className="inline-flex items-center gap-2 rounded-md px-3 py-1.5 text-sm/6 font-semibold text-white hover:bg-white/10 transition-all">
@@ -52,6 +52,7 @@ function NavbarUser() {
           transition
           anchor="bottom end"
           className="w-52 origin-top-right rounded-xl border border-gray-200 bg-white p-1 text-sm/6 text-gray-800 transition duration-100 ease-out [--anchor-gap:--spacing(1)] focus:outline-none data-closed:scale-95 data-closed:opacity-0 shadow-lg"
+          style={{ zIndex: 10001 }}
         >
           <MenuItem>
             <button onClick={ ()=>{navigate('/properties')}} 
@@ -94,6 +95,7 @@ function NavbarUser() {
           transition
           anchor="bottom end"
           className="w-48 origin-top-right rounded-xl border border-gray-200 bg-white p-1 text-sm/6 text-gray-800 transition duration-100 ease-out [--anchor-gap:--spacing(1)] focus:outline-none data-closed:scale-95 data-closed:opacity-0 shadow-lg"
+          style={{ zIndex: 10001 }}
         >
           <MenuItem>
             <button onClick={ ()=>{navigate('/profile')}} 
@@ -125,7 +127,7 @@ function NavbarUser() {
 
        {/* Mobile Menu */}
        {mobileMenuOpen && (
-         <div className="fixed top-[70px] left-2 right-2 bg-white rounded-xl shadow-2xl border border-gray-200 md:hidden z-[9999] overflow-hidden animate-fade-in max-h-[calc(100vh-80px)] overflow-y-auto">
+         <div className="fixed top-[70px] right-2 w-[calc(100vw-16px)] max-w-sm bg-white rounded-xl shadow-2xl border border-gray-200 md:hidden z-[10001] overflow-hidden animate-fade-in max-h-[calc(100vh-80px)] overflow-y-auto">
            <div className="p-4 space-y-2">
              <button
                onClick={() => { navigate('/properties'); setMobileMenuOpen(false); }}

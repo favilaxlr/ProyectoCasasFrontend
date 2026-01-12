@@ -100,8 +100,7 @@ const ConfirmAppointmentPage = () => {
                     <div className="space-y-3">
                         <button
                             onClick={() => navigate('/my-appointments')}
-                            className="w-full py-3 rounded-lg font-semibold transition-all"
-                            style={{ backgroundColor: '#C8A452', color: 'white' }}
+                            className="w-full bg-[var(--gold-accent)] hover:bg-[#145a75] text-white py-3 rounded-lg font-semibold transition-all"
                         >
                             View my appointments
                         </button>

@@ -45,7 +45,7 @@ function LoginPage() {
       <div className="max-w-md w-full space-y-8">
         {/* Header */}
         <div className="text-center animate-fade-in">
-          <div className="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-[var(--gold-accent)] to-yellow-600 rounded-full flex items-center justify-center shadow-2xl transform hover:scale-105 transition-transform duration-300">
+          <div className="w-20 h-20 mx-auto mb-6 bg-[var(--gold-accent)] rounded-full flex items-center justify-center shadow-2xl transform hover:scale-105 transition-transform duration-300">
             <IoLogIn className="w-10 h-10 text-white" />
           </div>
           <h2 className="text-4xl font-bold text-[var(--charcoal)] mb-2">Welcome</h2>
@@ -130,7 +130,7 @@ function LoginPage() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-gradient-to-r from-[var(--gold-accent)] to-yellow-600 text-white font-bold py-4 px-6 rounded-xl hover:from-yellow-600 hover:to-[var(--gold-accent)] focus:outline-none focus:ring-4 focus:ring-yellow-300 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+              className="w-full bg-[var(--gold-accent)] text-white font-bold py-4 px-6 rounded-xl hover:bg-[#165474] focus:outline-none focus:ring-4 focus:ring-blue-300 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
             >
               {isLoading ? (
                 <div className="flex items-center justify-center">

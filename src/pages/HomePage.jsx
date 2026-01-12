@@ -60,47 +60,22 @@ function HomePage() {
   return (
     <div className="h-screen flex flex-col">
       {/* Header con Filtros - Responsive */}
-      <div className="main-header px-4 md:px-6 py-3 md:py-4 flex-shrink-0 border-b border-gray-200 bg-white shadow-sm">
+      <div className="main-header px-4 md:px-6 py-3 md:py-4 flex-shrink-0 border-b border-gray-700/50 shadow-sm">
         <div className="flex justify-between items-center gap-4">
-          {/* Controles centrales - Todos en una línea */}
-          <div className="flex items-center gap-2 md:gap-3 overflow-x-auto scrollbar-hide">
-            {/* Selector de Mercado */}
-            <div className="flex items-center gap-2 bg-white px-2 md:px-3 py-2 rounded-lg border border-gray-300 hover:border-[var(--gold-accent)] transition-all shadow-sm">
-              <IoLocationSharp className="text-[var(--gold-accent)] text-lg flex-shrink-0" />
-              <select 
-                value={selectedMarket} 
-                onChange={(e) => setSelectedMarket(e.target.value)}
-                className="bg-transparent text-gray-900 text-xs md:text-sm font-medium focus:outline-none cursor-pointer"
-              >
-                <option value="Dallas">Dallas</option>
-              </select>
-            </div>
-            
+          {/* Controles centrales - Izquierda en móvil, Derecha en desktop */}
+          <div className="flex items-center gap-2 md:gap-3 overflow-x-auto scrollbar-hide md:ml-auto">
             {/* Filtro de Tipo de Operación */}
-            <div className="flex items-center gap-2 bg-white px-2 md:px-3 py-2 rounded-lg border border-gray-300 hover:border-[var(--gold-accent)] transition-all shadow-sm">
-              <IoBusinessSharp className="text-[var(--gold-accent)] text-lg flex-shrink-0" />
+            <div className="flex items-center gap-1 md:gap-2 bg-white px-1.5 md:px-3 py-2 rounded-lg border border-gray-300 hover:border-[var(--gold-accent)] transition-all shadow-sm flex-shrink-0">
+              <IoBusinessSharp className="text-[var(--gold-accent)] text-base md:text-lg flex-shrink-0" />
               <select 
                 value={operationType} 
                 onChange={(e) => setOperationType(e.target.value)}
-                className="bg-transparent text-gray-900 text-xs md:text-sm font-medium focus:outline-none cursor-pointer"
+                className="bg-transparent text-gray-900 text-xs md:text-sm font-medium focus:outline-none cursor-pointer pr-0"
               >
                 <option value="all">All</option>
                 <option value="sale">Sale</option>
                 <option value="rent">Rent</option>
                 <option value="both">Rent/Sale</option>
-              </select>
-            </div>
-
-            {/* Selector de Ordenamiento */}
-            <div className="flex items-center gap-2 bg-white px-2 md:px-3 py-2 rounded-lg border border-gray-300 hover:border-[var(--gold-accent)] transition-all shadow-sm">
-              <IoFunnelSharp className="text-[var(--gold-accent)] text-lg flex-shrink-0" />
-              <select 
-                value={sortOption} 
-                onChange={(e) => setSortOption(e.target.value)}
-                className="bg-transparent text-gray-900 text-xs md:text-sm font-medium focus:outline-none cursor-pointer"
-              >
-                <option value="price-low">$ Low → High</option>
-                <option value="price-high">$ High → Low</option>
               </select>
             </div>
           </div>
