@@ -14,7 +14,7 @@ function HomePage() {
   const [selectedProperty, setSelectedProperty] = useState(null)
   const [mapStyle, setMapStyle] = useState('osm') // 'osm' o 'satellite'
   const [operationType, setOperationType] = useState('all') // 'all', 'sale', 'rent', 'both'
-  const [isPanelOpen, setIsPanelOpen] = useState(true)
+  const [isPanelOpen, setIsPanelOpen] = useState(false)
 
   useEffect(() => {
     loadProperties()
