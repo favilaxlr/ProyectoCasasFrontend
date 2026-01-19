@@ -120,14 +120,6 @@ function PropertyCard({ property, compact = false }) {
               {property.address?.street}, {property.address?.city}
             </p>
 
-            {(isAdmin || isCoAdmin) && property.createdBy?.username && (
-              <p className="text-[10px] md:text-xs text-gray-500 truncate mb-0.5 md:mb-1">Uploaded by: {property.createdBy.username}</p>
-            )}
-
-            {(isAdmin || isCoAdmin) && property.lastModifiedBy?.username && (
-              <p className="text-[10px] md:text-xs text-yellow-600 truncate mb-0.5 md:mb-1">Modified by: {property.lastModifiedBy.username}</p>
-            )}
-            
             <div className="flex items-center text-[10px] md:text-sm text-gray-600 gap-1 md:gap-4 font-medium flex-wrap">
               <span className="flex items-center gap-1 whitespace-nowrap">
                 <IoBedSharp className="text-[var(--gold-accent)]" />
@@ -237,34 +229,6 @@ function PropertyCard({ property, compact = false }) {
       </div>
 
       {/* Información del creador - Solo admin/co-admin */}
-      {(isAdmin || isCoAdmin) && property.createdBy && (
-        <div className="bg-gray-100 px-3 py-2 rounded-lg mb-4 text-xs">
-          <p className="text-gray-700">
-            Uploaded by: <span className="font-semibold text-[var(--gold-accent)]">{property.createdBy.username}</span>
-          </p>
-        </div>
-      )}
-
-      {/* Última modificación - Solo admin/co-admin */}
-      {(isAdmin || isCoAdmin) && property.lastModifiedBy && (
-        <div className="bg-yellow-50 px-3 py-2 rounded-lg mb-4 text-xs border-l-2 border-yellow-500">
-          <p className="text-yellow-800">
-            Modified by: <span className="font-semibold text-yellow-900">{property.lastModifiedBy.username}</span>
-          </p>
-          {property.updatedAt && (
-            <p className="text-yellow-700 text-xs mt-1">
-              {new Date(property.updatedAt).toLocaleString('en-US', {
-                year: 'numeric',
-                month: 'short',
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-              })}
-            </p>
-          )}
-        </div>
-      )}
-
       {/* Información básica */}
       <div className="space-y-3">
         <div className="flex items-center text-gray-700">

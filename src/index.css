@@ -102,21 +102,28 @@
 }
 
 :root {
-  /* Paleta FR Family Investments */
-  --gold-accent: #1b6487;    /* Blue Accent - botones primarios */
-  --charcoal: #3C3C3C;       /* Charcoal - texto principal */
-  --soft-black: #1F1F1F;     /* Soft Black - encabezados */
-  --clean-white: #FFFFFF;    /* Clean White - fondos principales */
-  --light-gray: #F5F5F5;     /* Light Gray - fondos secundarios */
+  /* Vibrant FR Family Investments palette */
+  --gold-accent: #00b8a9;    /* Primary accent */
+  --charcoal: #0f172a;       /* Dark text */
+  --soft-black: #050914;     /* Deep background */
+  --clean-white: #f8fafc;    /* Elevated surfaces */
+  --light-gray: #e2e8f0;     /* Secondary surfaces */
+  --electric-sky: #5eead4;   /* Neon highlight */
+  --hyper-pink: #ff6b9b;     /* Pop accent */
+  --citrus-lime: #d3ff6a;    /* Contrast accent */
+  --ember-orange: #ff8a4c;   /* Warm accent */
+  --deep-teal: #003952;      /* Map halo */
+  --midnight-indigo: #030817;/* Map canvas */
+  --glass-white: rgba(255, 255, 255, 0.92);
   
-  /* Colores funcionales */
-  --disponible: #4CAF50;     /* Verde - DISPONIBLE */
-  --en-contrato: #FF9800;    /* Naranja - EN CONTRATO */
-  --vendida: #F44336;        /* Rojo - VENDIDA */
-  --success: #4CAF50;        /* Éxito */
-  --warning: #FFC107;        /* Advertencia */
-  --error: #F44336;          /* Error */
-  --info: #2196F3;           /* Información */
+  /* Functional colors */
+  --disponible: #16c472;     /* Verde - DISPONIBLE */
+  --en-contrato: #f97316;    /* Naranja - EN CONTRATO */
+  --vendida: #ef4444;        /* Rojo - VENDIDA */
+  --success: #16c472;        /* Éxito */
+  --warning: #fbbf24;        /* Advertencia */
+  --error: #ef4444;          /* Error */
+  --info: #0ea5e9;           /* Información */
 }
 
 /* Footer specific styling */
@@ -205,10 +212,37 @@ body {
 }
 
 .navbar {
-  background: var(--soft-black);
-  @apply text-white;
-  box-shadow: none;
-  border-bottom: 1px solid white;
+  background: linear-gradient(135deg, var(--soft-black) 0%, #051628 55%, var(--deep-teal) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 24px 70px rgba(3, 8, 24, 0.55);
+  @apply text-white relative rounded-2xl;
+  overflow: visible;
+}
+
+.navbar::before,
+.navbar::after {
+  content: '';
+  position: absolute;
+  pointer-events: none;
+  border-radius: 50%;
+  filter: blur(120px);
+  opacity: 0.55;
+}
+
+.navbar::before {
+  width: 220px;
+  height: 220px;
+  background: var(--gold-accent);
+  top: -120px;
+  left: -60px;
+}
+
+.navbar::after {
+  width: 180px;
+  height: 180px;
+  background: var(--hyper-pink);
+  bottom: -120px;
+  right: -40px;
 }
 
 .status-disponible {
@@ -273,6 +307,70 @@ body {
 
 .property-list::-webkit-scrollbar-thumb:hover {
   background: #b8944a;
+}
+
+/* Immersive Map overlays */
+.map-hero-card {
+  background: radial-gradient(circle at top, rgba(94, 234, 212, 0.95), rgba(124, 58, 237, 0.85));
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 28px;
+  padding: 1.75rem;
+  color: var(--clean-white);
+  box-shadow: 0 30px 80px rgba(3, 8, 23, 0.55);
+  backdrop-filter: blur(18px);
+}
+
+.map-legend {
+  background: rgba(3, 8, 23, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 22px;
+  padding: 1.5rem;
+  color: var(--clean-white);
+  box-shadow: 0 30px 80px rgba(3, 8, 23, 0.65);
+  backdrop-filter: blur(16px);
+}
+
+.map-style-control {
+  background: rgba(3, 8, 23, 0.82);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 1.25rem;
+  color: var(--clean-white);
+  box-shadow: 0 25px 60px rgba(3, 8, 23, 0.55);
+  backdrop-filter: blur(16px);
+}
+
+.map-overlay-chip {
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  padding: 0.45rem 1.4rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--clean-white);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.map-overlay-chip:hover {
+  border-color: rgba(255, 255, 255, 0.8);
+  transform: translateY(-1px);
+}
+
+.map-overlay-chip.is-active {
+  background: var(--clean-white);
+  color: var(--soft-black);
+  border-color: transparent;
+  box-shadow: 0 10px 30px rgba(3, 8, 23, 0.35);
+}
+
+.map-status-dot {
+  width: 16px;
+  height: 16px;
+  border-radius: 9999px;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 0 18px rgba(255, 255, 255, 0.3);
 }
 
 /* Header Styles */

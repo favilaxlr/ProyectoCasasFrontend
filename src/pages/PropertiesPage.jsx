@@ -2,8 +2,28 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router';
 import { getPropertiesRequest, deletePropertyRequest, changePropertyStatusRequest } from '../api/properties';
 import { toast } from 'react-toastify';
-import { IoSwapHorizontalSharp, IoFunnelSharp, IoBusinessSharp, IoGlobeOutline, IoEarthSharp } from 'react-icons/io5';
+import { IoFunnelSharp, IoBusinessSharp, IoGlobeOutline, IoEarthSharp } from 'react-icons/io5';
 import InteractiveMap from '../components/InteractiveMap';
+
+const inferBusinessMode = (property = {}) => {
+    if (property.businessMode) return property.businessMode;
+    if (property.price?.sale && property.price?.monthlyRent) return 'both';
+    if (property.price?.monthlyRent) return 'rent';
+    if (property.price?.sale) return 'sale';
+    return null;
+};
+
+const mapQuickFilters = [
+    { label: 'All', value: 'all' },
+    { label: 'Sale', value: 'sale' },
+    { label: 'Rent', value: 'rent' },
+    { label: 'Hybrid', value: 'both' },
+];
+
+const mapStyleOptions = [
+    { id: 'osm', label: 'City Grid', description: 'Clean street layer', Icon: IoGlobeOutline },
+    { id: 'satellite', label: 'Orbit', description: 'High-res imagery', Icon: IoEarthSharp },
+];
 
 function PropertiesPage() {
     const [properties, setProperties] = useState([]);
@@ -76,6 +96,41 @@ function PropertiesPage() {
         if (sortOption === 'price-high') return (b.price?.sale || 0) - (a.price?.sale || 0)
         return 0
     })
+
+    const totalListings = sortedProperties.length
+
+    const statusCounts = sortedProperties.reduce((acc, property) => {
+        if (property.status === 'DISPONIBLE') acc.available += 1
+        if (property.status === 'EN_CONTRATO') acc.contract += 1
+        if (property.status === 'VENDIDA') acc.sold += 1
+        return acc
+    }, { available: 0, contract: 0, sold: 0 })
+
+    const saleInventory = sortedProperties.filter(property => {
+        const mode = inferBusinessMode(property)
+        return mode === 'sale' || mode === 'both'
+    }).length
+
+    const rentInventory = sortedProperties.filter(property => {
+        const mode = inferBusinessMode(property)
+        return mode === 'rent' || mode === 'both'
+    }).length
+
+    const uniqueCities = [...new Set(sortedProperties.map(property => property.address?.city).filter(Boolean))]
+    const highlightedCity = uniqueCities[0] || 'Dallas'
+    const extraCitiesCount = Math.max(uniqueCities.length - 1, 0)
+
+    const listingInsights = [
+        { label: 'Available', value: statusCounts.available, helper: 'Ready now' },
+        { label: 'Sale-ready', value: saleInventory, helper: 'Sale or hybrid' },
+        { label: 'Rental', value: rentInventory, helper: 'Monthly options' }
+    ]
+
+    const legendItems = [
+        { label: 'Available', description: 'Tours open', count: statusCounts.available, color: 'var(--disponible)' },
+        { label: 'Under contract', description: 'In negotiation', count: statusCounts.contract, color: 'var(--en-contrato)' },
+        { label: 'Sold', description: 'Recently closed', count: statusCounts.sold, color: 'var(--vendida)' }
+    ]
 
     return (
         <div className="min-h-screen bg-gray-50">
@@ -177,7 +232,7 @@ function PropertiesPage() {
                 </div>
             ) : viewMode === 'map' ? (
                 /* Vista de Mapa */
-                <div className="h-[calc(100vh-200px)] relative rounded-xl overflow-hidden">
+                <div className="relative h-[calc(100vh-200px)] overflow-hidden rounded-[32px] border border-white/10 bg-[var(--midnight-indigo)] shadow-[0_30px_80px_rgba(3,8,24,0.65)]">
                     <InteractiveMap 
                         properties={sortedProperties}
                         selectedProperty={selectedProperty}
@@ -187,31 +242,112 @@ function PropertiesPage() {
                         height="100%"
                         mapStyle={mapStyle}
                     />
-                    
+
+                    {/* Ambient glow */}
+                    <div className="pointer-events-none absolute inset-0">
+                        <div className="absolute -top-32 right-4 h-72 w-72 rounded-full bg-[var(--gold-accent)] opacity-30 blur-[140px]"></div>
+                        <div className="absolute bottom-0 left-8 h-60 w-60 rounded-full bg-[var(--hyper-pink)] opacity-20 blur-[140px]"></div>
+                    </div>
+
+                    {/* Hero / legend overlays */}
+                    <div className="absolute top-6 left-6 z-[1000] w-full max-w-md space-y-4 pointer-events-none">
+                        <div className="map-hero-card pointer-events-auto">
+                            <div className="flex items-start justify-between gap-6">
+                                <div>
+                                    <p className="text-xs tracking-[0.35em] uppercase text-white/70">Live coverage</p>
+                                    <p className="text-4xl font-black leading-tight">{totalListings}</p>
+                                    <p className="text-sm text-white/80">Active listings</p>
+                                </div>
+                                <div className="text-right">
+                                    <p className="text-xs tracking-[0.35em] uppercase text-white/60">Focus city</p>
+                                    <p className="text-lg font-semibold text-white">{highlightedCity}</p>
+                                    {extraCitiesCount > 0 && (
+                                        <p className="text-xs text-white/60">+ {extraCitiesCount} more</p>
+                                    )}
+                                </div>
+                            </div>
+                            <div className="grid grid-cols-3 gap-3 mt-6">
+                                {listingInsights.map((insight) => (
+                                    <div key={insight.label} className="rounded-2xl border border-white/30 bg-white/10 px-3 py-2 text-white">
+                                        <p className="text-[0.6rem] uppercase tracking-[0.3em] text-white/70">{insight.label}</p>
+                                        <p className="mt-1 text-2xl font-black">{insight.value}</p>
+                                        <p className="text-xs text-white/70">{insight.helper}</p>
+                                    </div>
+                                ))}
+                            </div>
+                            <div className="flex flex-wrap gap-2 mt-6">
+                                {mapQuickFilters.map((filter) => (
+                                    <button
+                                        key={filter.value}
+                                        type="button"
+                                        onClick={() => setOperationType(filter.value)}
+                                        className={`map-overlay-chip ${operationType === filter.value ? 'is-active' : ''}`}
+                                    >
+                                        {filter.label}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+
+                        <div className="map-legend pointer-events-auto">
+                            <div className="flex items-center justify-between">
+                                <p className="text-xs uppercase tracking-[0.35em] text-white/60">Status legend</p>
+                                <span className="text-xs text-white/50">{new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
+                            </div>
+                            <div className="mt-4 space-y-3">
+                                {legendItems.map((item) => (
+                                    <div key={item.label} className="flex items-center justify-between gap-4">
+                                        <div className="flex items-center gap-3">
+                                            <span className="map-status-dot" style={{ background: item.color }}></span>
+                                            <div>
+                                                <p className="text-sm font-semibold text-white">{item.label}</p>
+                                                <p className="text-xs text-white/60">{item.description}</p>
+                                            </div>
+                                        </div>
+                                        <span className="text-lg font-black text-white">{item.count}</span>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+
                     {/* Map Style Controls - Flotante */}
-                    <div className="absolute top-6 right-6 bg-white/95 backdrop-blur-md rounded-xl shadow-2xl border border-white/20 z-[1000]">
-                        <div className="flex">
-                            <button 
-                                onClick={() => setMapStyle('osm')}
-                                className={`px-6 py-3 text-sm font-medium border-r border-gray-200 transition-all duration-300 rounded-l-xl flex items-center gap-2 ${
-                                    mapStyle === 'osm' 
-                                        ? 'bg-[var(--gold-accent)] text-white' 
-                                        : 'hover:bg-[var(--gold-accent)] hover:text-white'
-                                }`}
+                    <div className="absolute top-6 right-6 z-[1000] flex flex-col gap-4 pointer-events-none">
+                        <div className="map-style-control pointer-events-auto w-64">
+                            <p className="text-xs uppercase tracking-[0.35em] text-white/60">Map surface</p>
+                            <div className="mt-3 flex flex-col gap-2">
+                                {mapStyleOptions.map(({ id, label, description, Icon }) => (
+                                    <button
+                                        key={id}
+                                        type="button"
+                                        onClick={() => setMapStyle(id)}
+                                        className={`group flex items-center justify-between gap-3 rounded-2xl border px-3 py-2 text-left transition-all ${
+                                            mapStyle === id
+                                                ? 'bg-white text-[var(--soft-black)] border-white shadow-xl'
+                                                : 'border-white/25 text-white/80 hover:border-white/60'
+                                        }`}
+                                    >
+                                        <div className="flex items-center gap-3">
+                                            <span className={`rounded-full p-2 ${mapStyle === id ? 'bg-[var(--soft-black)] text-white' : 'bg-white/10 text-white'}`}>
+                                                <Icon className="text-lg" />
+                                            </span>
+                                            <div>
+                                                <p className="text-sm font-semibold">{label}</p>
+                                                <p className={`text-xs ${mapStyle === id ? 'text-[var(--soft-black)]/70' : 'text-white/60'}`}>{description}</p>
+                                            </div>
+                                        </div>
+                                        <span className={`text-[0.55rem] font-semibold tracking-[0.4em] uppercase ${mapStyle === id ? 'text-[var(--soft-black)]/70' : 'text-white/40'}`}>
+                                            {mapStyle === id ? 'Active' : 'Tap'}
+                                        </span>
+                                    </button>
+                                ))}
+                            </div>
+                            <button
+                                type="button"
+                                onClick={() => setViewMode('grid')}
+                                className="mt-4 w-full rounded-2xl border border-white/20 px-3 py-2 text-center text-[0.6rem] font-semibold uppercase tracking-[0.35em] text-white/70 hover:border-white hover:text-white"
                             >
-                                <IoGlobeOutline className="text-lg" />
-                                Map
-                            </button>
-                            <button 
-                                onClick={() => setMapStyle('satellite')}
-                                className={`px-6 py-3 text-sm font-medium transition-all duration-300 rounded-r-xl flex items-center gap-2 ${
-                                    mapStyle === 'satellite' 
-                                        ? 'bg-[var(--gold-accent)] text-white' 
-                                        : 'hover:bg-[var(--gold-accent)] hover:text-white'
-                                }`}
-                            >
-                                <IoEarthSharp className="text-lg" />
-                                Satellite
+                                Grid view
                             </button>
                         </div>
                     </div>
@@ -331,14 +467,6 @@ function PropertiesPage() {
 
                                 <p className="text-gray-600 text-sm mb-2 line-clamp-2">{property.description}</p>
 
-                                {property.createdBy?.username && (
-                                    <p className="text-xs text-gray-500 mb-1">Uploaded by: {property.createdBy.username}</p>
-                                )}
-
-                                {property.lastModifiedBy?.username && (
-                                    <p className="text-xs text-yellow-700 mb-2">Modified by: {property.lastModifiedBy.username}</p>
-                                )}
-                                
                                 <div className="text-sm text-gray-600 mb-3 space-y-1">
                                     <div className="flex justify-between">
                                         <span>Bedrooms:</span>

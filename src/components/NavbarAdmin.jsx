@@ -13,9 +13,13 @@ function NavbarAdmin() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   
   return (
-    <nav className="sticky top-0 backdrop-blur-lg bg-[var(--soft-black)] border-b border-white shadow-sm" style={{ zIndex: 10000, borderBottomWidth: '1px' }}>
-      <div className="w-full px-3 md:px-6 py-3 md:py-4">
-        <div className="flex justify-between items-center relative">
+    <nav className="sticky top-0 backdrop-blur-2xl bg-gradient-to-r from-[var(--soft-black)] via-[#05172a] to-[var(--deep-teal)] border-b border-white/10 shadow-[0_25px_60px_rgba(3,8,24,0.65)]" style={{ zIndex: 10000, borderBottomWidth: '1px' }}>
+      <div className="relative w-full px-3 md:px-6 py-3 md:py-4">
+        <div className="pointer-events-none absolute inset-0 opacity-60">
+          <div className="absolute -left-20 top-1/2 h-48 w-48 -translate-y-1/2 rounded-full bg-[var(--gold-accent)] blur-[140px]"></div>
+          <div className="absolute right-0 top-0 h-40 w-40 rounded-full bg-[var(--hyper-pink)] blur-[120px]"></div>
+        </div>
+        <div className="flex justify-between items-center relative z-10">
           {/* Logo */}
           <Link to='/' className="hover:scale-105 transition-transform duration-300 mx-auto md:absolute md:left-1/2 md:transform md:-translate-x-1/2">
             <Logo size="small" className="md:size-medium" />
@@ -26,7 +30,7 @@ function NavbarAdmin() {
             {/* Propiedades Menu */}
             <li className="relative">
               <Menu>
-                <MenuButton className="inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold text-white hover:bg-[var(--gold-accent)]/10 hover:text-[var(--gold-accent)] transition-all duration-200 border border-transparent hover:border-[var(--gold-accent)]/30">
+                <MenuButton className="inline-flex items-center gap-2 rounded-2xl px-5 py-2.5 text-sm font-semibold text-white/90 bg-white/10 border border-white/10 hover:border-white/40 hover:bg-white/20 transition-all duration-200 backdrop-blur-sm">
                   <IoHomeSharp size={18}/>
                   Properties
                   <IoChevronDownSharp className="fill-current" size={14} />
@@ -35,7 +39,7 @@ function NavbarAdmin() {
                 <MenuItems
                   modal
                   transition
-                  className="absolute right-0 top-full mt-2 w-64 origin-top-right rounded-2xl border border-gray-200 bg-white p-2 text-sm shadow-2xl transition duration-200 ease-out focus:outline-none data-closed:scale-95 data-closed:opacity-0"
+                  className="absolute right-0 top-full mt-2 w-64 origin-top-right rounded-3xl border border-white/20 bg-[var(--glass-white)] backdrop-blur-xl p-3 text-sm shadow-[0_25px_70px_rgba(3,8,24,0.45)] transition duration-200 ease-out focus:outline-none data-closed:scale-95 data-closed:opacity-0"
                   style={{ zIndex: 10001 }}
                 >
                   <div className="px-3 py-2 border-b border-gray-100 mb-1">
@@ -118,23 +122,18 @@ function NavbarAdmin() {
             {/* User Menu */}
             <li className="relative">
               <Menu>
-                <MenuButton className="inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold bg-[var(--gold-accent)] text-white hover:shadow-lg hover:shadow-[var(--gold-accent)]/30 transition-all duration-200">
+                <MenuButton className="inline-flex items-center gap-2 rounded-2xl px-5 py-2.5 text-sm font-semibold text-[var(--soft-black)] bg-gradient-to-r from-[var(--gold-accent)] via-[var(--electric-sky)] to-[var(--hyper-pink)] shadow-[0_10px_30px_rgba(3,8,24,0.35)] hover:shadow-[0_18px_40px_rgba(3,8,24,0.45)] transition-all duration-200">
                   <IoPerson size={18}/> 
                   {user.username}
-                  <IoChevronDownSharp className="fill-white" size={14} />
+                  <IoChevronDownSharp className="text-[var(--soft-black)]" size={14} />
                 </MenuButton>
 
                 <MenuItems
                   modal
                   transition
-                  className="absolute right-0 top-full mt-2 w-56 origin-top-right rounded-2xl border border-gray-200 bg-white p-2 text-sm shadow-2xl transition duration-200 ease-out focus:outline-none data-closed:scale-95 data-closed:opacity-0"
+                  className="absolute right-0 top-full mt-2 w-60 origin-top-right rounded-3xl border border-white/20 bg-[var(--glass-white)] backdrop-blur-xl p-3 text-sm shadow-[0_25px_70px_rgba(3,8,24,0.45)] transition duration-200 ease-out focus:outline-none data-closed:scale-95 data-closed:opacity-0"
                   style={{ zIndex: 10001 }}
                 >
-                  <div className="px-3 py-3 border-b border-gray-100 mb-1">
-                    <p className="text-xs font-semibold text-gray-900">{user.username}</p>
-                    <p className="text-xs text-gray-500 mt-0.5">{user.email}</p>
-                  </div>
-                  
                   <MenuItem>
                     <button onClick={ ()=>{navigate('/profile')}} 
                             className="group flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-gray-700 hover:bg-gray-100 data-focus:bg-gray-100 transition-all">
@@ -168,91 +167,91 @@ function NavbarAdmin() {
 
         {/* Mobile Menu */}
         {mobileMenuOpen && (
-          <div className="fixed top-[70px] right-2 w-[calc(100vw-16px)] max-w-sm bg-white rounded-xl shadow-2xl border border-gray-200 lg:hidden z-[10001] max-h-[calc(100vh-80px)] overflow-y-auto animate-fade-in">
+          <div className="fixed top-[70px] right-2 w-[calc(100vw-16px)] max-w-sm bg-gradient-to-br from-[var(--soft-black)] via-[#021222] to-[var(--deep-teal)] text-white rounded-3xl shadow-[0_25px_60px_rgba(3,8,24,0.7)] border border-white/10 lg:hidden z-[10001] max-h-[calc(100vh-80px)] overflow-y-auto animate-fade-in">
             <div className="p-4 space-y-2">
-            {/* Properties Section */}
-            <div className="space-y-1">
-              <p className="text-xs font-bold text-gray-500 uppercase tracking-wider px-3 mb-2">Management</p>
-              
-              <button
-                onClick={() => { navigate('/admin/properties'); setMobileMenuOpen(false); }}
-                className="w-full flex items-center gap-3 px-3 py-2.5 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
-              >
-                <IoHomeSharp size={18} className="text-blue-600" />
-                <span className="font-medium">List Properties</span>
-              </button>
-
-              <button
-                onClick={() => { navigate('/admin/add-property'); setMobileMenuOpen(false); }}
-                className="w-full flex items-center gap-3 px-3 py-2.5 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
-              >
-                <IoBagAdd size={18} className="text-green-600" />
-                <span className="font-medium">Add Property</span>
-              </button>
-
-              <button
-                onClick={() => { navigate('/admin/appointments'); setMobileMenuOpen(false); }}
-                className="w-full flex items-center gap-3 px-3 py-2.5 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
-              >
-                <IoCalendarSharp size={18} className="text-purple-600" />
-                <span className="font-medium">View Appointments</span>
-              </button>
-
-              <button
-                onClick={() => { navigate('/admin/offers'); setMobileMenuOpen(false); }}
-                className="w-full flex items-center gap-3 px-3 py-2.5 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors relative"
-              >
-                <IoCashSharp size={18} className="text-green-600" />
-                <span className="font-medium">Manage Offers</span>
-                {pendingOffersCount > 0 && (
-                  <span className="ml-auto bg-red-500 text-white text-xs font-bold rounded-full px-2 py-0.5 min-w-[20px] text-center">
-                    {pendingOffersCount}
-                  </span>
-                )}
-              </button>
-
-              <button
-                onClick={() => { navigate('/admin/notifications'); setMobileMenuOpen(false); }}
-                className="w-full flex items-center gap-3 px-3 py-2.5 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
-              >
-                <IoChatbubblesSharp size={18} className="text-orange-600" />
-                <span className="font-medium">SMS Notifications</span>
-              </button>
-
-              {user.role?.role === 'admin' && (
+              {/* Properties Section */}
+              <div className="space-y-1">
+                <p className="text-xs font-bold text-white/60 uppercase tracking-wider px-3 mb-2">Management</p>
+                
                 <button
-                  onClick={() => { navigate('/admin/users'); setMobileMenuOpen(false); }}
-                  className="w-full flex items-center gap-3 px-3 py-2.5 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+                  onClick={() => { navigate('/admin/properties'); setMobileMenuOpen(false); }}
+                  className="w-full flex items-center gap-3 px-3 py-2.5 text-white/90 hover:bg-white/10 rounded-2xl transition-colors"
                 >
-                  <IoPeopleSharp size={18} className="text-red-600" />
-                  <span className="font-medium">Manage Users</span>
+                  <IoHomeSharp size={18} className="text-[var(--electric-sky)]" />
+                  <span className="font-medium">List Properties</span>
                 </button>
-              )}
-            </div>
 
-            {/* User Section */}
-            <div className="border-t border-gray-200 pt-3 mt-3 space-y-1">
-              <div className="px-3 py-2">
-                <p className="text-sm font-semibold text-gray-900">{user.username}</p>
-                <p className="text-xs text-gray-500">{user.email}</p>
+                <button
+                  onClick={() => { navigate('/admin/add-property'); setMobileMenuOpen(false); }}
+                  className="w-full flex items-center gap-3 px-3 py-2.5 text-white/90 hover:bg-white/10 rounded-2xl transition-colors"
+                >
+                  <IoBagAdd size={18} className="text-[var(--citrus-lime)]" />
+                  <span className="font-medium">Add Property</span>
+                </button>
+
+                <button
+                  onClick={() => { navigate('/admin/appointments'); setMobileMenuOpen(false); }}
+                  className="w-full flex items-center gap-3 px-3 py-2.5 text-white/90 hover:bg-white/10 rounded-2xl transition-colors"
+                >
+                  <IoCalendarSharp size={18} className="text-[var(--hyper-pink)]" />
+                  <span className="font-medium">View Appointments</span>
+                </button>
+
+                <button
+                  onClick={() => { navigate('/admin/offers'); setMobileMenuOpen(false); }}
+                  className="w-full flex items-center gap-3 px-3 py-2.5 text-white/90 hover:bg-white/10 rounded-2xl transition-colors relative"
+                >
+                  <IoCashSharp size={18} className="text-[var(--electric-sky)]" />
+                  <span className="font-medium">Manage Offers</span>
+                  {pendingOffersCount > 0 && (
+                    <span className="ml-auto bg-white text-[var(--soft-black)] text-xs font-bold rounded-full px-2 py-0.5 min-w-[20px] text-center">
+                      {pendingOffersCount}
+                    </span>
+                  )}
+                </button>
+
+                <button
+                  onClick={() => { navigate('/admin/notifications'); setMobileMenuOpen(false); }}
+                  className="w-full flex items-center gap-3 px-3 py-2.5 text-white/90 hover:bg-white/10 rounded-2xl transition-colors"
+                >
+                  <IoChatbubblesSharp size={18} className="text-[var(--ember-orange)]" />
+                  <span className="font-medium">SMS Notifications</span>
+                </button>
+
+                {user.role?.role === 'admin' && (
+                  <button
+                    onClick={() => { navigate('/admin/users'); setMobileMenuOpen(false); }}
+                    className="w-full flex items-center gap-3 px-3 py-2.5 text-white/90 hover:bg-white/10 rounded-2xl transition-colors"
+                  >
+                    <IoPeopleSharp size={18} className="text-[var(--hyper-pink)]" />
+                    <span className="font-medium">Manage Users</span>
+                  </button>
+                )}
               </div>
 
-              <button
-                onClick={() => { navigate('/profile'); setMobileMenuOpen(false); }}
-                className="w-full flex items-center gap-3 px-3 py-2.5 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
-              >
-                <IoSettingsSharp size={18} />
-                <span className="font-medium">My Profile</span>
-              </button>
+              {/* User Section */}
+              <div className="border-t border-white/10 pt-3 mt-3 space-y-1">
+                <div className="px-3 py-2">
+                  <p className="text-sm font-semibold text-white">{user.username}</p>
+                  <p className="text-xs text-white/70">{user.email}</p>
+                </div>
 
-              <button
-                onClick={() => { logOut(); navigate('/'); setMobileMenuOpen(false); }}
-                className="w-full flex items-center gap-3 px-3 py-2.5 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-              >
-                <IoLogOutOutline size={18} />
-                <span className="font-semibold">Log Out</span>
-              </button>
-            </div>
+                <button
+                  onClick={() => { navigate('/profile'); setMobileMenuOpen(false); }}
+                  className="w-full flex items-center gap-3 px-3 py-2.5 text-white/90 hover:bg-white/10 rounded-2xl transition-colors"
+                >
+                  <IoSettingsSharp size={18} className="text-[var(--electric-sky)]" />
+                  <span className="font-medium">My Profile</span>
+                </button>
+
+                <button
+                  onClick={() => { logOut(); navigate('/'); setMobileMenuOpen(false); }}
+                  className="w-full flex items-center gap-3 px-3 py-2.5 text-white hover:bg-white/10 rounded-2xl transition-colors"
+                >
+                  <IoLogOutOutline size={18} className="text-[var(--hyper-pink)]" />
+                  <span className="font-semibold">Log Out</span>
+                </button>
+              </div>
             </div>
           </div>
         )}
