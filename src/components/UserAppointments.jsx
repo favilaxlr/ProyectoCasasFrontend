@@ -74,20 +74,20 @@ function UserAppointments() {
                new Date(appointment.appointmentDate) < new Date();
     };
 
-    if (loading) return <div className="text-center py-8">Cargando tus citas...</div>;
+    if (loading) return <div className="text-center py-8">Loading your appointments...</div>;
 
     return (
         <div className="space-y-6">
-            <h2 className="text-2xl font-bold">Mis Citas</h2>
+            <h2 className="text-2xl font-bold">My Appointments</h2>
 
             {appointments.length === 0 ? (
                 <div className="text-center py-12">
-                    <div className="text-gray-500 mb-4">No tienes citas agendadas</div>
+                    <div className="text-gray-500 mb-4">You have no appointments scheduled</div>
                     <button 
                         onClick={() => window.location.href = '/properties'}
                         className="btn-primary"
                     >
-                        Explorar Propiedades
+                        Browse Properties
                     </button>
                 </div>
             ) : (
@@ -118,7 +118,7 @@ function UserAppointments() {
                                             </p>
                                             {appointment.notes && (
                                                 <p className="text-gray-600 text-sm mt-2">
-                                                    <strong>Nota:</strong> {appointment.notes}
+                                                    <strong>Note:</strong> {appointment.notes}
                                                 </p>
                                             )}
                                         </div>
@@ -155,14 +155,14 @@ function UserAppointments() {
                                             onClick={() => window.location.href = `/properties/${appointment.property._id}`}
                                             className="text-gray-600 hover:text-gray-800 text-sm font-medium"
                                         >
-                                            Ver Propiedad
+                                            View Property
                                         </button>
                                     </div>
 
                                     {/* Código de confirmación si está pendiente */}
                                     {appointment.status === 'pending' && appointment.confirmationCode && (
                                         <div className="text-xs text-gray-500">
-                                            Código: {appointment.confirmationCode}
+                                            Code: {appointment.confirmationCode}
                                         </div>
                                     )}
                                 </div>

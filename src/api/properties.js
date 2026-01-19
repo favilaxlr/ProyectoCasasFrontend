@@ -30,6 +30,14 @@ export const deleteImageRequest = (propertyId, imageId) =>
 export const setMainImageRequest = (propertyId, imageId) => 
     axios.put(`/properties/${propertyId}/images/${imageId}/main`);
 
+// Gestión de documentos
+export const uploadDocumentsRequest = (propertyId, formData) => 
+    axios.post(`/properties/${propertyId}/documents`, formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        }
+    });
+
 // Gestión de estados
 export const changePropertyStatusRequest = (id, status, reason) => 
     axios.put(`/properties/${id}/status`, { status, reason });

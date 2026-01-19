@@ -1,13 +1,28 @@
 import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router';
-import { createPropertyRequest, getPropertyRequest, updatePropertyRequest } from '../api/properties';
+import { createPropertyRequest, getPropertyRequest, updatePropertyRequest, uploadDocumentsRequest } from '../api/properties';
 import PropertyGallery from '../components/PropertyGallery';
 import ImageUploader from '../components/ImageUploader';
 import LocationPicker from '../components/LocationPicker';
 import { geocodeAddress } from '../utils/geocoding';
 import { toast } from 'react-toastify';
-import { IoHomeSharp, IoDocumentTextSharp, IoLocationSharp, IoSettingsSharp, IoCameraSharp, IoCheckmarkSharp, IoCheckmarkCircleSharp, IoWarningSharp, IoCashSharp, IoBedSharp, IoWaterSharp, IoResizeSharp, IoCalendarSharp, IoCarSharp, IoPawSharp, IoRestaurantSharp, IoSparklesSharp, IoMapSharp, IoInformationCircleSharp, IoArrowBackSharp, IoArrowForwardSharp, IoSaveSharp, IoCloseSharp, IoBusinessSharp, IoHelpCircleSharp, IoKeySharp, IoCardSharp } from 'react-icons/io5';
+import { IoHomeSharp, IoDocumentTextSharp, IoLocationSharp, IoSettingsSharp, IoCameraSharp, IoCheckmarkSharp, IoCheckmarkCircleSharp, IoWarningSharp, IoCashSharp, IoBedSharp, IoWaterSharp, IoResizeSharp, IoCalendarSharp, IoCarSharp, IoPawSharp, IoRestaurantSharp, IoSparklesSharp, IoMapSharp, IoInformationCircleSharp, IoArrowBackSharp, IoArrowForwardSharp, IoSaveSharp, IoCloseSharp, IoBusinessSharp, IoHelpCircleSharp, IoKeySharp, IoCardSharp, IoCloudUploadOutline, IoTrashOutline } from 'react-icons/io5';
+
+const ALLOWED_DOCUMENT_TYPES = [
+    'application/pdf',
+    'application/msword',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+];
+const MAX_DOCUMENTS = 5;
+const MAX_DOCUMENT_SIZE = 10 * 1024 * 1024; // 10MB per file
+
+const formatFileSize = (bytes = 0) => {
+    if (bytes === 0) return '0 Bytes';
+    const units = ['Bytes', 'KB', 'MB'];
+    const index = Math.floor(Math.log(bytes) / Math.log(1024));
+    return `${Math.round((bytes / Math.pow(1024, index)) * 100) / 100} ${units[index]}`;
+};
 
 function PropertyFormPage() {
     const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm({
@@ -20,6 +35,7 @@ function PropertyFormPage() {
         }
     });
     const [images, setImages] = useState([]);
+    const [documents, setDocuments] = useState([]);
     const [loading, setLoading] = useState(false);
     const [property, setProperty] = useState(null);
     const [coordinates, setCoordinates] = useState(null);
@@ -251,14 +267,30 @@ function PropertyFormPage() {
                 formData.append('images', image);
             });
 
+            let targetPropertyId = isEditing ? id : null;
+
             if (isEditing) {
                 await updatePropertyRequest(id, formData);
                 toast.success('Property updated successfully');
             } else {
-                await createPropertyRequest(formData);
+                const response = await createPropertyRequest(formData);
                 toast.success('Property created successfully');
+                targetPropertyId = response?.data?._id || null;
             }
-            
+
+            if (documents.length > 0 && targetPropertyId) {
+                try {
+                    const documentsFormData = new FormData();
+                    documents.forEach((doc) => documentsFormData.append('documents', doc));
+                    await uploadDocumentsRequest(targetPropertyId, documentsFormData);
+                    toast.success('Documents uploaded successfully');
+                    setDocuments([]);
+                } catch (docError) {
+                    console.error('Error uploading documents:', docError);
+                    toast.error('Property saved, but documents could not be uploaded');
+                }
+            }
+        
             navigate('/admin/properties');
         } catch (error) {
             console.error('Error saving property:', error);
@@ -277,6 +309,41 @@ function PropertyFormPage() {
         console.log('📥 PropertyFormPage recibió archivos:', files?.length);
         // Los archivos ya vienen con su información de preview desde ImageUploader
         setImages(files);
+    };
+
+    const handleDocumentSelect = (event) => {
+        const selected = Array.from(event.target.files || []);
+        if (!selected.length) return;
+
+        const availableSlots = MAX_DOCUMENTS - documents.length;
+        if (availableSlots <= 0) {
+            toast.error(`You can upload up to ${MAX_DOCUMENTS} documents`);
+            event.target.value = '';
+            return;
+        }
+
+        const trimmedFiles = selected.slice(0, availableSlots);
+
+        const invalidFiles = trimmedFiles.filter(file => !ALLOWED_DOCUMENT_TYPES.includes(file.type));
+        if (invalidFiles.length) {
+            toast.error('Only PDF or Word documents are allowed');
+            event.target.value = '';
+            return;
+        }
+
+        const oversizedFiles = trimmedFiles.filter(file => file.size > MAX_DOCUMENT_SIZE);
+        if (oversizedFiles.length) {
+            toast.error('Each document must be smaller than 10MB');
+            event.target.value = '';
+            return;
+        }
+
+        setDocuments(prev => [...prev, ...trimmedFiles]);
+        event.target.value = '';
+    };
+
+    const removeDocument = (index) => {
+        setDocuments(prev => prev.filter((_, idx) => idx !== index));
     };
 
     const validateCurrentStep = async () => {
@@ -1127,6 +1194,82 @@ function PropertyFormPage() {
                                             </ul>
                                         </div>
                                     </div>
+                                </div>
+
+                                <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
+                                    <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-4">
+                                        <div>
+                                            <h3 className="text-xl font-bold text-[var(--charcoal)] flex items-center">
+                                                <IoDocumentTextSharp className="mr-2" /> Property Documents
+                                            </h3>
+                                            <p className="text-sm text-gray-600">
+                                                Attach optional PDFs or Word files (contracts, disclosures, brochures)
+                                            </p>
+                                        </div>
+                                        <span className="text-sm text-gray-500">
+                                            {documents.length}/{MAX_DOCUMENTS} selected
+                                        </span>
+                                    </div>
+
+                                    <div className="border-2 border-dashed border-gray-300 rounded-2xl p-6 text-center">
+                                        <IoCloudUploadOutline className="mx-auto text-5xl text-gray-400 mb-3" />
+                                        <p className="text-sm text-gray-600 mb-3">
+                                            Select supporting documents to share with interested buyers
+                                        </p>
+                                        <label
+                                            className={`inline-flex items-center justify-center px-5 py-2.5 rounded-xl font-semibold text-white transition-colors ${
+                                                documents.length >= MAX_DOCUMENTS
+                                                    ? 'bg-gray-400 cursor-not-allowed'
+                                                    : 'bg-[var(--gold-accent)] hover:bg-[var(--charcoal)] cursor-pointer'
+                                            }`}
+                                        >
+                                            <input
+                                                type="file"
+                                                accept=".pdf,.doc,.docx"
+                                                multiple
+                                                className="hidden"
+                                                onChange={handleDocumentSelect}
+                                                disabled={documents.length >= MAX_DOCUMENTS}
+                                            />
+                                            Select documents
+                                        </label>
+                                        <p className="text-xs text-gray-500 mt-2">
+                                            PDF, DOC or DOCX up to 10MB each (max {MAX_DOCUMENTS} files)
+                                        </p>
+                                    </div>
+
+                                    {documents.length > 0 && (
+                                        <ul className="mt-4 space-y-3">
+                                            {documents.map((file, index) => (
+                                                <li
+                                                    key={`${file.name}-${index}`}
+                                                    className="flex items-center justify-between bg-gray-50 border border-gray-200 rounded-2xl px-4 py-3"
+                                                >
+                                                    <div className="flex items-center gap-3 min-w-0">
+                                                        <IoDocumentTextSharp className="text-2xl text-[var(--gold-accent)] flex-shrink-0" />
+                                                        <div className="min-w-0">
+                                                            <p className="text-sm font-semibold text-gray-800 truncate">{file.name}</p>
+                                                            <p className="text-xs text-gray-500">{formatFileSize(file.size)}</p>
+                                                        </div>
+                                                    </div>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => removeDocument(index)}
+                                                        className="text-red-500 hover:text-red-600 p-2 rounded-full hover:bg-red-50"
+                                                        aria-label="Remove document"
+                                                    >
+                                                        <IoTrashOutline size={18} />
+                                                    </button>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    )}
+
+                                    {isEditing && (
+                                        <p className="text-xs text-gray-500 mt-4">
+                                            Existing documents remain stored. Uploading new files here will add them to the property.
+                                        </p>
+                                    )}
                                 </div>
                             </div>
                         )}

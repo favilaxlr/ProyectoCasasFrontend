@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { IoDocumentTextOutline, IoCloudUploadOutline, IoTrashOutline, IoCheckmarkCircle, IoWarning, IoClose } from 'react-icons/io5';
 import { toast } from 'react-toastify';
+import axios from '../api/axiosInstance';
 
 function DocumentUploader({ propertyId, documents = [], onDocumentsChange, isAdminOrCoAdmin }) {
     const [uploading, setUploading] = useState(false);
@@ -41,24 +42,11 @@ function DocumentUploader({ propertyId, documents = [], onDocumentsChange, isAdm
         setUploading(true);
         try {
             const formData = new FormData();
-            selectedFiles.forEach(file => {
-                formData.append('documents', file);
+            selectedFiles.forEach(file => formData.append('documents', file));
+
+            const { data } = await axios.post(`/properties/${propertyId}/documents`, formData, {
+                headers: { 'Content-Type': 'multipart/form-data' }
             });
-
-            const token = localStorage.getItem('token');
-            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/properties/${propertyId}/documents`, {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                },
-                body: formData
-            });
-
-            if (!response.ok) {
-                throw new Error('Error uploading documents');
-            }
-
-            const data = await response.json();
             toast.success('Documents uploaded successfully');
             setSelectedFiles([]);
             
@@ -79,19 +67,7 @@ function DocumentUploader({ propertyId, documents = [], onDocumentsChange, isAdm
         }
 
         try {
-            const token = localStorage.getItem('token');
-            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/properties/${propertyId}/documents/${documentId}`, {
-                method: 'DELETE',
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-
-            if (!response.ok) {
-                throw new Error('Error deleting document');
-            }
-
-            const data = await response.json();
+            const { data } = await axios.delete(`/properties/${propertyId}/documents/${documentId}`);
             toast.success('Document deleted successfully');
             
             if (onDocumentsChange) {
@@ -192,6 +168,7 @@ function DocumentUploader({ propertyId, documents = [], onDocumentsChange, isAdm
                                             href={doc.url}
                                             target="_blank"
                                             rel="noopener noreferrer"
+                                            download={doc.fileName || 'property-document'}
                                             className="text-blue-600 hover:text-blue-800 font-medium break-words"
                                         >
                                             {doc.fileName}
