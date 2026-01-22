@@ -55,15 +55,18 @@ function App() {
       <PropertiesProvider>
         <AppointmentsProvider>
           <BrowserRouter>
+            {/* ToastContainer moved above Navbar for visibility */}
+            <ToastContainer
+              position='top-right'
+              autoClose={3000}
+              limit={3}
+              hideProgressBar={false}
+              theme={toastTheme}
+              className='z-[99999]'
+              style={{ zIndex: 99999 }}
+            />
             <main className='w-full'>
               <Navbar/>
-              <ToastContainer
-                position='top-right'
-                autoClose={3000}
-                limit={3}
-                hideProgressBar={false}
-                theme={toastTheme}
-              />
               <Routes>
                 <Route path='/' element={<HomePage/>} />
                 <Route path='/login' element={<LoginPage />} />
