@@ -11,6 +11,7 @@ import { useAuth } from '../context/AuthContext';
 import { toast } from 'react-toastify';
 import { IoLocationSharp, IoBedSharp, IoCarSharp, IoHomeSharp, IoCalendarSharp, IoPawSharp, IoCheckmarkCircleSharp, IoCloseCircleSharp, IoPencilSharp, IoTimeSharp, IoSwapHorizontalSharp, IoCashSharp, IoKeySharp, IoBusinessSharp, IoCardSharp, IoDocumentTextSharp, IoExpand, IoArrowBack, IoArrowForward, IoClose, IoResizeSharp } from 'react-icons/io5';
 
+
 function PropertyDetailPage() {
     const { id } = useParams();
     const navigate = useNavigate();
@@ -20,6 +21,8 @@ function PropertyDetailPage() {
     const [selectedImage, setSelectedImage] = useState(0);
     const [showOfferModal, setShowOfferModal] = useState(false);
     const [showGalleryModal, setShowGalleryModal] = useState(false);
+    const [error, setError] = useState(null);
+    const [retryCount, setRetryCount] = useState(0);
 
     const handleMakeOfferClick = async () => {
         if (!isAuthenticated) {
@@ -43,19 +46,37 @@ function PropertyDetailPage() {
         setShowOfferModal(true);
     };
 
+
     useEffect(() => {
-        const loadProperty = async () => {
+        let isMounted = true;
+        const loadProperty = async (attempt = 1) => {
+            setLoading(true);
+            setError(null);
             try {
                 const res = await getPropertyRequest(id);
-                setProperty(res.data);
-            } catch (error) {
-                console.error('Error loading property:', error);
+                if (isMounted) {
+                    setProperty(res.data);
+                    setError(null);
+                }
+            } catch (err) {
+                if (isMounted) {
+                    setProperty(null);
+                    setError('No se pudo cargar la propiedad. Puede que el servidor esté despertando o haya un error temporal.');
+                    // Reintentar automáticamente hasta 2 veces más (3 intentos en total)
+                    if (attempt < 3) {
+                        setTimeout(() => {
+                            setRetryCount(c => c + 1);
+                        }, 1500);
+                    }
+                }
             } finally {
-                setLoading(false);
+                if (isMounted) setLoading(false);
             }
         };
         loadProperty();
-    }, [id]);
+        return () => { isMounted = false; };
+        // eslint-disable-next-line
+    }, [id, retryCount]);
 
     // Cerrar modal con tecla ESC
     useEffect(() => {
@@ -75,7 +96,21 @@ function PropertyDetailPage() {
         };
     }, [showGalleryModal, showOfferModal]);
 
-    if (loading) return <div className="flex justify-center p-8">Loading...</div>;
+
+    if (loading) return <div className="flex justify-center p-8">Cargando propiedad...</div>;
+    if (error) {
+        return (
+            <div className="flex flex-col items-center justify-center p-8 gap-4">
+                <div className="text-red-600 font-semibold">{error}</div>
+                <button
+                    className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+                    onClick={() => { setRetryCount(c => c + 1); setError(null); }}
+                >
+                    Reintentar
+                </button>
+            </div>
+        );
+    }
     if (!property) return <div className="flex justify-center p-8">Property not found</div>;
 
     const getPropertyTypeLabel = (type) => {
