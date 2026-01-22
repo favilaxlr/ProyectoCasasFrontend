@@ -18,7 +18,7 @@ function Navbar() {
             return <NavbarUser/>
     
   return (
-    <nav className="navbar flex flex-col lg:flex-row justify-between items-center py-3 md:py-6 px-4 md:px-6 lg:px-10 shadow-2xl backdrop-blur-sm relative z-[10000]">
+    <nav className="navbar flex flex-col lg:flex-row justify-between items-center py-3 md:py-6 px-4 md:px-6 lg:px-10 shadow-2xl backdrop-blur-sm relative z-[10000] rounded-none">
       {/* Contenedor para móvil y tablet */}
       <div className="flex lg:hidden justify-center items-center w-full relative">
         {/* Logo centrado en móvil/tablet */}
@@ -55,7 +55,7 @@ function Navbar() {
           <Tooltip title="Sign In" arrow>
             <Link 
               to='/login'
-              className="flex items-center space-x-1 xl:space-x-2 btn-primary px-4 xl:px-6 py-2.5 xl:py-3 rounded-xl font-semibold text-sm xl:text-base transition-all duration-300 hover:scale-105 hover:shadow-lg whitespace-nowrap"
+              className="flex items-center space-x-1 xl:space-x-2 btn-primary px-4 xl:px-6 py-2.5 xl:py-3 rounded-none font-semibold text-sm xl:text-base transition-all duration-300 hover:scale-105 hover:shadow-lg whitespace-nowrap"
             >
               <IoLogIn size={18} className="xl:w-5 xl:h-5" />
               <span>Sign In</span>
@@ -65,7 +65,7 @@ function Navbar() {
           <Tooltip title="Register" arrow>
             <Link 
               to='/register'
-              className="flex items-center space-x-1 xl:space-x-2 btn-secondary px-4 xl:px-6 py-2.5 xl:py-3 rounded-xl font-semibold text-sm xl:text-base transition-all duration-300 hover:scale-105 hover:shadow-lg whitespace-nowrap"
+              className="flex items-center space-x-1 xl:space-x-2 btn-secondary px-4 xl:px-6 py-2.5 xl:py-3 rounded-none font-semibold text-sm xl:text-base transition-all duration-300 hover:scale-105 hover:shadow-lg whitespace-nowrap"
             >
               <IoPersonAdd size={18} className="xl:w-5 xl:h-5" />
               <span>Register</span>
@@ -76,7 +76,7 @@ function Navbar() {
 
       {/* Mobile Menu */}
       {mobileMenuOpen && (
-        <div className="lg:hidden w-full mt-4 space-y-3 animate-fade-in border-t border-white/20 pt-4">
+        <div className="lg:hidden w-full mt-4 space-y-3 animate-fade-in border-t border-white/20 pt-4 rounded-none">
           <Link 
             to='/properties'
             onClick={() => setMobileMenuOpen(false)}
@@ -89,7 +89,7 @@ function Navbar() {
           <Link 
             to='/login'
             onClick={() => setMobileMenuOpen(false)}
-            className="flex items-center justify-center gap-2 btn-primary w-full py-3 rounded-xl font-semibold transition-all duration-300"
+            className="flex items-center justify-center gap-2 btn-primary w-full py-3 rounded-none font-semibold transition-all duration-300"
           >
             <IoLogIn size={20} />
             <span>Sign In</span>
@@ -98,7 +98,7 @@ function Navbar() {
           <Link 
             to='/register'
             onClick={() => setMobileMenuOpen(false)}
-            className="flex items-center justify-center gap-2 btn-secondary w-full py-3 rounded-xl font-semibold transition-all duration-300"
+            className="flex items-center justify-center gap-2 btn-secondary w-full py-3 rounded-none font-semibold transition-all duration-300"
           >
             <IoPersonAdd size={20} />
             <span>Register</span>

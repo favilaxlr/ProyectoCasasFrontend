@@ -149,9 +149,9 @@ function HomePage() {
           </button>
         )}
 
-        {/* Panel Flotante de Propiedades - Izquierda */}
-        {isPanelOpen && (
-          <div className="absolute left-6 top-6 bottom-6 w-[32rem] bg-white rounded-xl shadow-2xl z-[1000] overflow-hidden border border-gray-200 animate-slide-in-left md:left-6 md:top-6 md:bottom-6 md:w-[32rem] max-md:left-0 max-md:top-0 max-md:bottom-0 max-md:right-0 max-md:w-full max-md:rounded-none">
+          {/* Panel Flotante de Propiedades - Izquierda */}
+          {isPanelOpen && (
+            <div className="absolute left-6 top-6 bottom-6 w-[32rem] bg-white shadow-2xl z-[1000] overflow-hidden border border-gray-200 animate-slide-in-left md:left-6 md:top-6 md:bottom-6 md:w-[32rem] max-md:left-0 max-md:top-0 max-md:bottom-0 max-md:right-0 max-md:w-full">
             {/* Header del Panel */}
             <div className="bg-white border-b border-gray-200 px-4 py-3 flex justify-between items-center">
               <div>

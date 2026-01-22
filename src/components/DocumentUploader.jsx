@@ -4,6 +4,7 @@ import { toast } from 'react-toastify';
 import axios from '../api/axiosInstance';
 
 function DocumentUploader({ propertyId, documents = [], onDocumentsChange, isAdminOrCoAdmin }) {
+    // Eliminada la vista previa modal
     const [uploading, setUploading] = useState(false);
     const [selectedFiles, setSelectedFiles] = useState([]);
 
@@ -168,8 +169,8 @@ function DocumentUploader({ propertyId, documents = [], onDocumentsChange, isAdm
                                             href={doc.url}
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            download={doc.fileName || 'property-document'}
-                                            className="text-blue-600 hover:text-blue-800 font-medium break-words"
+                                            className="text-blue-600 hover:text-blue-800 font-medium break-words underline cursor-pointer"
+                                            title="Open document in new tab"
                                         >
                                             {doc.fileName}
                                         </a>
@@ -181,6 +182,13 @@ function DocumentUploader({ propertyId, documents = [], onDocumentsChange, isAdm
                                                 Uploaded: {new Date(doc.uploadedAt).toLocaleDateString()}
                                             </p>
                                         )}
+                                        <a
+                                            href={doc.url}
+                                            download={doc.fileName || 'property-document'}
+                                            className="text-sm text-green-600 hover:text-green-800 underline block mt-1"
+                                        >
+                                            Download
+                                        </a>
                                     </div>
                                 </div>
                                 {isAdminOrCoAdmin && (
@@ -202,6 +210,8 @@ function DocumentUploader({ propertyId, documents = [], onDocumentsChange, isAdm
                     <p>No documents uploaded yet</p>
                 </div>
             )}
+
+
         </div>
     );
 }

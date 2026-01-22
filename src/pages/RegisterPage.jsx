@@ -60,7 +60,7 @@ function RegisterPage() {
         </div>
 
         {/* Form Container */}
-        <div className="bg-white rounded-2xl shadow-2xl p-6 md:p-8 space-y-6 transform hover:shadow-3xl transition-all duration-500 animate-slide-up">
+        <div className="bg-white shadow-2xl p-6 md:p-8 space-y-6 transform hover:shadow-3xl transition-all duration-500 animate-slide-up">
           {/* Error Messages */}
           {registerErrors.length > 0 && (
             <div className="space-y-2 animate-shake">

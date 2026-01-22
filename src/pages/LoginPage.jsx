@@ -53,7 +53,7 @@ function LoginPage() {
         </div>
 
         {/* Form Container */}
-        <div className="bg-white rounded-2xl shadow-2xl p-8 space-y-6 transform hover:shadow-3xl transition-all duration-500 animate-slide-up">
+        <div className="bg-white shadow-2xl p-8 space-y-6 transform hover:shadow-3xl transition-all duration-500 animate-slide-up">
           {/* Error Messages */}
           {loginErrors.length > 0 && (
             <div className="space-y-2 animate-shake">
