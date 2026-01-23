@@ -1,6 +1,6 @@
 import { createContext, useState, useContext, useEffect } from "react";
 import { registerRequest, loginRequest, verifyTokenRequest, logOutRequest } from "../api/auth";
-import Cookies from 'js-cookie';
+import { clearCsrfToken } from "../utils/csrf";
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const AuthContext = createContext();
@@ -58,13 +58,6 @@ export const AuthProvider = ({ children }) => {
                 throw new Error('No se recibió respuesta del servidor');
             }
             
-            // Guardar token en localStorage para producción (dominios diferentes)
-            // Priorizar el token del body sobre el de cookies
-            const token = res.data.token || Cookies.get('token');
-            if (token) {
-                localStorage.setItem('token', token);
-            }
-            
             // Verificar roles
             if (res.data.role?.role === 'admin') {
                 setIsAdmin(true);
@@ -120,32 +113,20 @@ export const AuthProvider = ({ children }) => {
 
     //useEffect para verificar la sesion del usuario
     useEffect(() => {
-        async function checkLogin() {
-            // Intentar obtener token de cookies o localStorage
-            const cookieToken = Cookies.get('token');
-            const localToken = localStorage.getItem('token');
-            const token = cookieToken || localToken;
-            
-            if (!token) {
-                setIsAuthenticated(false);
-                setUser(null);
-                setIsLoading(false);
-                setIsAdmin(false);
-                setIsCoAdmin(false);
-                return;
-            }
+        let isMounted = true;
 
+        async function checkLogin() {
             try {
-                const res = await verifyTokenRequest(token);
-                if (!res.data) {
+                const res = await verifyTokenRequest();
+                if (!isMounted) return;
+
+                if (!res?.data) {
                     throw new Error('No data received');
                 }
 
                 setIsAuthenticated(true);
                 setUser(res.data);
-                setIsLoading(false);
                 
-                // Verificar roles correctamente
                 if (res.data.role?.role === 'admin') {
                     setIsAdmin(true);
                     setIsCoAdmin(false);
@@ -158,29 +139,39 @@ export const AuthProvider = ({ children }) => {
                 }
 
             } catch (error) {
-                Cookies.remove('token');
-                localStorage.removeItem('token');
+                if (!isMounted) return;
                 setIsAuthenticated(false);
                 setUser(null);
-                setIsLoading(false);
                 setIsAdmin(false);
                 setIsCoAdmin(false);
+            } finally {
+                if (isMounted) {
+                    setIsLoading(false);
+                }
             }
         }
 
         checkLogin();
+
+        return () => {
+            isMounted = false;
+        };
     }, []);
 
     //funcion para cerrar sesion en el backend
-    const logOut = () => {
-        logOutRequest();
-        Cookies.remove('token');
-        localStorage.removeItem('token');
-        setIsAuthenticated(false);
-        setIsAdmin(false);
-        setIsCoAdmin(false);
-        setUser(null);
-        setIsLoading(true);
+    const logOut = async () => {
+        try {
+            await logOutRequest();
+        } catch (error) {
+            console.error('Error al cerrar sesión', error);
+        } finally {
+            clearCsrfToken();
+            setIsAuthenticated(false);
+            setIsAdmin(false);
+            setIsCoAdmin(false);
+            setUser(null);
+            setIsLoading(false);
+        }
     }
 
     // Función para actualizar datos del usuario
@@ -193,12 +184,6 @@ export const AuthProvider = ({ children }) => {
 
     // Función para autenticar usuario después de verificación
     const authenticateUser = (userData) => {
-        // Guardar token si viene en la respuesta
-        const token = userData.token || Cookies.get('token');
-        if (token) {
-            localStorage.setItem('token', token);
-        }
-        
         setUser(userData);
         setIsAuthenticated(true);
         
