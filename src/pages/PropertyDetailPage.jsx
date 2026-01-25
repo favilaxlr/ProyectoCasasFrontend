@@ -97,7 +97,7 @@ function PropertyDetailPage() {
     }, [showGalleryModal, showOfferModal]);
 
 
-    if (loading) return <div className="flex justify-center p-8">Cargando propiedad...</div>;
+    if (loading) return <div className="flex justify-center p-8">Loading property...</div>;
     if (error) {
         return (
             <div className="flex flex-col items-center justify-center p-8 gap-4">
