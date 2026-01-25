@@ -46,6 +46,10 @@ function PropertyFormPage() {
             }
         }
     });
+    const resolvePostSaveRoute = () => {
+        if (typeof window === 'undefined') return '/admin/properties';
+        return window.innerWidth < 768 ? '/properties' : '/admin/properties';
+    };
     const [images, setImages] = useState([]);
     const [videos, setVideos] = useState([]);
     const [documents, setDocuments] = useState([]);
@@ -321,7 +325,7 @@ function PropertyFormPage() {
                 }
             }
         
-            navigate('/admin/properties');
+            navigate(resolvePostSaveRoute(), { replace: true });
         } catch (error) {
             console.error('Error saving property:', error);
             const errorMsg = error.response?.data?.message 
@@ -1417,7 +1421,7 @@ function PropertyFormPage() {
                         <div className="flex gap-3">
                             <button
                                 type="button"
-                                onClick={() => navigate('/admin/properties')}
+                                onClick={() => navigate(resolvePostSaveRoute())}
                                 className="px-6 py-3 bg-gray-200 text-gray-700 rounded-xl font-medium hover:bg-gray-300 transition-all flex items-center"
                             >
                                 <IoCloseSharp className="mr-2" />
