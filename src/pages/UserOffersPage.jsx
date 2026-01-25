@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router';
-import { getUserOffersRequest } from '../api/offers';
+import { toast } from 'react-toastify';
+import { getUserOffersRequest, cancelUserOfferRequest } from '../api/offers';
 import { IoCashOutline, IoTimeOutline, IoPersonOutline, IoCheckmarkCircle, IoCloseCircle, IoChatbubbleEllipsesOutline, IoHomeOutline } from 'react-icons/io5';
 
 function UserOffersPage() {
     const [offers, setOffers] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [cancellingOffer, setCancellingOffer] = useState(null);
 
     useEffect(() => {
         loadOffers();
@@ -19,6 +21,23 @@ function UserOffersPage() {
             console.error('Error loading offers:', error);
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handleCancelOffer = async (offerId) => {
+        const confirmed = window.confirm('Do you want to cancel this offer? The conversation will remain for reference.');
+        if (!confirmed) return;
+
+        setCancellingOffer(offerId);
+        try {
+            await cancelUserOfferRequest(offerId);
+            toast.info('Offer cancelled successfully.');
+            await loadOffers();
+        } catch (error) {
+            console.error('Error cancelling offer:', error);
+            toast.error(error.response?.data?.message?.[0] || 'Error cancelling offer');
+        } finally {
+            setCancellingOffer(null);
         }
     };
 
@@ -75,100 +94,149 @@ function UserOffersPage() {
                 </div>
             ) : (
                 <div className="grid grid-cols-1 gap-6">
-                    {offers.map((offer) => (
-                        <div
-                            key={offer._id}
-                            className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow"
-                        >
-                            <div className="flex flex-col md:flex-row">
-                                {/* Property Image */}
-                                <div className="md:w-1/3">
-                                    {offer.property?.images?.[0] ? (
-                                        <img
-                                            src={offer.property.images.find(img => img.isMain)?.url || offer.property.images[0].url}
-                                            alt={offer.property.title}
-                                            className="w-full h-48 md:h-full object-cover"
-                                        />
-                                    ) : (
-                                        <div className="w-full h-48 md:h-full bg-gray-200 flex items-center justify-center">
-                                            <IoHomeOutline className="text-6xl text-gray-400" />
-                                        </div>
-                                    )}
-                                </div>
+                    {offers.map((offer) => {
+                        const property = offer.property || null;
+                        const propertyId = property?._id;
+                        const propertyTitle = property?.title || 'Property unavailable';
+                        const propertyAddress = property?.address;
+                        const propertyImages = property?.images || [];
+                        const mainImage = propertyImages.find(img => img.isMain)?.url || propertyImages[0]?.url;
+                        const askingPrice = property?.price?.sale;
+                        const propertyLink = propertyId ? `/properties/${propertyId}` : null;
 
-                                {/* Offer Details */}
-                                <div className="md:w-2/3 p-6">
-                                    <div className="flex justify-between items-start mb-4">
-                                        <div>
-                                            <Link
-                                                to={`/properties/${offer.property._id}`}
-                                                className="text-xl font-bold text-gray-800 hover:text-[var(--gold-accent)] transition-colors"
-                                            >
-                                                {offer.property.title}
-                                            </Link>
-                                            <p className="text-gray-600 text-sm mt-1">
-                                                {offer.property.address?.street}, {offer.property.address?.city}
-                                            </p>
-                                        </div>
-                                        {getStatusBadge(offer.status)}
-                                    </div>
+                        const assigned = offer.assignedTo;
+                        const assignedName = typeof assigned === 'object' ? assigned?.username : assigned ? 'Team Member' : null;
+                        const canCancel = ['pending', 'in_progress'].includes(offer.status);
 
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                                        <div className="bg-blue-50 p-3 rounded-lg">
-                                            <p className="text-sm text-gray-600">Your Offer</p>
-                                            <p className="text-2xl font-bold text-[var(--gold-accent)]">
-                                                ${offer.offerAmount?.toLocaleString()}
-                                            </p>
-                                        </div>
-                                        {offer.property.price?.sale && (
-                                            <div className="bg-blue-50 p-3 rounded-lg">
-                                                <p className="text-sm text-gray-600">Asking Price</p>
-                                                <p className="text-2xl font-bold text-blue-600">
-                                                    ${offer.property.price.sale?.toLocaleString()}
-                                                </p>
+                        return (
+                            <div
+                                key={offer._id}
+                                className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow"
+                            >
+                                <div className="flex flex-col md:flex-row">
+                                    {/* Property Image */}
+                                    <div className="md:w-1/3">
+                                        {mainImage ? (
+                                            <img
+                                                src={mainImage}
+                                                alt={propertyTitle}
+                                                className="w-full h-48 md:h-full object-cover"
+                                            />
+                                        ) : (
+                                            <div className="w-full h-48 md:h-full bg-gray-200 flex items-center justify-center">
+                                                <IoHomeOutline className="text-6xl text-gray-400" />
                                             </div>
                                         )}
                                     </div>
 
-                                    {offer.assignedTo && (
-                                        <div className="mb-4 p-3 bg-blue-50 rounded-lg flex items-center">
-                                            <IoPersonOutline className="text-blue-600 mr-2" />
-                                            <span className="text-sm text-blue-800">
-                                                <strong>Assigned to:</strong> {offer.assignedTo.username}
-                                            </span>
+                                    {/* Offer Details */}
+                                    <div className="md:w-2/3 p-6">
+                                        <div className="flex justify-between items-start mb-4">
+                                            <div>
+                                                {propertyLink ? (
+                                                    <Link
+                                                        to={propertyLink}
+                                                        className="text-xl font-bold text-gray-800 hover:text-[var(--gold-accent)] transition-colors"
+                                                    >
+                                                        {propertyTitle}
+                                                    </Link>
+                                                ) : (
+                                                    <p className="text-xl font-bold text-gray-500">{propertyTitle}</p>
+                                                )}
+                                                <p className="text-gray-600 text-sm mt-1">
+                                                    {propertyAddress?.street && propertyAddress?.city
+                                                        ? `${propertyAddress.street}, ${propertyAddress.city}`
+                                                        : 'Address unavailable'}
+                                                </p>
+                                            </div>
+                                            <div className="flex flex-col gap-2 items-start sm:flex-row sm:items-center">
+                                                {getStatusBadge(offer.status)}
+                                                {canCancel && (
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => handleCancelOffer(offer._id)}
+                                                        disabled={cancellingOffer === offer._id}
+                                                        className="text-xs sm:text-sm font-semibold px-4 py-1.5 border-2 border-red-300 text-red-600 rounded-full hover:bg-red-50 transition-colors disabled:opacity-60"
+                                                    >
+                                                        {cancellingOffer === offer._id ? 'Cancelling…' : 'Cancel Offer'}
+                                                    </button>
+                                                )}
+                                            </div>
                                         </div>
-                                    )}
 
-                                    <div className="flex items-center text-sm text-gray-500 mb-4">
-                                        <IoChatbubbleEllipsesOutline className="mr-2" />
-                                        <span>{offer.messages?.length || 0} messages</span>
-                                        {offer.unreadCount?.user > 0 && (
-                                            <span className="ml-2 bg-red-500 text-white px-2 py-1 rounded-full text-xs">
-                                                {offer.unreadCount.user} new
-                                            </span>
+                                        {!property && (
+                                            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">
+                                                This property was removed, but your offer history is saved for reference.
+                                            </div>
                                         )}
-                                    </div>
 
-                                    <div className="flex gap-3">
-                                        <Link
-                                            to={`/my-offers/${offer._id}`}
-                                            className="flex-1 bg-[var(--gold-accent)] text-white text-center py-2 rounded-lg hover:bg-[#145a75] transition-colors flex items-center justify-center"
-                                        >
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                            <div className="bg-blue-50 p-3 rounded-lg">
+                                                <p className="text-sm text-gray-600">Your Offer</p>
+                                                <p className="text-2xl font-bold text-[var(--gold-accent)]">
+                                                    ${offer.offerAmount?.toLocaleString()}
+                                                </p>
+                                            </div>
+                                            {askingPrice && (
+                                                <div className="bg-blue-50 p-3 rounded-lg">
+                                                    <p className="text-sm text-gray-600">Asking Price</p>
+                                                    <p className="text-2xl font-bold text-blue-600">
+                                                        ${askingPrice?.toLocaleString()}
+                                                    </p>
+                                                </div>
+                                            )}
+                                        </div>
+
+                                        {assigned && (
+                                            <div className="mb-4 p-3 bg-blue-50 rounded-lg flex items-center">
+                                                <IoPersonOutline className="text-blue-600 mr-2" />
+                                                <span className="text-sm text-blue-800">
+                                                    <strong>Assigned to:</strong> {assignedName}
+                                                </span>
+                                            </div>
+                                        )}
+
+                                        <div className="flex items-center text-sm text-gray-500 mb-4">
                                             <IoChatbubbleEllipsesOutline className="mr-2" />
-                                            View Conversation
-                                        </Link>
-                                        <Link
-                                            to={`/properties/${offer.property._id}`}
-                                            className="flex-1 bg-gray-200 text-gray-800 text-center py-2 rounded-lg hover:bg-gray-300 transition-colors flex items-center justify-center"
-                                        >
-                                            <IoHomeOutline className="mr-2" />
-                                            View Property
-                                        </Link>
+                                            <span>{offer.messages?.length || 0} messages</span>
+                                            {offer.unreadCount?.user > 0 && (
+                                                <span className="ml-2 bg-red-500 text-white px-2 py-1 rounded-full text-xs">
+                                                    {offer.unreadCount.user} new
+                                                </span>
+                                            )}
+                                        </div>
+
+                                        <div className="flex gap-3">
+                                            <Link
+                                                to={`/my-offers/${offer._id}`}
+                                                className="flex-1 bg-[var(--gold-accent)] text-white text-center py-2 rounded-lg hover:bg-[#145a75] transition-colors flex items-center justify-center"
+                                            >
+                                                <IoChatbubbleEllipsesOutline className="mr-2" />
+                                                View Conversation
+                                            </Link>
+                                            {propertyLink ? (
+                                                <Link
+                                                    to={propertyLink}
+                                                    className="flex-1 bg-gray-200 text-gray-800 text-center py-2 rounded-lg hover:bg-gray-300 transition-colors flex items-center justify-center"
+                                                >
+                                                    <IoHomeOutline className="mr-2" />
+                                                    View Property
+                                                </Link>
+                                            ) : (
+                                                <button
+                                                    disabled
+                                                    className="flex-1 bg-gray-100 text-gray-400 text-center py-2 rounded-lg flex items-center justify-center cursor-not-allowed"
+                                                >
+                                                    <IoHomeOutline className="mr-2" />
+                                                    Property Unavailable
+                                                </button>
+                                            )}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    ))}
+                        );
+                    })}
                 </div>
             )}
         </div>
