@@ -1,6 +1,7 @@
 import { createContext, useState, useContext, useEffect } from "react";
 import { registerRequest, loginRequest, verifyTokenRequest, logOutRequest } from "../api/auth";
 import { clearCsrfToken } from "../utils/csrf";
+import { setAuthToken, clearAuthToken, getAuthToken } from "../utils/authToken";
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const AuthContext = createContext();
@@ -72,6 +73,9 @@ export const AuthProvider = ({ children }) => {
             setUser(res.data);
             setIsAuthenticated(true);
             setIsLoading(false);
+            if (res.data.token) {
+                setAuthToken(res.data.token);
+            }
             return { success: true };
         } catch (error) {
             console.error('Error en signIn:', error);
@@ -117,6 +121,15 @@ export const AuthProvider = ({ children }) => {
 
         async function checkLogin() {
             try {
+                const storedToken = getAuthToken();
+                const hasCookieToken = typeof document !== 'undefined' && document.cookie?.includes('token=');
+                if (!storedToken && !hasCookieToken) {
+                    setIsAuthenticated(false);
+                    setUser(null);
+                    setIsAdmin(false);
+                    setIsCoAdmin(false);
+                    return;
+                }
                 const res = await verifyTokenRequest();
                 if (!isMounted) return;
 
@@ -144,6 +157,7 @@ export const AuthProvider = ({ children }) => {
                 setUser(null);
                 setIsAdmin(false);
                 setIsCoAdmin(false);
+                clearAuthToken();
             } finally {
                 if (isMounted) {
                     setIsLoading(false);
@@ -166,6 +180,7 @@ export const AuthProvider = ({ children }) => {
             console.error('Error al cerrar sesión', error);
         } finally {
             clearCsrfToken();
+            clearAuthToken();
             setIsAuthenticated(false);
             setIsAdmin(false);
             setIsCoAdmin(false);
@@ -192,6 +207,9 @@ export const AuthProvider = ({ children }) => {
         setIsAdmin(userRole === 'admin');
         setIsCoAdmin(userRole === 'co-admin');
         setErrors([]);
+        if (userData.token) {
+            setAuthToken(userData.token);
+        }
     }
 
     return (

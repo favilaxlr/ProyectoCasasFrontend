@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { ensureCsrfToken, clearCsrfToken } from '../utils/csrf';
+import { getAuthToken, clearAuthToken } from '../utils/authToken';
 
 const baseUrl = import.meta.env.VITE_BASE_URL ? import.meta.env.VITE_BASE_URL.replace(/\/$/, '') : '';
 
@@ -12,6 +13,14 @@ const SAFE_METHODS = ['GET', 'HEAD', 'OPTIONS', 'TRACE'];
 
 instance.interceptors.request.use(
     async (config) => {
+        const authToken = getAuthToken();
+        if (authToken) {
+            config.headers = config.headers || {};
+            if (!config.headers['Authorization']) {
+                config.headers['Authorization'] = `Bearer ${authToken}`;
+            }
+        }
+
         const method = config.method?.toUpperCase();
         if (method && !SAFE_METHODS.includes(method)) {
             const csrfToken = await ensureCsrfToken();
@@ -22,6 +31,10 @@ instance.interceptors.request.use(
         return config;
     },
     (error) => {
+        if (response?.status === 401 || response?.status === 403) {
+            clearAuthToken();
+        }
+
         return Promise.reject(error);
     }
 );
