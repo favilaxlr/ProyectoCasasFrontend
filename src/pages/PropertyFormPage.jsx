@@ -86,6 +86,10 @@ function PropertyFormPage() {
         { number: 5, title: 'Media', icon: <IoCameraSharp /> }
     ];
 
+    const lastStepIndex = steps.length - 1;
+    const isLastStep = currentStep >= lastStepIndex;
+    const progressValue = lastStepIndex > 0 ? Math.min((currentStep / lastStepIndex) * 100, 100) : 100;
+
     // Available business modes
     const businessModes = [
         {
@@ -452,19 +456,19 @@ function PropertyFormPage() {
 
     const nextStep = async () => {
         const isValid = await validateCurrentStep();
-        if (isValid && currentStep < steps.length) {
-            setCurrentStep(currentStep + 1);
+        if (isValid && currentStep < lastStepIndex) {
+            setCurrentStep((prev) => Math.min(prev + 1, lastStepIndex));
         }
     };
 
     const prevStep = () => {
         if (currentStep > 0) {
-            setCurrentStep(currentStep - 1);
+            setCurrentStep((prev) => Math.max(prev - 1, 0));
         }
     };
 
     const goToStep = (step) => {
-        setCurrentStep(step);
+        setCurrentStep(Math.max(0, Math.min(step, lastStepIndex)));
     };
 
     const propertyType = watch('details.propertyType');
@@ -488,7 +492,7 @@ function PropertyFormPage() {
                         <div className="absolute top-6 left-0 right-0 h-1 bg-gray-200 -z-10">
                             <div 
                                 className="h-full bg-[var(--gold-accent)] transition-all duration-500"
-                                style={{ width: `${(currentStep / (steps.length - 1)) * 100}%` }}
+                                style={{ width: `${progressValue}%` }}
                             />
                         </div>
 
@@ -1200,108 +1204,120 @@ function PropertyFormPage() {
                                     <p className="text-gray-600 mt-1">High quality images and short videos help increase engagement</p>
                                 </div>
 
-                                {isEditing && property && (
-                                    <div className="mb-6">
-                                        <h3 className="text-lg font-semibold mb-3 text-gray-700">Current Images</h3>
-                                        <PropertyGallery 
-                                            property={property} 
-                                            isEditable={true}
-                                            onImageUpdate={loadProperty}
-                                        />
-                                    </div>
-                                )}
-                                
-                                <div>
-                                    {isEditing ? (
-                                        <ImageUploader 
-                                            propertyId={id}
-                                            onImagesUploaded={loadProperty}
-                                        />
-                                    ) : (
-                                        <ImageUploader 
-                                            onChange={handleImageChange}
-                                        />
-                                    )}
-                                </div>
+                                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                    <div className="space-y-6">
+                                        {isEditing && property && (
+                                            <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
+                                                <h3 className="text-lg font-semibold mb-3 text-gray-700">Current Images</h3>
+                                                <PropertyGallery 
+                                                    property={property} 
+                                                    isEditable={true}
+                                                    onImageUpdate={loadProperty}
+                                                />
+                                            </div>
+                                        )}
 
-                                <div className="bg-blue-50 border-l-4 border-blue-400 p-4 rounded-r-xl mt-4">
-                                    <div className="flex">
-                                        <div className="mr-3">
-                                            <IoHelpCircleSharp className="text-2xl text-blue-600" />
-                                        </div>
-                                        <div>
-                                            <p className="text-sm font-medium text-blue-800">Tips for better images:</p>
-                                            <ul className="text-xs text-blue-700 mt-2 space-y-1">
-                                                <li>• Use good natural lighting</li>
-                                                <li>• Show different angles of each room</li>
-                                                <li>• Include outdoor areas if available</li>
-                                                <li>• Use the buttons to reorder images</li>
-                                                <li>• Mark with the star the image you want to appear first</li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
+                                        <div className="bg-gradient-to-br from-white via-gray-50 to-gray-100 border border-gray-200 rounded-2xl p-6 shadow-sm">
+                                            <div className="flex items-center justify-between mb-4">
+                                                <h3 className="text-xl font-bold text-[var(--charcoal)] flex items-center">
+                                                    <IoCameraSharp className="mr-2" /> Upload Images
+                                                </h3>
+                                                <span className="text-xs uppercase tracking-widest text-gray-400">Step 5</span>
+                                            </div>
+                                            {isEditing ? (
+                                                <ImageUploader 
+                                                    propertyId={id}
+                                                    onImagesUploaded={loadProperty}
+                                                />
+                                            ) : (
+                                                <ImageUploader 
+                                                    onChange={handleImageChange}
+                                                />
+                                            )}
 
-                                <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
-                                    <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-4">
-                                        <div>
-                                            <h3 className="text-xl font-bold text-[var(--charcoal)] flex items-center">
-                                                <IoVideocam className="mr-2" /> Property Videos
-                                            </h3>
-                                            <p className="text-sm text-gray-600">
-                                                Attach up to 3 short walkthroughs (MP4, MOV, AVI, MPEG or WebM)
-                                            </p>
-                                        </div>
-                                        <span className="text-sm text-gray-500">
-                                            {videos.length}/3 selected
-                                        </span>
-                                    </div>
-
-                                    <VideoUploader
-                                        selectedVideos={videos}
-                                        onChange={handleVideoSelection}
-                                    />
-
-                                    {isEditing && property?.videos?.length > 0 && (
-                                        <div className="mt-6">
-                                            <h4 className="text-sm font-semibold text-gray-700 mb-3">Current videos</h4>
-                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                                {property.videos.map((video) => (
-                                                    <div key={video._id} className="bg-gray-50 border border-gray-200 rounded-2xl p-3">
-                                                        <div className="aspect-video bg-black rounded-xl overflow-hidden mb-3">
-                                                            <video
-                                                                controls
-                                                                src={video.url}
-                                                                poster={video.thumbnailUrl || undefined}
-                                                                className="w-full h-full object-cover"
-                                                            />
-                                                        </div>
-                                                        <div className="flex items-center justify-between text-sm text-gray-600">
-                                                            <div>
-                                                                <p className="font-semibold text-gray-800">
-                                                                    Duration: {formatVideoDuration(video.duration)}
-                                                                </p>
-                                                                {video.bytes && (
-                                                                    <p className="text-xs text-gray-500">{formatFileSize(video.bytes)}</p>
-                                                                )}
-                                                            </div>
-                                                            <button
-                                                                type="button"
-                                                                onClick={() => handleExistingVideoDelete(video._id)}
-                                                                className="text-red-500 hover:text-red-600 p-2 rounded-full hover:bg-red-50"
-                                                            >
-                                                                <IoTrashOutline size={18} />
-                                                            </button>
-                                                        </div>
+                                            <div className="bg-blue-50 border-l-4 border-blue-400 p-4 rounded-r-xl mt-4">
+                                                <div className="flex">
+                                                    <div className="mr-3">
+                                                        <IoHelpCircleSharp className="text-2xl text-blue-600" />
                                                     </div>
-                                                ))}
+                                                    <div>
+                                                        <p className="text-sm font-medium text-blue-800">Tips for better images:</p>
+                                                        <ul className="text-xs text-blue-700 mt-2 space-y-1">
+                                                            <li>• Use good natural lighting</li>
+                                                            <li>• Show different angles of each room</li>
+                                                            <li>• Include outdoor areas if available</li>
+                                                            <li>• Use the buttons to reorder images</li>
+                                                            <li>• Mark with the star the image you want to appear first</li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
-                                    )}
+                                    </div>
 
-                                    <p className="text-xs text-gray-500 mt-4">
-                                        Videos are uploaded after saving the property. You can delete existing ones at any time.
-                                    </p>
+                                    <div className="space-y-6">
+                                        <div className="bg-gradient-to-br from-white via-gray-50 to-gray-100 border border-gray-200 rounded-2xl p-6 shadow-sm">
+                                            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-4">
+                                                <div>
+                                                    <h3 className="text-xl font-bold text-[var(--charcoal)] flex items-center">
+                                                        <IoVideocam className="mr-2" /> Property Videos
+                                                    </h3>
+                                                    <p className="text-sm text-gray-600">
+                                                        Attach up to 3 short walkthroughs (MP4, MOV, AVI, MPEG or WebM)
+                                                    </p>
+                                                </div>
+                                                <span className="text-sm text-gray-500">
+                                                    {videos.length}/3 selected
+                                                </span>
+                                            </div>
+
+                                            <VideoUploader
+                                                selectedVideos={videos}
+                                                onChange={handleVideoSelection}
+                                            />
+
+                                            {isEditing && property?.videos?.length > 0 && (
+                                                <div className="mt-6">
+                                                    <h4 className="text-sm font-semibold text-gray-700 mb-3">Current videos</h4>
+                                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                        {property.videos.map((video) => (
+                                                            <div key={video._id} className="bg-gray-50 border border-gray-200 rounded-2xl p-3">
+                                                                <div className="aspect-video bg-black rounded-xl overflow-hidden mb-3">
+                                                                    <video
+                                                                        controls
+                                                                        src={video.url}
+                                                                        poster={video.thumbnailUrl || undefined}
+                                                                        className="w-full h-full object-cover"
+                                                                    />
+                                                                </div>
+                                                                <div className="flex items-center justify-between text-sm text-gray-600">
+                                                                    <div>
+                                                                        <p className="font-semibold text-gray-800">
+                                                                            Duration: {formatVideoDuration(video.duration)}
+                                                                        </p>
+                                                                        {video.bytes && (
+                                                                            <p className="text-xs text-gray-500">{formatFileSize(video.bytes)}</p>
+                                                                        )}
+                                                                    </div>
+                                                                    <button
+                                                                        type="button"
+                                                                        onClick={() => handleExistingVideoDelete(video._id)}
+                                                                        className="text-red-500 hover:text-red-600 p-2 rounded-full hover:bg-red-50"
+                                                                    >
+                                                                        <IoTrashOutline size={18} />
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            )}
+
+                                            <p className="text-xs text-gray-500 mt-4">
+                                                Videos are uploaded after saving the property. You can delete existing ones at any time.
+                                            </p>
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
@@ -1408,7 +1424,7 @@ function PropertyFormPage() {
                                 Cancel
                             </button>
 
-                            {currentStep < steps.length ? (
+                            {!isLastStep ? (
                                 <button
                                     type="button"
                                     onClick={nextStep}
