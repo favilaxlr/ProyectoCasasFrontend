@@ -266,7 +266,7 @@ function PropertyMarker({ property, isSelected, onPropertyClick, getStatusColor,
             )}
             {property.details?.furnished && (
               <span className="bg-purple-100 text-purple-800 px-2 py-0.5 rounded text-xs">
-                Amueblado
+                Furnished
               </span>
             )}
           </div>

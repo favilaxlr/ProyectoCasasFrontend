@@ -162,7 +162,7 @@ function PropertyDetailPage() {
             <button
                 type="button"
                 onClick={handleMobileBack}
-                className="md:hidden fixed top-4 left-4 z-[1100] bg-white/90 text-gray-800 border border-gray-200 rounded-full shadow-lg px-4 py-2 flex items-center gap-2 backdrop-blur-sm"
+                className="md:hidden fixed top-4 left-4 z-[12000] bg-white/90 text-gray-800 border border-gray-200 rounded-full shadow-lg px-4 py-2 flex items-center gap-2 backdrop-blur-sm"
             >
                 <IoArrowBack className="text-base" />
                 <span className="text-sm font-semibold">Back</span>

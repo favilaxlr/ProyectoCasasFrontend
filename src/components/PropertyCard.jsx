@@ -340,27 +340,18 @@ function PropertyCard({ property, compact = false }) {
             
             <div className="flex items-center justify-between mt-2">
               <p className="text-xs text-gray-600">
-              {property.details?.propertyType === 'house' ? 'House' :
-               property.details?.propertyType === 'apartment' ? 'Apartment' :
-               property.details?.propertyType === 'condo' ? 'Condo' :
-               property.details?.propertyType === 'townhouse' ? 'Townhouse' :
-                 property.details?.propertyType}
+              {(() => {
+                const type = property.details?.propertyType;
+                if (type === 'house') return 'House';
+                if (type === 'apartment') return 'Apartment';
+                if (type === 'condo') return 'Condo';
+                if (type === 'townhouse') return 'Townhouse';
+                if (typeof type === 'string' || typeof type === 'number') return type;
+                return '';
+              })()}
               </p>
               
-              {/* Estado siempre visible */}
-              {property.status && (
-                <span className={`text-sm px-3 py-1 rounded-full font-semibold ${
-                  property.status === 'DISPONIBLE' ? 'bg-green-500 text-white' :
-                  property.status === 'EN_CONTRATO' ? 'bg-orange-500 text-white' :
-                  property.status === 'VENDIDA' ? 'bg-red-500 text-white' :
-                  'bg-gray-500 text-white'
-                }`}>
-                  {property.status === 'DISPONIBLE' ? 'Available' :
-                   property.status === 'EN_CONTRATO' ? 'Under Contract' :
-                   property.status === 'VENDIDA' ? 'Sold' :
-                   property.status}
-                </span>
-              )}
+              {/* Estado solo se muestra en el encabezado superior */}
             </div>
           </div>
           

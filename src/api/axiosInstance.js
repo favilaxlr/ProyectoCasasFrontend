@@ -2,7 +2,24 @@ import axios from 'axios';
 import { ensureCsrfToken, clearCsrfToken } from '../utils/csrf';
 import { getAuthToken, clearAuthToken } from '../utils/authToken';
 
-const baseUrl = import.meta.env.VITE_BASE_URL ? import.meta.env.VITE_BASE_URL.replace(/\/$/, '') : '';
+const resolveBaseUrl = () => {
+    const rawUrl = import.meta.env.VITE_BASE_URL || '';
+    let normalizedUrl = rawUrl.replace(/\/$/, '');
+
+    if (typeof window !== 'undefined' && normalizedUrl.includes('localhost')) {
+        try {
+            const parsed = new URL(normalizedUrl);
+            parsed.hostname = window.location.hostname;
+            normalizedUrl = parsed.origin;
+        } catch (error) {
+            console.warn('Could not normalize API base URL:', error);
+        }
+    }
+
+    return normalizedUrl;
+};
+
+const baseUrl = resolveBaseUrl();
 
 const instance = axios.create({
     baseURL: `${baseUrl}/api`,
@@ -42,6 +59,15 @@ instance.interceptors.request.use(
 instance.interceptors.response.use(
     (response) => response,
     async (error) => {
+        if (import.meta.env.DEV) {
+            console.error('API request failed:', {
+                url: error.config?.url,
+                method: error.config?.method,
+                status: error.response?.status,
+                message: error.message,
+            });
+        }
+
         const { config, response } = error || {};
         const serverMessage = response?.data?.message?.[0];
         const isCsrfError = response?.status === 403 && typeof serverMessage === 'string' && serverMessage.toLowerCase().includes('csrf');

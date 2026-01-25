@@ -1,6 +1,18 @@
 const normalizeBaseUrl = (url = '') => {
     if (!url) return '';
-    return url.endsWith('/') ? url.slice(0, -1) : url;
+    let normalized = url.endsWith('/') ? url.slice(0, -1) : url;
+
+    if (typeof window !== 'undefined' && normalized.includes('localhost')) {
+        try {
+            const parsed = new URL(normalized);
+            parsed.hostname = window.location.hostname;
+            normalized = parsed.origin;
+        } catch (error) {
+            console.warn('Could not normalize CSRF base URL:', error);
+        }
+    }
+
+    return normalized;
 };
 
 const getBaseUrl = () => {
