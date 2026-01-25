@@ -37,8 +37,14 @@ function ReviewsSection({ propertyId }) {
             return;
         }
 
-        if (!comment.trim()) {
-            toast.error('Por favor escribe un comentario');
+        const trimmedComment = comment.trim();
+        if (!trimmedComment) {
+            toast.error('Please write a comment');
+            return;
+        }
+
+        if (trimmedComment.length < 10) {
+            toast.error('Comment must be at least 10 characters.');
             return;
         }
 
@@ -47,7 +53,7 @@ function ReviewsSection({ propertyId }) {
             const formData = new FormData();
             formData.append('propertyId', propertyId);
             formData.append('rating', rating);
-            formData.append('comment', comment);
+            formData.append('comment', trimmedComment);
 
             await createReviewRequest(formData);
             toast.success('Review sent successfully');

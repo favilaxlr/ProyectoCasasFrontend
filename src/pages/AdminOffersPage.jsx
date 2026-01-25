@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router';
-import { getPendingOffersRequest, getMyAssignedOffersRequest, takeOfferRequest } from '../api/offers';
+import { getPendingOffersRequest, getMyAssignedOffersRequest, takeOfferRequest, updateOfferStatusRequest } from '../api/offers';
 import { IoCashOutline, IoTimeOutline, IoPersonOutline, IoCheckmarkCircle, IoCloseCircle, IoChatbubbleEllipsesOutline, IoHomeOutline, IoHandRightOutline } from 'react-icons/io5';
 import { toast } from 'react-toastify';
 
@@ -10,6 +10,7 @@ function AdminOffersPage() {
     const [activeTab, setActiveTab] = useState('pending'); // 'pending' or 'assigned'
     const [loading, setLoading] = useState(true);
     const [takingOffer, setTakingOffer] = useState(null);
+    const [cancellingOffer, setCancellingOffer] = useState(null);
 
     useEffect(() => {
         loadOffers();
@@ -60,6 +61,23 @@ function AdminOffersPage() {
         }
     };
 
+    const handleCancelOffer = async (offerId) => {
+        const confirmed = window.confirm('Cancel this offer? The conversation will be archived but kept for reference.');
+        if (!confirmed) return;
+
+        setCancellingOffer(offerId);
+        try {
+            await updateOfferStatusRequest(offerId, 'closed');
+            toast.info('Offer cancelled and archived.');
+            await loadOffers();
+        } catch (error) {
+            console.error('Error cancelling offer:', error);
+            toast.error(error.response?.data?.message?.[0] || 'Error cancelling offer');
+        } finally {
+            setCancellingOffer(null);
+        }
+    };
+
     const getStatusBadge = (status) => {
         const statuses = {
             pending: { color: 'bg-yellow-100 text-yellow-800 border-yellow-300', icon: <IoTimeOutline />, text: 'Pending' },
@@ -78,114 +96,162 @@ function AdminOffersPage() {
         );
     };
 
-    const renderOfferCard = (offer, showTakeButton = false) => (
-        <div
-            key={offer._id}
-            className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow"
-        >
-            <div className="flex flex-col md:flex-row">
-                {/* Property Image */}
-                <div className="md:w-1/3">
-                    {offer.property?.images?.[0] ? (
-                        <img
-                            src={offer.property.images.find(img => img.isMain)?.url || offer.property.images[0].url}
-                            alt={offer.property.title}
-                            className="w-full h-48 md:h-full object-cover"
-                        />
-                    ) : (
-                        <div className="w-full h-48 md:h-full bg-gray-200 flex items-center justify-center">
-                            <IoHomeOutline className="text-6xl text-gray-400" />
-                        </div>
-                    )}
-                </div>
+    const renderOfferCard = (offer, showTakeButton = false) => {
+        const property = offer.property || null;
+        const buyer = offer.user || {};
+        const propertyId = property?._id;
+        const propertyTitle = property?.title || 'Property unavailable';
+        const propertyImages = property?.images || [];
+        const mainImage = propertyImages.find(img => img.isMain)?.url || propertyImages[0]?.url;
+        const propertyAddress = property?.address;
+        const askingPrice = property?.price?.sale;
+        const propertyLink = propertyId ? `/properties/${propertyId}` : null;
 
-                {/* Offer Details */}
-                <div className="md:w-2/3 p-6">
-                    <div className="flex justify-between items-start mb-4">
-                        <div>
-                            <Link
-                                to={`/properties/${offer.property._id}`}
-                                className="text-xl font-bold text-gray-800 hover:text-[var(--gold-accent)] transition-colors"
-                            >
-                                {offer.property.title}
-                            </Link>
-                            <p className="text-gray-600 text-sm mt-1">
-                                {offer.property.address?.street}, {offer.property.address?.city}
-                            </p>
-                            <p className="text-gray-500 text-sm mt-1">
-                                Offered by: <strong>{offer.user.username}</strong> ({offer.user.email})
-                            </p>
-                        </div>
-                        {getStatusBadge(offer.status)}
-                    </div>
+        const canCancel = !showTakeButton && ['pending', 'in_progress'].includes(offer.status);
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                        <div className="bg-blue-50 p-3 rounded-lg">
-                            <p className="text-sm text-gray-600">Offer Amount</p>
-                            <p className="text-2xl font-bold text-[var(--gold-accent)]">
-                                ${offer.offerAmount?.toLocaleString()}
-                            </p>
-                        </div>
-                        {offer.property.price?.sale && (
-                            <div className="bg-blue-50 p-3 rounded-lg">
-                                <p className="text-sm text-gray-600">Asking Price</p>
-                                <p className="text-2xl font-bold text-blue-600">
-                                    ${offer.property.price.sale?.toLocaleString()}
-                                </p>
+        return (
+            <div
+                key={offer._id}
+                className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow"
+            >
+                <div className="flex flex-col md:flex-row">
+                    {/* Property Image */}
+                    <div className="md:w-1/3">
+                        {mainImage ? (
+                            <img
+                                src={mainImage}
+                                alt={propertyTitle}
+                                className="w-full h-48 md:h-full object-cover"
+                            />
+                        ) : (
+                            <div className="w-full h-48 md:h-full bg-gray-200 flex items-center justify-center">
+                                <IoHomeOutline className="text-6xl text-gray-400" />
                             </div>
                         )}
                     </div>
 
-                    <div className="flex items-center text-sm text-gray-500 mb-4">
-                        <IoChatbubbleEllipsesOutline className="mr-2" />
-                        <span>{offer.messages?.length || 0} messages</span>
-                        {offer.unreadCount?.admin > 0 && (
-                            <span className="ml-2 bg-red-500 text-white px-2 py-1 rounded-full text-xs">
-                                {offer.unreadCount.admin} new
-                            </span>
-                        )}
-                    </div>
-
-                    <div className="flex gap-3">
-                        {showTakeButton ? (
-                            <button
-                                onClick={() => handleTakeOffer(offer._id)}
-                                disabled={takingOffer === offer._id}
-                                className="flex-1 bg-[var(--gold-accent)] text-white py-2 rounded-lg hover:bg-[#145a75] transition-colors disabled:bg-gray-400 flex items-center justify-center"
-                            >
-                                {takingOffer === offer._id ? (
-                                    <>
-                                        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-                                        Taking...
-                                    </>
+                    {/* Offer Details */}
+                    <div className="md:w-2/3 p-6">
+                        <div className="flex justify-between items-start mb-4">
+                            <div>
+                                {propertyLink ? (
+                                    <Link
+                                        to={propertyLink}
+                                        className="text-xl font-bold text-gray-800 hover:text-[var(--gold-accent)] transition-colors"
+                                    >
+                                        {propertyTitle}
+                                    </Link>
                                 ) : (
-                                    <>
-                                        <IoHandRightOutline className="mr-2" />
-                                        Take This Offer
-                                    </>
+                                    <p className="text-xl font-bold text-gray-500">{propertyTitle}</p>
                                 )}
-                            </button>
-                        ) : (
-                            <Link
-                                to={`/admin/offers/${offer._id}`}
-                                className="flex-1 bg-[var(--gold-accent)] text-white text-center py-2 rounded-lg hover:bg-[#145a75] transition-colors flex items-center justify-center"
-                            >
-                                <IoChatbubbleEllipsesOutline className="mr-2" />
-                                View Conversation
-                            </Link>
+                                <p className="text-gray-600 text-sm mt-1">
+                                    {propertyAddress?.street && propertyAddress?.city
+                                        ? `${propertyAddress.street}, ${propertyAddress.city}`
+                                        : 'Address unavailable'}
+                                </p>
+                                <p className="text-gray-500 text-sm mt-1">
+                                    Offered by: <strong>{buyer.username || 'Unknown buyer'}</strong>
+                                    {buyer.email ? ` (${buyer.email})` : ''}
+                                </p>
+                            </div>
+                            <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
+                                {getStatusBadge(offer.status)}
+                                {canCancel && (
+                                    <button
+                                        onClick={() => handleCancelOffer(offer._id)}
+                                        disabled={cancellingOffer === offer._id}
+                                        className="text-sm font-semibold px-3 py-1 border-2 border-red-300 text-red-600 rounded-full hover:bg-red-50 transition-colors disabled:opacity-60"
+                                    >
+                                        {cancellingOffer === offer._id ? 'Cancelling…' : 'Cancel Offer'}
+                                    </button>
+                                )}
+                            </div>
+                        </div>
+
+                        {!property && (
+                            <div className="mb-4 p-3 rounded-lg bg-red-50 text-sm text-red-700">
+                                This property was removed, but the offer history remains for reference.
+                            </div>
                         )}
-                        <Link
-                            to={`/properties/${offer.property._id}`}
-                            className="flex-1 bg-gray-200 text-gray-800 text-center py-2 rounded-lg hover:bg-gray-300 transition-colors flex items-center justify-center"
-                        >
-                            <IoHomeOutline className="mr-2" />
-                            View Property
-                        </Link>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                            <div className="bg-blue-50 p-3 rounded-lg">
+                                <p className="text-sm text-gray-600">Offer Amount</p>
+                                <p className="text-2xl font-bold text-[var(--gold-accent)]">
+                                    ${offer.offerAmount?.toLocaleString()}
+                                </p>
+                            </div>
+                            {askingPrice && (
+                                <div className="bg-blue-50 p-3 rounded-lg">
+                                    <p className="text-sm text-gray-600">Asking Price</p>
+                                    <p className="text-2xl font-bold text-blue-600">
+                                        ${askingPrice?.toLocaleString()}
+                                    </p>
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="flex items-center text-sm text-gray-500 mb-4">
+                            <IoChatbubbleEllipsesOutline className="mr-2" />
+                            <span>{offer.messages?.length || 0} messages</span>
+                            {offer.unreadCount?.admin > 0 && (
+                                <span className="ml-2 bg-red-500 text-white px-2 py-1 rounded-full text-xs">
+                                    {offer.unreadCount.admin} new
+                                </span>
+                            )}
+                        </div>
+
+                        <div className="flex gap-3">
+                            {showTakeButton ? (
+                                <button
+                                    onClick={() => handleTakeOffer(offer._id)}
+                                    disabled={takingOffer === offer._id}
+                                    className="flex-1 bg-[var(--gold-accent)] text-white py-2 rounded-lg hover:bg-[#145a75] transition-colors disabled:bg-gray-400 flex items-center justify-center"
+                                >
+                                    {takingOffer === offer._id ? (
+                                        <>
+                                            <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                                            Taking...
+                                        </>
+                                    ) : (
+                                        <>
+                                            <IoHandRightOutline className="mr-2" />
+                                            Take This Offer
+                                        </>
+                                    )}
+                                </button>
+                            ) : (
+                                <Link
+                                    to={`/admin/offers/${offer._id}`}
+                                    className="flex-1 bg-[var(--gold-accent)] text-white text-center py-2 rounded-lg hover:bg-[#145a75] transition-colors flex items-center justify-center"
+                                >
+                                    <IoChatbubbleEllipsesOutline className="mr-2" />
+                                    View Conversation
+                                </Link>
+                            )}
+                            {propertyLink ? (
+                                <Link
+                                    to={propertyLink}
+                                    className="flex-1 bg-gray-200 text-gray-800 text-center py-2 rounded-lg hover:bg-gray-300 transition-colors flex items-center justify-center"
+                                >
+                                    <IoHomeOutline className="mr-2" />
+                                    View Property
+                                </Link>
+                            ) : (
+                                <button
+                                    disabled
+                                    className="flex-1 bg-gray-100 text-gray-400 text-center py-2 rounded-lg flex items-center justify-center cursor-not-allowed"
+                                >
+                                    <IoHomeOutline className="mr-2" />
+                                    Property Unavailable
+                                </button>
+                            )}
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    );
+        );
+    };
 
     if (loading) {
         return (
