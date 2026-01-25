@@ -57,6 +57,14 @@ function HomePage() {
     return 0
   })
 
+  const handlePropertySelect = (property) => {
+    setSelectedProperty(property)
+
+    if (typeof window !== 'undefined' && window.innerWidth < 768) {
+      setIsPanelOpen(false)
+    }
+  }
+
   return (
     <div className="flex flex-col" style={{ height: 'calc(100vh - 70px)' }}>
       {/* Header con Filtros - Responsive */}
@@ -187,7 +195,7 @@ function HomePage() {
                     className={`compact-card cursor-pointer ${
                       selectedProperty?._id === property._id ? 'selected' : ''
                     }`}
-                    onClick={() => setSelectedProperty(property)}
+                    onClick={() => handlePropertySelect(property)}
                   >
                     <PropertyCard property={property} compact={true} />
                   </div>

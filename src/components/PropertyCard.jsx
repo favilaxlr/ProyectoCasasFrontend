@@ -355,9 +355,9 @@ function PropertyCard({ property, compact = false }) {
                   property.status === 'VENDIDA' ? 'bg-red-500 text-white' :
                   'bg-gray-500 text-white'
                 }`}>
-                  {property.status === 'DISPONIBLE' ? 'Disponible' :
-                   property.status === 'EN_CONTRATO' ? 'En Contrato' :
-                   property.status === 'VENDIDA' ? 'Vendida' :
+                  {property.status === 'DISPONIBLE' ? 'Available' :
+                   property.status === 'EN_CONTRATO' ? 'Under Contract' :
+                   property.status === 'VENDIDA' ? 'Sold' :
                    property.status}
                 </span>
               )}

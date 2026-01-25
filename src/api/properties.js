@@ -38,6 +38,17 @@ export const uploadDocumentsRequest = (propertyId, formData) =>
         }
     });
 
+// Gestión de videos
+export const uploadVideosRequest = (propertyId, formData) => 
+    axios.post(`/properties/${propertyId}/videos`, formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        }
+    });
+
+export const deleteVideoRequest = (propertyId, videoId) => 
+    axios.delete(`/properties/${propertyId}/videos/${videoId}`);
+
 // Gestión de estados
 export const changePropertyStatusRequest = (id, status, reason) => 
     axios.put(`/properties/${id}/status`, { status, reason });

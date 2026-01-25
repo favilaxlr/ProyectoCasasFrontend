@@ -28,12 +28,27 @@ instance.interceptors.request.use(
 
 instance.interceptors.response.use(
     (response) => response,
-    (error) => {
-        if (error.response?.status === 403) {
-            const serverMessage = error.response?.data?.message?.[0];
-            if (typeof serverMessage === 'string' && serverMessage.toLowerCase().includes('csrf')) {
+    async (error) => {
+        const { config, response } = error || {};
+        const serverMessage = response?.data?.message?.[0];
+        const isCsrfError = response?.status === 403 && typeof serverMessage === 'string' && serverMessage.toLowerCase().includes('csrf');
+
+        if (isCsrfError && config && !config.__isRetryRequest) {
+            config.__isRetryRequest = true;
+
+            try {
                 clearCsrfToken();
+                const freshToken = await ensureCsrfToken();
+                config.headers = config.headers || {};
+                config.headers['x-csrf-token'] = freshToken;
+                return instance(config);
+            } catch (refreshError) {
+                return Promise.reject(refreshError);
             }
+        }
+
+        if (isCsrfError) {
+            clearCsrfToken();
         }
 
         return Promise.reject(error);

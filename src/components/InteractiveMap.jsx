@@ -353,9 +353,9 @@ function InteractiveMap({
 
   const getStatusLabel = (status) => {
     switch(status) {
-      case 'DISPONIBLE': return 'Disponible';
-      case 'EN_CONTRATO': return 'En Contrato';
-      case 'VENDIDA': return 'Vendida';
+      case 'DISPONIBLE': return 'Available';
+      case 'EN_CONTRATO': return 'Under Contract';
+      case 'VENDIDA': return 'Sold';
       default: return status;
     }
   };

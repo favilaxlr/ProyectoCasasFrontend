@@ -1,13 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router';
-import { createPropertyRequest, getPropertyRequest, updatePropertyRequest, uploadDocumentsRequest } from '../api/properties';
+import { createPropertyRequest, getPropertyRequest, updatePropertyRequest, uploadDocumentsRequest, uploadVideosRequest, deleteVideoRequest } from '../api/properties';
 import PropertyGallery from '../components/PropertyGallery';
 import ImageUploader from '../components/ImageUploader';
+import VideoUploader from '../components/VideoUploader';
 import LocationPicker from '../components/LocationPicker';
 import { geocodeAddress } from '../utils/geocoding';
 import { toast } from 'react-toastify';
-import { IoHomeSharp, IoDocumentTextSharp, IoLocationSharp, IoSettingsSharp, IoCameraSharp, IoCheckmarkSharp, IoCheckmarkCircleSharp, IoWarningSharp, IoCashSharp, IoBedSharp, IoWaterSharp, IoResizeSharp, IoCalendarSharp, IoCarSharp, IoPawSharp, IoRestaurantSharp, IoSparklesSharp, IoMapSharp, IoInformationCircleSharp, IoArrowBackSharp, IoArrowForwardSharp, IoSaveSharp, IoCloseSharp, IoBusinessSharp, IoHelpCircleSharp, IoKeySharp, IoCardSharp, IoCloudUploadOutline, IoTrashOutline } from 'react-icons/io5';
+import { IoHomeSharp, IoDocumentTextSharp, IoLocationSharp, IoSettingsSharp, IoCameraSharp, IoCheckmarkSharp, IoCheckmarkCircleSharp, IoWarningSharp, IoCashSharp, IoBedSharp, IoWaterSharp, IoResizeSharp, IoCalendarSharp, IoCarSharp, IoPawSharp, IoRestaurantSharp, IoSparklesSharp, IoMapSharp, IoInformationCircleSharp, IoArrowBackSharp, IoArrowForwardSharp, IoSaveSharp, IoCloseSharp, IoBusinessSharp, IoHelpCircleSharp, IoKeySharp, IoCardSharp, IoCloudUploadOutline, IoTrashOutline, IoVideocam } from 'react-icons/io5';
 
 const ALLOWED_DOCUMENT_TYPES = [
     'application/pdf',
@@ -24,6 +25,17 @@ const formatFileSize = (bytes = 0) => {
     return `${Math.round((bytes / Math.pow(1024, index)) * 100) / 100} ${units[index]}`;
 };
 
+const formatVideoDuration = (seconds = 0) => {
+    if (!seconds && seconds !== 0) return '—';
+    const totalSeconds = Math.round(seconds);
+    const minutes = Math.floor(totalSeconds / 60);
+    const remainingSeconds = totalSeconds % 60;
+    if (minutes === 0) {
+        return `${remainingSeconds}s`;
+    }
+    return `${minutes}m ${remainingSeconds.toString().padStart(2, '0')}s`;
+};
+
 function PropertyFormPage() {
     const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm({
         defaultValues: {
@@ -35,6 +47,7 @@ function PropertyFormPage() {
         }
     });
     const [images, setImages] = useState([]);
+    const [videos, setVideos] = useState([]);
     const [documents, setDocuments] = useState([]);
     const [loading, setLoading] = useState(false);
     const [property, setProperty] = useState(null);
@@ -70,7 +83,7 @@ function PropertyFormPage() {
         { number: 4, title: businessMode === 'sale' ? 'Sale Information' : 
                           businessMode === 'rent' ? 'Rent Information' : 
                           'Sale and Rent Information', icon: <IoCashSharp /> },
-        { number: 5, title: 'Images', icon: <IoCameraSharp /> }
+        { number: 5, title: 'Media', icon: <IoCameraSharp /> }
     ];
 
     // Available business modes
@@ -290,6 +303,19 @@ function PropertyFormPage() {
                     toast.error('Property saved, but documents could not be uploaded');
                 }
             }
+
+            if (videos.length > 0 && targetPropertyId) {
+                try {
+                    const videoFormData = new FormData();
+                    videos.forEach((video) => videoFormData.append('videos', video));
+                    await uploadVideosRequest(targetPropertyId, videoFormData);
+                    toast.success('Videos uploaded successfully');
+                    setVideos([]);
+                } catch (videoError) {
+                    console.error('Error uploading videos:', videoError);
+                    toast.error('Property saved, but videos could not be uploaded');
+                }
+            }
         
             navigate('/admin/properties');
         } catch (error) {
@@ -309,6 +335,26 @@ function PropertyFormPage() {
         console.log('📥 PropertyFormPage recibió archivos:', files?.length);
         // Los archivos ya vienen con su información de preview desde ImageUploader
         setImages(files);
+    };
+
+    const handleVideoSelection = (files) => {
+        setVideos(files);
+    };
+
+    const handleExistingVideoDelete = async (videoId) => {
+        if (!videoId || !id) return;
+        if (!window.confirm('Delete this video?')) {
+            return;
+        }
+
+        try {
+            await deleteVideoRequest(id, videoId);
+            toast.success('Video deleted successfully');
+            loadProperty();
+        } catch (error) {
+            console.error('Error deleting video:', error);
+            toast.error('Error deleting video');
+        }
     };
 
     const handleDocumentSelect = (event) => {
@@ -1149,9 +1195,9 @@ function PropertyFormPage() {
                             <div className="animate-fade-in space-y-6">
                                 <div className="border-b pb-4 mb-6">
                                     <h2 className="text-2xl font-bold text-[var(--charcoal)] flex items-center">
-                                        <IoCameraSharp className="mr-3" /> Property Images
+                                        <IoCameraSharp className="mr-3" /> Property Media
                                     </h2>
-                                    <p className="text-gray-600 mt-1">Images help attract more interested parties</p>
+                                    <p className="text-gray-600 mt-1">High quality images and short videos help increase engagement</p>
                                 </div>
 
                                 {isEditing && property && (
@@ -1194,6 +1240,68 @@ function PropertyFormPage() {
                                             </ul>
                                         </div>
                                     </div>
+                                </div>
+
+                                <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
+                                    <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-4">
+                                        <div>
+                                            <h3 className="text-xl font-bold text-[var(--charcoal)] flex items-center">
+                                                <IoVideocam className="mr-2" /> Property Videos
+                                            </h3>
+                                            <p className="text-sm text-gray-600">
+                                                Attach up to 3 short walkthroughs (MP4, MOV, AVI, MPEG or WebM)
+                                            </p>
+                                        </div>
+                                        <span className="text-sm text-gray-500">
+                                            {videos.length}/3 selected
+                                        </span>
+                                    </div>
+
+                                    <VideoUploader
+                                        selectedVideos={videos}
+                                        onChange={handleVideoSelection}
+                                    />
+
+                                    {isEditing && property?.videos?.length > 0 && (
+                                        <div className="mt-6">
+                                            <h4 className="text-sm font-semibold text-gray-700 mb-3">Current videos</h4>
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                {property.videos.map((video) => (
+                                                    <div key={video._id} className="bg-gray-50 border border-gray-200 rounded-2xl p-3">
+                                                        <div className="aspect-video bg-black rounded-xl overflow-hidden mb-3">
+                                                            <video
+                                                                controls
+                                                                src={video.url}
+                                                                poster={video.thumbnailUrl || undefined}
+                                                                className="w-full h-full object-cover"
+                                                            />
+                                                        </div>
+                                                        <div className="flex items-center justify-between text-sm text-gray-600">
+                                                            <div>
+                                                                <p className="font-semibold text-gray-800">
+                                                                    Duration: {formatVideoDuration(video.duration)}
+                                                                </p>
+                                                                {video.bytes && (
+                                                                    <p className="text-xs text-gray-500">{formatFileSize(video.bytes)}</p>
+                                                                )}
+                                                            </div>
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => handleExistingVideoDelete(video._id)}
+                                                                className="text-red-500 hover:text-red-600 p-2 rounded-full hover:bg-red-50"
+                                                            >
+                                                                <IoTrashOutline size={18} />
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    <p className="text-xs text-gray-500 mt-4">
+                                        Videos are uploaded after saving the property. You can delete existing ones at any time.
+                                    </p>
                                 </div>
 
                                 <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
