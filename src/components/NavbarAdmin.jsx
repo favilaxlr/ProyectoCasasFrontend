@@ -9,7 +9,7 @@ import { useState } from 'react';
 function NavbarAdmin() {
   const {user, logOut} = useAuth();
   const navigate = useNavigate();
-  const { pendingOffersCount } = useNotificationCount();
+  const { pendingOffersCount, pendingAppointmentsCount } = useNotificationCount();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   
   return (
@@ -73,6 +73,11 @@ function NavbarAdmin() {
                         <IoCalendarSharp className="text-purple-600" size={16} />
                       </div>
                       <span className="font-medium">View Appointments</span>
+                      {pendingAppointmentsCount > 0 && (
+                        <span className="ml-auto bg-red-500 text-white text-xs font-bold rounded-full px-2 py-0.5 min-w-[20px] text-center">
+                          {pendingAppointmentsCount}
+                        </span>
+                      )}
                     </button>
                   </MenuItem>
                   
@@ -195,6 +200,11 @@ function NavbarAdmin() {
                 >
                   <IoCalendarSharp size={18} className="text-[var(--hyper-pink)]" />
                   <span className="font-medium">View Appointments</span>
+                  {pendingAppointmentsCount > 0 && (
+                    <span className="ml-auto bg-white text-[var(--soft-black)] text-xs font-bold rounded-full px-2 py-0.5 min-w-[20px] text-center">
+                      {pendingAppointmentsCount}
+                    </span>
+                  )}
                 </button>
 
                 <button

@@ -230,6 +230,14 @@ function PropertyFormPage() {
     const onSubmit = async (data) => {
         setLoading(true);
         try {
+            const hasExistingImages = Boolean(property?.images?.length);
+            const hasNewImages = images.length > 0;
+
+            if (!hasExistingImages && !hasNewImages) {
+                toast.error('Please upload at least one image before saving');
+                return;
+            }
+
             const formData = new FormData();
             
             if (data.title) formData.append('title', data.title);
