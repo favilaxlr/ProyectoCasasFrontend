@@ -228,15 +228,16 @@ function PropertyFormPage() {
     };
 
     const onSubmit = async (data) => {
+        const hasExistingImages = Boolean(property?.images?.length);
+        const hasNewImages = images.length > 0;
+
+        if (!hasExistingImages && !hasNewImages) {
+            toast.error('Please upload at least one image before saving');
+            return;
+        }
+
         setLoading(true);
         try {
-            const hasExistingImages = Boolean(property?.images?.length);
-            const hasNewImages = images.length > 0;
-
-            if (!hasExistingImages && !hasNewImages) {
-                toast.error('Please upload at least one image before saving');
-                return;
-            }
 
             const formData = new FormData();
             
@@ -485,6 +486,15 @@ function PropertyFormPage() {
 
     const propertyType = watch('details.propertyType');
 
+    // Treat Enter presses as “Next” until we reach the final step to avoid accidental submits
+    const handleFormKeyDown = (event) => {
+        if (event.key !== 'Enter') return;
+        if (event.target?.tagName === 'TEXTAREA') return;
+        if (currentStep >= lastStepIndex) return;
+        event.preventDefault();
+        nextStep();
+    };
+
     return (
         <div className="min-h-screen bg-gray-50 py-8 px-4">
             <div className="max-w-5xl mx-auto">
@@ -539,7 +549,7 @@ function PropertyFormPage() {
                     </div>
                 </div>
 
-                <form onSubmit={handleSubmit(onSubmit)}>
+                <form onSubmit={handleSubmit(onSubmit)} onKeyDown={handleFormKeyDown}>
                     <div className="bg-white rounded-2xl shadow-xl p-8 mb-6 min-h-[500px]">
                         
                         {/* Step 0: Business Mode Selection */}
