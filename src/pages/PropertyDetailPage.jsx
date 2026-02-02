@@ -118,7 +118,8 @@ function PropertyDetailPage() {
             house: 'House',
             apartment: 'Apartment',
             condo: 'Condo',
-            townhouse: 'Townhouse'
+            townhouse: 'Townhouse',
+            vacant_land: 'Vacant Land'
         };
         return types[type] || type;
     };

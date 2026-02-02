@@ -346,6 +346,7 @@ function PropertyCard({ property, compact = false }) {
                 if (type === 'apartment') return 'Apartment';
                 if (type === 'condo') return 'Condo';
                 if (type === 'townhouse') return 'Townhouse';
+                if (type === 'vacant_land') return 'Vacant Land';
                 if (typeof type === 'string' || typeof type === 'number') return type;
                 return '';
               })()}
