@@ -849,7 +849,8 @@ function PropertyFormPage() {
                                             { value: 'house', label: 'House', icon: <IoHomeSharp /> },
                                             { value: 'apartment', label: 'Apartment', icon: <IoBusinessSharp /> },
                                             { value: 'condo', label: 'Condo', icon: <IoBusinessSharp /> },
-                                            { value: 'townhouse', label: 'Townhouse', icon: <IoHomeSharp /> }
+                                            { value: 'townhouse', label: 'Townhouse', icon: <IoHomeSharp /> },
+                                            { value: 'vacant_land', label: 'Vacant Land', icon: <IoMapSharp /> }
                                         ].map((type) => (
                                             <label
                                                 key={type.value}

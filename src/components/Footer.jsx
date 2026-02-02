@@ -46,8 +46,9 @@ export default function Footer() {
           </nav>
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex flex-col items-center gap-1 text-center md:items-end">
           <div className="text-sm text-gray-500">© {new Date().getFullYear()} FR Family Investments</div>
+          <div className="text-xs text-gray-400">All rights reserved. FR Family Investments LLC.</div>
         </div>
       </div>
     </footer>
