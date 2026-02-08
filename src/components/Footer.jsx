@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom';
+
 export default function Footer() {
   return (
     <footer className="mt-12 border-t border-gray-200/40 py-8">
@@ -47,6 +49,10 @@ export default function Footer() {
         </div>
 
         <div className="flex flex-col items-center gap-1 text-center md:items-end">
+          <div className="flex items-center gap-4 text-sm text-gray-600">
+            <Link to="/privacy-policy" className="hover:text-[var(--gold-accent)] transition-colors">Privacy Policy</Link>
+            <Link to="/terms-of-service" className="hover:text-[var(--gold-accent)] transition-colors">Terms of Service</Link>
+          </div>
           <div className="text-sm text-gray-500">© {new Date().getFullYear()} FR Family Investments</div>
           <div className="text-xs text-gray-400">All rights reserved. FR Family Investments LLC.</div>
         </div>

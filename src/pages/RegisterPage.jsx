@@ -11,7 +11,11 @@ import 'react-phone-number-input/style.css';
 function RegisterPage() {
   const { signUp, isAuthenticated, errors: registerErrors } = useAuth();
   const { register, handleSubmit, formState: { errors }, control } = useForm({
-    resolver: zodResolver(registerSchema)
+    resolver: zodResolver(registerSchema),
+    defaultValues: {
+      termsAccepted: false,
+      smsConsent: false
+    }
   });
   const navigate = useNavigate();
   const [passwordShown, setPasswordShown] = useState(false);
@@ -156,6 +160,12 @@ function RegisterPage() {
               {errors.phone && (
                 <p className="text-red-500 text-sm mt-1 animate-fade-in">{errors.phone.message}</p>
               )}
+              <div className="mt-3 text-xs text-blue-900 bg-blue-50 border border-blue-100 rounded-2xl p-3 leading-relaxed">
+                By providing your phone number, you agree to receive text messages from FR Family Investments. Message and data rates may apply. Message frequency varies. Reply STOP to opt out, HELP for help. View our{' '}
+                <Link to="/privacy-policy" className="font-semibold underline">Privacy Policy</Link>{' '}
+                and{' '}
+                <Link to="/terms-of-service" className="font-semibold underline">Terms of Service</Link>.
+              </div>
             </div>
 
             {/* Password Field */}
@@ -219,6 +229,39 @@ function RegisterPage() {
               </div>
               {errors.confirm && (
                 <p className="text-red-500 text-sm mt-1 animate-fade-in">{errors.confirm.message}</p>
+              )}
+            </div>
+
+            <div className="space-y-4 bg-gray-50 border border-gray-100 rounded-2xl p-4">
+              <label className="flex items-start gap-3 text-sm text-gray-700">
+                <input
+                  type="checkbox"
+                  className="mt-1 h-4 w-4 rounded border-gray-300 text-[var(--gold-accent)] focus:ring-[var(--gold-accent)]"
+                  {...register('termsAccepted')}
+                />
+                <span>
+                  I have read and agree to the{' '}
+                  <Link to="/terms-of-service" className="underline font-semibold">Terms of Service</Link>{' '}
+                  and{' '}
+                  <Link to="/privacy-policy" className="underline font-semibold">Privacy Policy</Link>.
+                </span>
+              </label>
+              {errors.termsAccepted && (
+                <p className="text-red-500 text-xs animate-fade-in">{errors.termsAccepted.message}</p>
+              )}
+
+              <label className="flex items-start gap-3 text-sm text-gray-700">
+                <input
+                  type="checkbox"
+                  className="mt-1 h-4 w-4 rounded border-gray-300 text-[var(--gold-accent)] focus:ring-[var(--gold-accent)]"
+                  {...register('smsConsent')}
+                />
+                <span>
+                  I consent to receive automated SMS updates about appointments, verification codes, and curated properties from FR Family Investments. Message frequency varies. Reply STOP to opt out, HELP for help.
+                </span>
+              </label>
+              {errors.smsConsent && (
+                <p className="text-red-500 text-xs animate-fade-in">{errors.smsConsent.message}</p>
               )}
             </div>
 

@@ -28,7 +28,15 @@ export const registerSchema = z.object({
 
         confirm: z
             .string('Confirm password')
-            .min(6, 'Confirmation must be at least 6 characters')
+            .min(6, 'Confirmation must be at least 6 characters'),
+
+        termsAccepted: z.literal(true, {
+            errorMap: () => ({ message: 'You must agree to the Terms of Service and Privacy Policy.' })
+        }),
+
+        smsConsent: z.literal(true, {
+            errorMap: () => ({ message: 'You must provide SMS consent to receive appointment updates.' })
+        })
 })
     .refine((data) => data.password === data.confirm, {
         message: "Passwords do not match",
