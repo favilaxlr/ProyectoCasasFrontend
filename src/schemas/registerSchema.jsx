@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { DEFAULT_MAX_NOTIFICATION_CITIES, DEFAULT_MIN_NOTIFICATION_CITIES } from '../utils/notificationCities';
 
 export const registerSchema = z.object({
     username: z
@@ -20,6 +21,11 @@ export const registerSchema = z.object({
             const phoneRegex = /^\+[1-9]\d{1,14}$/;
             return phoneRegex.test(value);
         }, 'Please select a country and enter a valid number'),
+    notificationCities: z
+        .array(z.string('Notification city required'))
+        .min(DEFAULT_MIN_NOTIFICATION_CITIES, `Select at least ${DEFAULT_MIN_NOTIFICATION_CITIES} city`)
+        .max(DEFAULT_MAX_NOTIFICATION_CITIES, `You can select up to ${DEFAULT_MAX_NOTIFICATION_CITIES} cities`)
+        .refine((cities) => new Set(cities).size === cities.length, 'Cities must be unique'),
         
     password: z
         .string('Password required')

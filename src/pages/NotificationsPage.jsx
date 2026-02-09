@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { getNotificationStatsRequest, getNotificationHistoryRequest, resendFailedNotificationsRequest } from '../api/notifications';
 import { toast } from 'react-toastify';
-import { IoStatsChartSharp, IoRefreshSharp, IoTimeSharp, IoCheckmarkCircleSharp, IoCloseCircleSharp, IoWarningSharp, IoPhonePortraitSharp, IoChevronDownSharp, IoChevronUpSharp } from 'react-icons/io5';
+import { IoStatsChartSharp, IoRefreshSharp, IoTimeSharp, IoCheckmarkCircleSharp, IoCloseCircleSharp, IoWarningSharp, IoPhonePortraitSharp, IoChevronDownSharp, IoChevronUpSharp, IoNotificationsOutline } from 'react-icons/io5';
 
 function NotificationsPage() {
     const [stats, setStats] = useState(null);
@@ -66,6 +66,8 @@ function NotificationsPage() {
                 return <IoCloseCircleSharp className="text-red-500" />;
             case 'in_progress':
                 return <IoTimeSharp className="text-[var(--gold-accent)]" />;
+            case 'skipped':
+                return <IoNotificationsOutline className="text-gray-400" />;
             default:
                 return <IoWarningSharp className="text-gray-500" />;
         }
@@ -77,6 +79,7 @@ function NotificationsPage() {
             case 'failed': return 'Failed';
             case 'in_progress': return 'In Progress';
             case 'pending': return 'Pending';
+            case 'skipped': return 'Skipped';
             default: return status;
         }
     };
@@ -172,6 +175,9 @@ function NotificationsPage() {
                                     Property
                                 </th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Segment
+                                </th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     Statistics
                                 </th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -206,6 +212,16 @@ function NotificationsPage() {
                                             </div>
                                             <div className="text-sm text-gray-500">
                                                 {notification.property?.address?.city || 'N/A'}
+                                            </div>
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            <div className="text-sm font-medium text-gray-900">
+                                                {notification.filters?.cityLabel || 'N/A'}
+                                            </div>
+                                            <div className="text-xs text-gray-500">
+                                                {notification.status === 'skipped'
+                                                    ? 'No subscribers matched'
+                                                    : notification.filters?.cityCode || '—'}
                                             </div>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
@@ -270,8 +286,20 @@ function NotificationsPage() {
                                     </tr>
                                     {expandedRow === notification._id && (
                                         <tr>
-                                            <td colSpan="7" className="px-6 py-4 bg-gray-50">
+                                            <td colSpan="8" className="px-6 py-4 bg-gray-50">
                                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                                    <div className="md:col-span-2 bg-gray-100 border border-gray-200 rounded-lg p-4 text-sm text-gray-700">
+                                                        Segment: <span className="font-semibold">{notification.filters?.cityLabel || 'N/A'}</span>
+                                                        {notification.filters?.cityCode && (
+                                                            <span className="text-gray-500"> ({notification.filters.cityCode})</span>
+                                                        )}
+                                                        {notification.filters?.notes && (
+                                                            <span className="ml-2 italic text-gray-500">{notification.filters.notes}</span>
+                                                        )}
+                                                        {notification.status === 'skipped' && (
+                                                            <span className="ml-2 text-red-500 font-medium">Skipped — no subscribers matched</span>
+                                                        )}
+                                                    </div>
                                                     {/* Successfully sent */}
                                                     <div className="bg-white rounded-lg p-4 border border-green-200">
                                                         <h4 className="text-sm font-semibold text-green-700 mb-3 flex items-center">
@@ -349,7 +377,7 @@ function NotificationsPage() {
                         <h4 className="font-semibold mb-2">How it works:</h4>
                         <ul className="space-y-1">
                             <li>• Automatic sending when publishing properties</li>
-                            <li>• Notification to ALL registered and verified users</li>
+                            <li>• Notification only to investors subscribed to the target city (max 3 per user)</li>
                             <li>• Processing in batches of 50 messages</li>
                             <li>• Automatic retries for failures</li>
                             <li>• Auto-update every 30 seconds</li>
@@ -362,7 +390,7 @@ function NotificationsPage() {
                             <li>• Maximum 3 retries per number</li>
                             <li>• Time limit: 10 minutes</li>
                             <li>• Administrators do not receive SMS</li>
-                            <li>• History shows last 20 notifications</li>
+                            <li>• History shows last 20 notifications plus their segment filters</li>
                         </ul>
                     </div>
                 </div>

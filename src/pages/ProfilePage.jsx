@@ -2,13 +2,23 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { updateProfileRequest, changePasswordRequest, updateProfileImageRequest } from '../api/users';
 import { toast } from 'react-toastify';
-import { IoPersonSharp, IoMailSharp, IoPhonePortraitSharp, IoLockClosedSharp, IoShieldCheckmarkSharp, IoCheckmarkCircleSharp, IoCloseCircleSharp, IoCameraSharp } from 'react-icons/io5';
+import { IoPersonSharp, IoMailSharp, IoPhonePortraitSharp, IoLockClosedSharp, IoShieldCheckmarkSharp, IoCheckmarkCircleSharp, IoCloseCircleSharp, IoCameraSharp, IoNotificationsOutline } from 'react-icons/io5';
+import { getNotificationCitiesRequest, updateOwnNotificationPreferencesRequest } from '../api/notificationPreferences';
+import { FALLBACK_NOTIFICATION_CITIES, DEFAULT_MAX_NOTIFICATION_CITIES, DEFAULT_MIN_NOTIFICATION_CITIES, DEFAULT_USER_CITY_UPDATE_COOLDOWN_DAYS } from '../utils/notificationCities';
 
 function ProfilePage() {
   const { user, updateUserData } = useAuth();
+  const initialCitySelection = user?.notificationPreferences?.cities || [];
+  const [selectedCities, setSelectedCities] = useState(initialCitySelection);
   const [isEditing, setIsEditing] = useState(false);
   const [isChangingPassword, setIsChangingPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [cityOptions, setCityOptions] = useState([]);
+  const [cityCatalogLoading, setCityCatalogLoading] = useState(true);
+  const [maxNotificationCities, setMaxNotificationCities] = useState(DEFAULT_MAX_NOTIFICATION_CITIES);
+  const [minNotificationCities, setMinNotificationCities] = useState(DEFAULT_MIN_NOTIFICATION_CITIES);
+  const [cityCooldownDays, setCityCooldownDays] = useState(DEFAULT_USER_CITY_UPDATE_COOLDOWN_DAYS);
+  const [citySaving, setCitySaving] = useState(false);
   
   const [formData, setFormData] = useState({
     username: user?.username || '',
@@ -22,6 +32,9 @@ function ProfilePage() {
     confirmPassword: ''
   });
 
+  const userCityCodes = user?.notificationPreferences?.cities || [];
+  const userCitySignature = userCityCodes.join('|');
+
   useEffect(() => {
     if (user) {
       setFormData({
@@ -31,6 +44,33 @@ function ProfilePage() {
       });
     }
   }, [user]);
+
+  useEffect(() => {
+    setSelectedCities(userCityCodes);
+  }, [userCitySignature]);
+
+  useEffect(() => {
+    const fetchCities = async () => {
+      try {
+        const response = await getNotificationCitiesRequest();
+        const apiCities = response.data?.cities;
+        setCityOptions(apiCities?.length ? apiCities : FALLBACK_NOTIFICATION_CITIES);
+        setMaxNotificationCities(response.data?.maxSelection || DEFAULT_MAX_NOTIFICATION_CITIES);
+        setMinNotificationCities(response.data?.minSelection || DEFAULT_MIN_NOTIFICATION_CITIES);
+        setCityCooldownDays(response.data?.userUpdateCooldownDays || DEFAULT_USER_CITY_UPDATE_COOLDOWN_DAYS);
+      } catch (error) {
+        console.error('Error loading notification cities', error);
+        setCityOptions(FALLBACK_NOTIFICATION_CITIES);
+        setMaxNotificationCities(DEFAULT_MAX_NOTIFICATION_CITIES);
+        setMinNotificationCities(DEFAULT_MIN_NOTIFICATION_CITIES);
+        setCityCooldownDays(DEFAULT_USER_CITY_UPDATE_COOLDOWN_DAYS);
+      } finally {
+        setCityCatalogLoading(false);
+      }
+    };
+
+    fetchCities();
+  }, []);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -161,6 +201,83 @@ function ProfilePage() {
       setLoading(false);
     }
   };
+
+  const handleCitySelectionToggle = (cityCode) => {
+    setSelectedCities((prev) => {
+      if (prev.includes(cityCode)) {
+        return prev.filter((code) => code !== cityCode);
+      }
+      if (prev.length >= maxNotificationCities) {
+        return prev;
+      }
+      return [...prev, cityCode];
+    });
+  };
+
+  const handleResetCitySelection = () => {
+    setSelectedCities(userCityCodes);
+  };
+
+  const handleSaveNotificationPreferences = async () => {
+    if (!selectionCountValid) {
+      toast.error(`Select between ${minNotificationCities} and ${maxNotificationCities} cities.`);
+      return;
+    }
+
+    if (!selectionChanged) {
+      toast.info('No notification city changes to save.');
+      return;
+    }
+
+    if (!canUpdateCitiesNow) {
+      toast.error('You can update your notification cities once every week. Please try again later.');
+      return;
+    }
+
+    setCitySaving(true);
+    try {
+      const res = await updateOwnNotificationPreferencesRequest({ cities: selectedCities });
+      if (updateUserData) {
+        updateUserData(res.data.user);
+      }
+      toast.success('Notification cities updated successfully');
+    } catch (error) {
+      console.error('Error updating notification cities:', error);
+      if (error.response?.status === 429) {
+        const nextAllowed = error.response?.data?.nextAllowedUpdate;
+        const formattedLimit = nextAllowed
+          ? new Date(nextAllowed).toLocaleString('en-US', { year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric' })
+          : 'later';
+        toast.error(`You can update your notification cities once every ${cityCooldownDays} days. Next update available on ${formattedLimit}.`);
+      } else {
+        const errorMessage = error.response?.data?.message?.[0] || 'Error updating notification cities';
+        toast.error(errorMessage);
+      }
+    } finally {
+      setCitySaving(false);
+    }
+  };
+
+  const pendingCityItems = selectedCities.map((code) => {
+    const match = cityOptions.find((city) => city.code === code);
+    return { code, label: match?.label || code };
+  });
+  const selectionSignature = [...selectedCities].sort().join('|');
+  const savedSelectionSignature = [...userCityCodes].sort().join('|');
+  const selectionChanged = selectionSignature !== savedSelectionSignature;
+  const selectionLimitReached = selectedCities.length >= maxNotificationCities;
+  const selectionCountValid = selectedCities.length >= minNotificationCities && selectedCities.length <= maxNotificationCities;
+  const lastCityUpdate = user?.notificationPreferences?.lastUpdatedAt;
+  const nextUserUpdateAvailableAt = user?.notificationPreferences?.nextUserUpdateAvailableAt
+    ? new Date(user.notificationPreferences.nextUserUpdateAvailableAt)
+    : null;
+  const canUpdateCitiesNow = !nextUserUpdateAvailableAt || Date.now() >= nextUserUpdateAvailableAt.getTime();
+  const lastCityUpdateLabel = lastCityUpdate
+    ? new Date(lastCityUpdate).toLocaleString('en-US', { year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric' })
+    : null;
+  const formattedNextUpdate = nextUserUpdateAvailableAt
+    ? nextUserUpdateAvailableAt.toLocaleString('en-US', { year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric' })
+    : null;
 
   return (
     <div className="max-w-4xl mx-auto p-6">
@@ -325,6 +442,105 @@ function ProfilePage() {
           )}
         </div>
       </div>
+
+        {/* Notification Preferences Card */}
+        <div className="bg-white rounded-lg shadow-lg mb-6 border-t-4 border-[var(--gold-accent)]">
+          <div className="p-6 border-b border-gray-200">
+            <h2 className="text-2xl font-semibold flex items-center" style={{ color: '#3C3C3C' }}>
+              <IoNotificationsOutline className="mr-2 text-[var(--gold-accent)]" />
+              Notification Preferences
+            </h2>
+            <p className="text-gray-600 text-sm mt-1">SMS campaigns are segmented by city</p>
+          </div>
+          <div className="p-6 space-y-4">
+            {cityCatalogLoading ? (
+              <p className="text-gray-600 text-sm">Loading your preferred cities...</p>
+            ) : (
+              <>
+                <div className="flex items-center justify-between text-sm text-gray-600">
+                  <span>Select between {minNotificationCities} and {maxNotificationCities} cities</span>
+                  <span className="font-semibold">{selectedCities.length}/{maxNotificationCities} selected</span>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-2 max-h-64 overflow-y-auto pr-1">
+                  {cityOptions.map((city) => {
+                    const isSelected = selectedCities.includes(city.code);
+                    const isDisabled = (!isSelected && selectionLimitReached) || citySaving;
+                    return (
+                      <button
+                        key={city.code}
+                        type="button"
+                        onClick={() => handleCitySelectionToggle(city.code)}
+                        disabled={isDisabled}
+                        className={`px-4 py-3 rounded-xl border-2 text-left text-sm transition-all duration-300 ${
+                          isSelected
+                            ? 'bg-[var(--gold-accent)]/10 border-[var(--gold-accent)] text-[var(--charcoal)] shadow-md'
+                            : 'bg-gray-50 border-gray-200 text-gray-700 hover:border-[var(--gold-accent)]'
+                        } ${isDisabled ? 'opacity-60 cursor-not-allowed' : ''}`}
+                      >
+                        {city.label}
+                      </button>
+                    );
+                  })}
+                </div>
+                {selectionLimitReached && (
+                  <p className="text-xs text-gray-500">Limit reached. Deselect a city to choose a different market.</p>
+                )}
+
+                <div className="flex flex-wrap gap-2">
+                  {pendingCityItems.length > 0 ? (
+                    pendingCityItems.map(({ code, label }) => (
+                      <span key={code} className="px-3 py-1 rounded-full bg-[var(--soft-black)] text-white text-sm">
+                        {label}
+                      </span>
+                    ))
+                  ) : (
+                    <p className="text-sm text-gray-500">Select at least one city to keep receiving SMS notifications.</p>
+                  )}
+                </div>
+
+                {selectedCities.length < minNotificationCities && (
+                  <p className="text-xs text-red-500">Please select at least {minNotificationCities} city.</p>
+                )}
+
+                {selectionChanged && (
+                  <p className="text-xs text-amber-600">You have unsaved changes.</p>
+                )}
+
+                {lastCityUpdateLabel && (
+                  <p className="text-xs text-gray-500">Last updated on {lastCityUpdateLabel}</p>
+                )}
+
+                <div className="flex flex-wrap gap-3 pt-2">
+                  <button
+                    onClick={handleSaveNotificationPreferences}
+                    disabled={!selectionChanged || !selectionCountValid || !canUpdateCitiesNow || citySaving}
+                    className="bg-[var(--gold-accent)] hover:bg-[#145a75] text-white px-6 py-2 rounded-lg font-medium transition-all disabled:opacity-50"
+                  >
+                    {citySaving ? 'Saving...' : 'Save Cities'}
+                  </button>
+                  <button
+                    onClick={handleResetCitySelection}
+                    disabled={!selectionChanged || citySaving}
+                    className="text-gray-700 px-6 py-2 rounded-lg font-medium border border-gray-300 transition-all hover:bg-gray-50 disabled:opacity-50"
+                  >
+                    Reset
+                  </button>
+                </div>
+
+                <div className="space-y-2 text-xs text-gray-600">
+                  <p>
+                    You can update your notification cities once every {cityCooldownDays} days.
+                    {!canUpdateCitiesNow && formattedNextUpdate ? ` Next update available on ${formattedNextUpdate}.` : ''}
+                  </p>
+                  <p className="bg-blue-50 border border-blue-100 rounded-xl p-4 text-blue-900">
+                    Need to enable more than {maxNotificationCities} cities or pause alerts temporarily? Email{' '}
+                    <a href="mailto:frinvestements@gmail.com" className="underline font-semibold">frinvestements@gmail.com</a>.
+                  </p>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
 
       {/* Security Card */}
       <div className="bg-white rounded-lg shadow-lg border-t-4 border-[var(--gold-accent)]">

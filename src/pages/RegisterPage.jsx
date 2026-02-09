@@ -7,20 +7,36 @@ import { registerSchema } from '../schemas/registerSchema';
 import { IoPersonAdd, IoLogIn, IoEyeSharp, IoEyeOffSharp, IoMailSharp, IoLockClosedSharp, IoPersonSharp, IoCallSharp, IoPhonePortraitSharp } from "react-icons/io5"
 import PhoneInput from 'react-phone-number-input';
 import 'react-phone-number-input/style.css';
+import { getNotificationCitiesRequest } from '../api/notificationPreferences';
+import { 
+  FALLBACK_NOTIFICATION_CITIES, 
+  DEFAULT_MAX_NOTIFICATION_CITIES,
+  DEFAULT_MIN_NOTIFICATION_CITIES,
+  DEFAULT_USER_CITY_UPDATE_COOLDOWN_DAYS
+} from '../utils/notificationCities';
 
 function RegisterPage() {
   const { signUp, isAuthenticated, errors: registerErrors } = useAuth();
-  const { register, handleSubmit, formState: { errors }, control } = useForm({
+  const { register, handleSubmit, formState: { errors }, control, setValue, watch } = useForm({
     resolver: zodResolver(registerSchema),
     defaultValues: {
       termsAccepted: false,
-      smsConsent: false
+      smsConsent: false,
+      notificationCities: []
     }
   });
   const navigate = useNavigate();
   const [passwordShown, setPasswordShown] = useState(false);
   const [passwordConfirmShown, setPasswordConfirmShown] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [cityOptions, setCityOptions] = useState([]);
+  const [citiesLoading, setCitiesLoading] = useState(true);
+  const [cityFetchError, setCityFetchError] = useState('');
+  const [maxNotificationCities, setMaxNotificationCities] = useState(DEFAULT_MAX_NOTIFICATION_CITIES);
+  const [minNotificationCities, setMinNotificationCities] = useState(DEFAULT_MIN_NOTIFICATION_CITIES);
+  const [cityCooldownDays, setCityCooldownDays] = useState(DEFAULT_USER_CITY_UPDATE_COOLDOWN_DAYS);
+  const selectedNotificationCities = watch('notificationCities') || [];
+  const selectionLimitReached = selectedNotificationCities.length >= maxNotificationCities;
 
   const togglePasswordVisibility = () => {
     setPasswordShown(!passwordShown);
@@ -30,10 +46,55 @@ function RegisterPage() {
     setPasswordConfirmShown(!passwordConfirmShown);
   }
 
+  const handleCityToggle = (cityCode) => {
+    const currentSelection = selectedNotificationCities;
+    const isSelected = currentSelection.includes(cityCode);
+    let updatedSelection = currentSelection;
+
+    if (isSelected) {
+      updatedSelection = currentSelection.filter((code) => code !== cityCode);
+    } else {
+      if (currentSelection.length >= maxNotificationCities) {
+        return;
+      }
+      updatedSelection = [...currentSelection, cityCode];
+    }
+
+    setValue('notificationCities', updatedSelection, { shouldValidate: true, shouldDirty: true });
+  };
+
   useEffect(() => {
     if (isAuthenticated)
       navigate("/properties");
   }, [isAuthenticated]);
+
+  useEffect(() => {
+    const fetchCities = async () => {
+      try {
+        const response = await getNotificationCitiesRequest();
+        const apiCities = response.data?.cities;
+        if (apiCities?.length) {
+          setCityOptions(apiCities);
+        } else {
+          setCityOptions(FALLBACK_NOTIFICATION_CITIES);
+        }
+        setMaxNotificationCities(response.data?.maxSelection || DEFAULT_MAX_NOTIFICATION_CITIES);
+        setMinNotificationCities(response.data?.minSelection || DEFAULT_MIN_NOTIFICATION_CITIES);
+        setCityCooldownDays(response.data?.userUpdateCooldownDays || DEFAULT_USER_CITY_UPDATE_COOLDOWN_DAYS);
+      } catch (error) {
+        console.error('Error loading notification cities', error);
+        setCityOptions(FALLBACK_NOTIFICATION_CITIES);
+        setMaxNotificationCities(DEFAULT_MAX_NOTIFICATION_CITIES);
+        setMinNotificationCities(DEFAULT_MIN_NOTIFICATION_CITIES);
+        setCityCooldownDays(DEFAULT_USER_CITY_UPDATE_COOLDOWN_DAYS);
+        setCityFetchError('Unable to load live notification cities. Using fallback list.');
+      } finally {
+        setCitiesLoading(false);
+      }
+    };
+
+    fetchCities();
+  }, []);
 
   const onSubmit = handleSubmit(async (values) => {
     setIsLoading(true);
@@ -168,6 +229,63 @@ function RegisterPage() {
               </div>
             </div>
 
+            {/* Notification Cities Field */}
+            <div className="space-y-3">
+              <label className="text-sm font-semibold text-[var(--charcoal)] flex items-center">
+                <IoPhonePortraitSharp className="w-4 h-4 mr-2 text-[var(--gold-accent)]" />
+                Notification Cities
+              </label>
+              <input type="hidden" {...register('notificationCities')} />
+              {citiesLoading ? (
+                <p className="text-sm text-gray-500">Loading available cities...</p>
+              ) : (
+                <>
+                  <div className="flex items-center justify-between text-xs text-gray-600">
+                    <span>Select between {minNotificationCities} and {maxNotificationCities} cities</span>
+                    <span className="font-semibold">
+                      {selectedNotificationCities.length}/{maxNotificationCities} selected
+                    </span>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-64 overflow-y-auto pr-1">
+                    {cityOptions.map((city) => {
+                      const isSelected = selectedNotificationCities.includes(city.code);
+                      const isDisabled = !isSelected && selectionLimitReached;
+                      return (
+                        <button
+                          key={city.code}
+                          type="button"
+                          onClick={() => handleCityToggle(city.code)}
+                          disabled={isDisabled}
+                          className={`w-full px-4 py-3 rounded-xl border-2 text-left text-sm transition-all duration-300 ${
+                            isSelected
+                              ? 'bg-[var(--gold-accent)]/10 border-[var(--gold-accent)] text-[var(--charcoal)] shadow-md'
+                              : 'bg-gray-50 border-gray-200 text-gray-700 hover:border-[var(--gold-accent)]'
+                          } ${isDisabled ? 'opacity-60 cursor-not-allowed' : ''}`}
+                        >
+                          {city.label}
+                        </button>
+                      );
+                    })}
+                  </div>
+                  {selectionLimitReached && (
+                    <p className="text-xs text-gray-500">
+                      You reached the limit. Deselect a city to pick a different market.
+                    </p>
+                  )}
+                </>
+              )}
+              {cityFetchError && (
+                <p className="text-sm text-red-500">{cityFetchError}</p>
+              )}
+              <p className="text-xs text-gray-600">
+                Choose up to {maxNotificationCities} U.S. markets now. You can adjust this list from your profile once every {cityCooldownDays} days.
+                Need additional markets? Email <a className="font-semibold underline" href="mailto:frinvestements@gmail.com">frinvestements@gmail.com</a>.
+              </p>
+              {errors.notificationCities && (
+                <p className="text-red-500 text-sm mt-1 animate-fade-in">{errors.notificationCities.message}</p>
+              )}
+            </div>
+
             {/* Password Field */}
             <div className="space-y-2">
               <label className="text-sm font-semibold text-[var(--charcoal)] flex items-center">
@@ -288,9 +406,8 @@ function RegisterPage() {
           {/* Login Link */}
           <div className="text-center pt-6 border-t border-gray-100">
             <div className="bg-blue-50 p-4 rounded-lg mb-4">
-              <p className="text-xs text-blue-700 flex items-start">
-                <IoPhonePortraitSharp className="mr-2 mt-0.5 flex-shrink-0" />
-                By registering with FR Family Investments, you agree to receive SMS notifications about new properties available in Dallas. These notifications are sent automatically to all registered users.
+              <p className="text-xs text-blue-700 leading-relaxed">
+                By registering with FR Family Investments, you agree to receive SMS notifications about curated properties in the U.S. cities you enable. Alerts are personalized per city, limited to {maxNotificationCities} markets per investor, and can be adjusted from your profile once every {cityCooldownDays} days. To request additional cities, write to <a href="mailto:frinvestements@gmail.com" className="underline font-semibold">frinvestements@gmail.com</a>.
               </p>
             </div>
             <p className="text-gray-600 mb-4">Already have an account?</p>
