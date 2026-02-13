@@ -222,7 +222,7 @@ function RegisterPage() {
                 <p className="text-red-500 text-sm mt-1 animate-fade-in">{errors.phone.message}</p>
               )}
               <div className="mt-3 text-xs text-blue-900 bg-blue-50 border border-blue-100 rounded-2xl p-3 leading-relaxed">
-                By providing your phone number, you agree to receive text messages from FR Family Investments. Message and data rates may apply. Message frequency varies. Reply STOP to opt out, HELP for help. View our{' '}
+                By providing your phone number, you agree to receive text messages from FR Family Investments for account verification and appointment reminders. Message and data rates may apply. Message frequency varies. Reply STOP to cancel at any time. View our{' '}
                 <Link to="/privacy-policy" className="font-semibold underline">Privacy Policy</Link>{' '}
                 and{' '}
                 <Link to="/terms-of-service" className="font-semibold underline">Terms of Service</Link>.
@@ -358,7 +358,7 @@ function RegisterPage() {
                   {...register('termsAccepted')}
                 />
                 <span>
-                  I have read and agree to the{' '}
+                  I agree to the{' '}
                   <Link to="/terms-of-service" className="underline font-semibold">Terms of Service</Link>{' '}
                   and{' '}
                   <Link to="/privacy-policy" className="underline font-semibold">Privacy Policy</Link>.
