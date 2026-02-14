@@ -222,10 +222,10 @@ function RegisterPage() {
                 <p className="text-red-500 text-sm mt-1 animate-fade-in">{errors.phone.message}</p>
               )}
               <div className="mt-3 text-xs text-blue-900 bg-blue-50 border border-blue-100 rounded-2xl p-3 leading-relaxed">
-                By providing your phone number, you agree to receive text messages from FR Family Investments for account verification and appointment reminders. Message and data rates may apply. Message frequency varies. Reply STOP to cancel at any time. View our{' '}
+                By providing your phone number you acknowledge that FR Family Investments LLC may send account-critical texts (like verification codes or fraud alerts). Marketing updates and appointment reminders are optional and require selecting the SMS consent checkbox near "Create Account." Message and data rates may apply, and message frequency varies. Reply STOP to cancel, HELP for help. View our{' '}
                 <Link to="/privacy-policy" className="font-semibold underline">Privacy Policy</Link>{' '}
                 and{' '}
-                <Link to="/terms-of-service" className="font-semibold underline">Terms of Service</Link>.
+                <Link to="/terms-of-service" className="font-semibold underline">Terms of Service</Link>. Your consent is never a condition of purchase or account creation.
               </div>
             </div>
 
@@ -375,12 +375,12 @@ function RegisterPage() {
                   {...register('smsConsent')}
                 />
                 <span>
-                  I consent to receive automated SMS updates about appointments, verification codes, and curated properties from FR Family Investments. Message frequency varies. Reply STOP to opt out, HELP for help.
+                  I consent to join the FR Family Investments Notifications SMS program and receive automated texts from FR Family Investments LLC about appointments, verification codes, and curated properties. Message and data rates may apply. Message frequency varies. Reply STOP to opt out, HELP for help. Consent is optional and not a condition of purchase or account creation. View our{' '}
+                  <Link to="/privacy-policy" className="underline font-semibold">Privacy Policy</Link>{' '}
+                  and{' '}
+                  <Link to="/terms-of-service" className="underline font-semibold">Terms of Service</Link>.
                 </span>
               </label>
-              {errors.smsConsent && (
-                <p className="text-red-500 text-xs animate-fade-in">{errors.smsConsent.message}</p>
-              )}
             </div>
 
             {/* Submit Button */}
@@ -407,7 +407,7 @@ function RegisterPage() {
           <div className="text-center pt-6 border-t border-gray-100">
             <div className="bg-blue-50 p-4 rounded-lg mb-4">
               <p className="text-xs text-blue-700 leading-relaxed">
-                By registering with FR Family Investments, you agree to receive SMS notifications about curated properties in the U.S. cities you enable. Alerts are personalized per city, limited to {maxNotificationCities} markets per investor, and can be adjusted from your profile once every {cityCooldownDays} days. To request additional cities, write to <a href="mailto:frinvestements@gmail.com" className="underline font-semibold">frinvestements@gmail.com</a>.
+                When you opt into FR Family Investments Notifications you can receive SMS alerts about the {maxNotificationCities} U.S. cities you select. Alerts only begin after you manually check the consent box above, can be adjusted from your profile once every {cityCooldownDays} days, and can be stopped anytime by replying STOP (HELP for help). Message and data rates may apply. To request additional cities, write to <a href="mailto:frinvestements@gmail.com" className="underline font-semibold">frinvestements@gmail.com</a>.
               </p>
             </div>
             <p className="text-gray-600 mb-4">Already have an account?</p>

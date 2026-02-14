@@ -11,7 +11,7 @@ const commitments = [
   },
   {
     title: 'SMS Program Consent',
-    detail: 'Opting into SMS alerts requires checking the consent box on the registration form. Message and data rates may apply. Reply STOP to cancel or HELP for assistance.'
+    detail: 'Opting into SMS alerts requires checking the consent box on the registration form. Participation is optional, message and data rates may apply, and you can reply STOP to cancel or HELP for assistance at any time.'
   },
   {
     title: 'Acceptable Conduct',
@@ -50,13 +50,19 @@ function TermsOfServicePage() {
         <section className="p-6 bg-blue-50 border border-blue-100 rounded-2xl">
           <h2 className="text-2xl font-semibold text-[var(--charcoal)]">SMS Compliance Notice</h2>
           <p className="mt-3 text-gray-700 leading-relaxed">
-            The FR Family Investments texting program complies with CTIA and A2P 10DLC standards. By entering your phone number and checking the consent box, you agree to receive automated messages about appointments, verification codes, and curated property opportunities tailored to your searches.
+            The FR Family Investments Notifications program operated by FR Family Investments LLC complies with CTIA and A2P 10DLC standards. You can only join by visiting frfamilyinvestments.com/register and manually checking the SMS consent box, after which we send a confirmation text before any additional alerts.
           </p>
           <ul className="mt-4 list-disc list-inside text-sm text-gray-600 space-y-2">
-            <li>Message frequency varies. Message and data rates may apply.</li>
-            <li>Reply STOP to cancel, HELP for help, or email compliance@frfamilyinvestments.com for support.</li>
-            <li>Your consent is not a condition of purchase and can be revoked at any time.</li>
+            <li><strong>Program name:</strong> FR Family Investments Notifications (automated appointment, verification, and property updates).</li>
+            <li><strong>Message & data rates:</strong> Message and data rates may apply and message frequency varies based on your activity.</li>
+            <li><strong>Opt-out:</strong> Reply STOP to cancel at any time. We will send a final confirmation text acknowledging your opt-out.</li>
+            <li><strong>Help:</strong> Reply HELP for assistance or email compliance@frfamilyinvestments.com.</li>
+            <li><strong>Carrier liability:</strong> Wireless carriers (e.g., AT&T, T-Mobile) are not liable for delayed or undelivered messages.</li>
+            <li><strong>Consent:</strong> Consent is optional and not a condition of purchase or account creation, and it can be revoked at any time.</li>
           </ul>
+          <p className="mt-4 text-sm text-gray-600">
+            For questions about the texting program, contact us at frinvestements@gmail.com or +1 (469) 405-1309.
+          </p>
         </section>
 
         <section className="space-y-4">

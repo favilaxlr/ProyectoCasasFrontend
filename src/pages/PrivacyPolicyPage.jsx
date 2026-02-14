@@ -20,9 +20,9 @@ const sections = [
   {
     title: 'SMS Communications',
     body: [
-      'By consenting on the registration form, you authorize FR Family Investments to contact you via automated text messages regarding appointments, property updates, and verification codes.',
+      'By consenting on the registration form, you authorize FR Family Investments LLC to contact you via automated text messages regarding appointments, property updates, and verification codes.',
       'Message frequency varies based on your activity. Message and data rates may apply. Reply STOP to opt out at any time or HELP for help.',
-      'Información de contacto móvil y consentimiento para SMS no serán compartidos con terceros o afiliados para fines de marketing.',
+      'La información de consentimiento y los datos personales obtenidos para el envío de mensajes de texto (SMS) no serán compartidos, vendidos ni alquilados a terceros ni afiliados bajo ninguna circunstancia con fines de marketing o publicidad.',
       'Mobile Information Sharing: No mobile information will be shared with third parties/affiliates for marketing/promotional purposes. All the above categories exclude text messaging originator opt-in data and consent; this information will not be shared with any third parties.'
     ]
   },
