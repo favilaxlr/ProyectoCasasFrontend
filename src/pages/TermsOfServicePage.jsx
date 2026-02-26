@@ -7,7 +7,7 @@ const commitments = [
   },
   {
     title: 'Account Security',
-    detail: 'Keep credentials confidential. Notify us immediately at frinvestements@gmail.com if you suspect unauthorized access.'
+    detail: 'Keep credentials confidential. Notify us immediately at support@frfamilyinvestments.com if you suspect unauthorized access.'
   },
   {
     title: 'SMS Program Consent',
@@ -56,12 +56,12 @@ function TermsOfServicePage() {
             <li><strong>Program name:</strong> FR Family Investments Notifications (automated appointment, verification, and property updates).</li>
             <li><strong>Message & data rates:</strong> Message and data rates may apply and message frequency varies based on your activity.</li>
             <li><strong>Opt-out:</strong> Reply STOP to cancel at any time. We will send a final confirmation text acknowledging your opt-out.</li>
-            <li><strong>Help:</strong> Reply HELP for assistance or email compliance@frfamilyinvestments.com.</li>
+            <li><strong>Help:</strong> Reply HELP for assistance or email support@frfamilyinvestments.com.</li>
             <li><strong>Carrier liability:</strong> Wireless carriers (e.g., AT&T, T-Mobile) are not liable for delayed or undelivered messages.</li>
             <li><strong>Consent:</strong> Consent is optional and not a condition of purchase or account creation, and it can be revoked at any time.</li>
           </ul>
           <p className="mt-4 text-sm text-gray-600">
-            For questions about the texting program, contact us at frinvestements@gmail.com or +1 (469) 405-1309.
+            For questions about the texting program, contact us at support@frfamilyinvestments.com or +1 (469) 405-1309.
           </p>
         </section>
 

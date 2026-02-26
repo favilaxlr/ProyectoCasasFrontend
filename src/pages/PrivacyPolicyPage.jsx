@@ -30,7 +30,7 @@ const sections = [
     title: 'Your Choices',
     body: [
       'Update profile data or withdraw SMS consent within your account or by replying STOP to any message.',
-      'Request deletion of your account and associated data by contacting frinvestements@gmail.com.',
+      'Request deletion of your account and associated data by contacting support@frfamilyinvestments.com.',
       'Manage cookie preferences through the on-site consent manager.'
     ]
   }
@@ -53,7 +53,7 @@ function PrivacyPolicyPage() {
 
         <section className="bg-blue-50 border border-blue-100 rounded-2xl p-6">
           <p className="text-sm text-blue-900">
-            Questions? Email <a href="mailto:frinvestements@gmail.com" className="underline font-medium">frinvestements@gmail.com</a> or call +1 (469) 405-1309.
+            Questions? Email <a href="mailto:support@frfamilyinvestments.com" className="underline font-medium">support@frfamilyinvestments.com</a> or call +1 (469) 405-1309.
           </p>
         </section>
 
