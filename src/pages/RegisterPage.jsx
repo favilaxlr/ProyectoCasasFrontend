@@ -279,7 +279,7 @@ function RegisterPage() {
               )}
               <p className="text-xs text-gray-600">
                 Choose up to {maxNotificationCities} U.S. markets now. You can adjust this list from your profile once every {cityCooldownDays} days.
-                Need additional markets? Email <a className="font-semibold underline" href="mailto:frinvestements@gmail.com">frinvestements@gmail.com</a>.
+                Need additional markets? Email <a className="font-semibold underline" href="mailto:support@frfamilyinvestments.com">support@frfamilyinvestments.com</a>.
               </p>
               {errors.notificationCities && (
                 <p className="text-red-500 text-sm mt-1 animate-fade-in">{errors.notificationCities.message}</p>
@@ -407,7 +407,7 @@ function RegisterPage() {
           <div className="text-center pt-6 border-t border-gray-100">
             <div className="bg-blue-50 p-4 rounded-lg mb-4">
               <p className="text-xs text-blue-700 leading-relaxed">
-                When you opt into FR Family Investments Notifications you can receive SMS alerts about the {maxNotificationCities} U.S. cities you select. Alerts only begin after you manually check the consent box above, can be adjusted from your profile once every {cityCooldownDays} days, and can be stopped anytime by replying STOP (HELP for help). Message and data rates may apply. To request additional cities, write to <a href="mailto:frinvestements@gmail.com" className="underline font-semibold">frinvestements@gmail.com</a>.
+                When you opt into FR Family Investments Notifications you can receive SMS alerts about the {maxNotificationCities} U.S. cities you select. Alerts only begin after you manually check the consent box above, can be adjusted from your profile once every {cityCooldownDays} days, and can be stopped anytime by replying STOP (HELP for help). Message and data rates may apply. To request additional cities, write to <a href="mailto:support@frfamilyinvestments.com" className="underline font-semibold">support@frfamilyinvestments.com</a>.
               </p>
             </div>
             <p className="text-gray-600 mb-4">Already have an account?</p>
