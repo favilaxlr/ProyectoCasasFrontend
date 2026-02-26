@@ -422,7 +422,7 @@ function UsersManagementPage() {
                                 )}
 
                                 <div className="bg-blue-50 border border-blue-100 rounded-xl p-4 text-sm text-blue-900">
-                                    Investors can self-manage up to {maxNotificationCities} cities from their profile (one update per week). For additional markets or to pause alerts entirely, have them email <a href="mailto:frinvestements@gmail.com" className="underline font-semibold">frinvestements@gmail.com</a>. Administrators can still override preferences here when needed.
+                                    Investors can self-manage up to {maxNotificationCities} cities from their profile (one update per week). For additional markets or to pause alerts entirely, have them email <a href="mailto:support@frfamilyinvestments.com" className="underline font-semibold">support@frfamilyinvestments.com</a>. Administrators can still override preferences here when needed.
                                 </div>
                             </div>
 

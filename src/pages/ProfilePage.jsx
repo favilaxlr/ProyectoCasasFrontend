@@ -534,7 +534,7 @@ function ProfilePage() {
                   </p>
                   <p className="bg-blue-50 border border-blue-100 rounded-xl p-4 text-blue-900">
                     Need to enable more than {maxNotificationCities} cities or pause alerts temporarily? Email{' '}
-                    <a href="mailto:frinvestements@gmail.com" className="underline font-semibold">frinvestements@gmail.com</a>.
+                    <a href="mailto:support@frfamilyinvestments.com" className="underline font-semibold">support@frfamilyinvestments.com</a>.
                   </p>
                 </div>
               </>
