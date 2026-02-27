@@ -53,7 +53,7 @@ function PrivacyPolicyPage() {
 
         <section className="bg-blue-50 border border-blue-100 rounded-2xl p-6">
           <p className="text-sm text-blue-900">
-            Questions? Email <a href="mailto:support@frfamilyinvestments.com" className="underline font-medium">support@frfamilyinvestments.com</a> or call +1 (469) 405-1309.
+            Questions? Email <a href="mailto:support@frfamilyinvestments.com" className="underline font-medium">support@frfamilyinvestments.com</a> or call +1 (682) 553-2342.
           </p>
         </section>
 

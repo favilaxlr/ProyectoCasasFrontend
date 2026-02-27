@@ -61,7 +61,7 @@ function TermsOfServicePage() {
             <li><strong>Consent:</strong> Consent is optional and not a condition of purchase or account creation, and it can be revoked at any time.</li>
           </ul>
           <p className="mt-4 text-sm text-gray-600">
-            For questions about the texting program, contact us at support@frfamilyinvestments.com or +1 (469) 405-1309.
+            For questions about the texting program, contact us at support@frfamilyinvestments.com or +1 (682) 553-2342.
           </p>
         </section>
 
