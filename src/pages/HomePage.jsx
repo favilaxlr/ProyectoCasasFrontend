@@ -44,7 +44,7 @@ function HomePage() {
   }
 
   // Filtrar por tipo de operación
-  const filteredProperties = properties.filter(property => {
+  const filteredProperties = Array.isArray(properties) ? properties.filter(property => {
     if (operationType === 'all') return true
     
     // Si filtramos por 'Venta', mostrar propiedades 'sale' y 'both'
@@ -63,7 +63,7 @@ function HomePage() {
     }
     
     return true
-  })
+  }) : []
 
   const sortedProperties = [...filteredProperties].sort((a, b) => {
     if (sortOption === 'price-low') return (a.price?.sale || 0) - (b.price?.sale || 0)
