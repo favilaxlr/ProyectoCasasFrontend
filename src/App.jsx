@@ -6,6 +6,8 @@ import VerificationPage from './pages/VerificationPage';
 import { AuthProvider } from './context/AuthContext';
 import HomePage from './pages/HomePage';
 import ProfilePage from './pages/ProfilePage'
+import TermsOfServicePage from './pages/TermsOfServicePage';
+import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 import ProtectedRoute from './ProtectedRoute';
 import AdminOnlyRoute from './AdminOnlyRoute';
 import Navbar from './components/Navbar';
@@ -72,6 +74,8 @@ function App() {
                 <Route path='/login' element={<LoginPage />} />
                 <Route path='/register' element={<RegisterPage/>} />
                 <Route path='/verify' element={<VerificationPage/>} />
+                <Route path='/privacy-policy' element={<PrivacyPolicyPage/>} />
+                <Route path='/terms-of-service' element={<TermsOfServicePage/>} />
                 
                 {/* Ruta pública para confirmar citas por link */}
                 <Route path='/confirm-appointment/:id/:code' element={<ConfirmAppointmentPage/>} />

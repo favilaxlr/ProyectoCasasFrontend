@@ -26,6 +26,10 @@ export const registerSchema = z.object({
         .min(6, 'Password must be at least 6 characters')
         .max(20, 'Password too long'),
 
+    smsConsent: z.literal(true, {
+        errorMap: () => ({ message: 'You must agree to receive SMS messages from FR Family Investments.' })
+    }),
+
         confirm: z
             .string('Confirm password')
             .min(6, 'Confirmation must be at least 6 characters')

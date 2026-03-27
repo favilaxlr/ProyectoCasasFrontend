@@ -47,7 +47,7 @@ export default function Footer() {
         </div>
 
         <div className="flex items-center gap-4">
-          <div className="text-sm text-gray-500">© {new Date().getFullYear()} FR Family Investments</div>
+          <div className="text-sm text-gray-500">© 2026 FR Family Investments. All rights reserved.</div>
         </div>
       </div>
     </footer>

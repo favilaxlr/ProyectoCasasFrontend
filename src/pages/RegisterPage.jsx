@@ -222,6 +222,25 @@ function RegisterPage() {
               )}
             </div>
 
+            {/* SMS Consent Checkbox */}
+            <div className="space-y-2">
+              <label className="inline-flex items-start gap-2 text-sm text-[var(--charcoal)]">
+                <input
+                  type="checkbox"
+                  className="mt-1 h-4 w-4 text-[var(--gold-accent)] border-gray-300 rounded focus:ring-[var(--gold-accent)]"
+                  {...register('smsConsent')}
+                />
+                <span>
+                  “I consent to join the FR Family Investments Notifications SMS program and receive automated texts from FR Family Investments about appointments, verification codes, and curated properties. Message and data rates may apply. Message frequency varies. Reply STOP to opt out, HELP for help. Consent is optional and not a condition of purchase or account creation.”
+                  <br />
+                  <a href="/terms-of-service" className="text-blue-600 hover:underline">Terms of Service</a> and <a href="/privacy-policy" className="text-blue-600 hover:underline">Privacy Policy</a>.
+                </span>
+              </label>
+              {errors.smsConsent && (
+                <p className="text-red-500 text-sm mt-1 animate-fade-in">{errors.smsConsent.message}</p>
+              )}
+            </div>
+
             {/* Submit Button */}
             <button
               type="submit"
@@ -247,7 +266,7 @@ function RegisterPage() {
             <div className="bg-blue-50 p-4 rounded-lg mb-4">
               <p className="text-xs text-blue-700 flex items-start">
                 <IoPhonePortraitSharp className="mr-2 mt-0.5 flex-shrink-0" />
-                By registering with FR Family Investments, you agree to receive SMS notifications about new properties available in Dallas. These notifications are sent automatically to all registered users.
+                By registering with FR Family Investments, you agree to receive SMS notifications about new properties available in Dallas. These notifications are sent automatically to all registered users. Your consent is explicitly recorded as required by SMS compliance.
               </p>
             </div>
             <p className="text-gray-600 mb-4">Already have an account?</p>
