@@ -222,10 +222,10 @@ function RegisterPage() {
                 <p className="text-red-500 text-sm mt-1 animate-fade-in">{errors.phone.message}</p>
               )}
               <div className="mt-3 text-xs text-blue-900 bg-blue-50 border border-blue-100 rounded-2xl p-3 leading-relaxed">
-                By providing your phone number you acknowledge that FR Family Investments LLC may send account-critical texts (like verification codes or fraud alerts). Marketing updates and appointment reminders are optional and require selecting the SMS consent checkbox near "Create Account." Message and data rates may apply, and message frequency varies. Reply STOP to cancel, HELP for help. View our{' '}
-                <Link to="/privacy-policy" className="font-semibold underline">Privacy Policy</Link>{' '}
+                By providing your phone number you acknowledge that FR Family Investments may send account-critical texts (like verification codes or fraud alerts). Marketing updates and appointment reminders are optional and require selecting the SMS consent checkbox near "Create Account." Message and data rates may apply, and message frequency varies. Reply STOP to cancel, HELP for help. View our{' '}
+                <a href="https://frfamilyinvestments.com/privacy-policy" target="_blank" rel="noopener noreferrer" className="font-semibold underline">Privacy Policy</a>{' '}
                 and{' '}
-                <Link to="/terms-of-service" className="font-semibold underline">Terms of Service</Link>. Your consent is never a condition of purchase or account creation.
+                <a href="https://frfamilyinvestments.com/terms-of-service" target="_blank" rel="noopener noreferrer" className="font-semibold underline">Terms of Service</a>. Your consent is never a condition of purchase or account creation.
               </div>
             </div>
 
@@ -359,9 +359,9 @@ function RegisterPage() {
                   {...register('smsConsent')}
                 />
                 <span>
-                  “I consent to join the FR Family Investments Notifications SMS program and receive automated texts from FR Family Investments about appointments, verification codes, and curated properties. Message and data rates may apply. Message frequency varies. Reply STOP to opt out, HELP for help. Consent is optional and not a condition of purchase or account creation.”
+                  "I consent to join the FR Family Investments Notifications SMS program and receive automated texts from FR Family Investments about appointments, verification codes, and curated properties. Message and data rates may apply. Message frequency varies. Reply STOP to opt out, HELP for help. Consent is optional and not a condition of purchase or account creation."
                   <br />
-                  <a href="/terms-of-service" className="text-blue-600 hover:underline">Terms of Service</a> and <a href="/privacy-policy" className="text-blue-600 hover:underline">Privacy Policy</a>.
+                  <a href="https://frfamilyinvestments.com/terms-of-service" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">Terms of Service</a> and <a href="https://frfamilyinvestments.com/privacy-policy" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">Privacy Policy</a>.
                 </span>
               </label>
               {errors.smsConsent && (

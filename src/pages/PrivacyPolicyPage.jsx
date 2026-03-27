@@ -14,7 +14,7 @@ export default function PrivacyPolicyPage() {
         <p>FR Family Investments is committed to protecting your privacy. By consenting on our registration form, you authorize us to send automated text messages regarding appointments, property updates, and verification codes.</p>
 
         <h3 className="text-xl font-semibold mt-4">Mobile Information Sharing:</h3>
-        <p>No mobile information will be shared with third parties or affiliates for marketing or promotional purposes. All the above categories exclude text messaging originator opt-in data and consent; this information will not be shared with any third parties under any circumstances.</p>
+        <p><strong>No mobile information will be shared with third parties/affiliates for marketing/promotional purposes. All the above categories exclude text messaging originator opt-in data and consent; this information will not be shared with any third parties.</strong></p>
 
         <h3 className="text-xl font-semibold mt-4">Opt-out & Support:</h3>
         <p>Message frequency varies based on your activity. Message and data rates may apply. You can opt-out at any time by replying STOP to any message. For assistance, reply HELP or email support@frfamilyinvestments.com.</p>
