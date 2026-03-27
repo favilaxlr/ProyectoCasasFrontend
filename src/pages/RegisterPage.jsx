@@ -350,7 +350,6 @@ function RegisterPage() {
               )}
             </div>
 
-<<<<<<< HEAD
             {/* SMS Consent Checkbox */}
             <div className="space-y-2">
               <label className="inline-flex items-start gap-2 text-sm text-[var(--charcoal)]">
@@ -368,39 +367,6 @@ function RegisterPage() {
               {errors.smsConsent && (
                 <p className="text-red-500 text-sm mt-1 animate-fade-in">{errors.smsConsent.message}</p>
               )}
-=======
-            <div className="space-y-4 bg-gray-50 border border-gray-100 rounded-2xl p-4">
-              <label className="flex items-start gap-3 text-sm text-gray-700">
-                <input
-                  type="checkbox"
-                  className="mt-1 h-4 w-4 rounded border-gray-300 text-[var(--gold-accent)] focus:ring-[var(--gold-accent)]"
-                  {...register('termsAccepted')}
-                />
-                <span>
-                  I agree to the{' '}
-                  <Link to="/terms-of-service" className="underline font-semibold">Terms of Service</Link>{' '}
-                  and{' '}
-                  <Link to="/privacy-policy" className="underline font-semibold">Privacy Policy</Link>.
-                </span>
-              </label>
-              {errors.termsAccepted && (
-                <p className="text-red-500 text-xs animate-fade-in">{errors.termsAccepted.message}</p>
-              )}
-
-              <label className="flex items-start gap-3 text-sm text-gray-700">
-                <input
-                  type="checkbox"
-                  className="mt-1 h-4 w-4 rounded border-gray-300 text-[var(--gold-accent)] focus:ring-[var(--gold-accent)]"
-                  {...register('smsConsent')}
-                />
-                <span>
-                  I consent to join the FR Family Investments Notifications SMS program and receive automated texts from FR Family Investments LLC about appointments, verification codes, and curated properties. Message and data rates may apply. Message frequency varies. Reply STOP to opt out, HELP for help. Consent is optional and not a condition of purchase or account creation. View our{' '}
-                  <Link to="/privacy-policy" className="underline font-semibold">Privacy Policy</Link>{' '}
-                  and{' '}
-                  <Link to="/terms-of-service" className="underline font-semibold">Terms of Service</Link>.
-                </span>
-              </label>
->>>>>>> 54fcb6833021d61414e11edb91ae0da5a80bb493
             </div>
 
             {/* Submit Button */}
@@ -426,14 +392,8 @@ function RegisterPage() {
           {/* Login Link */}
           <div className="text-center pt-6 border-t border-gray-100">
             <div className="bg-blue-50 p-4 rounded-lg mb-4">
-<<<<<<< HEAD
-              <p className="text-xs text-blue-700 flex items-start">
-                <IoPhonePortraitSharp className="mr-2 mt-0.5 flex-shrink-0" />
-                By registering with FR Family Investments, you agree to receive SMS notifications about new properties available in Dallas. These notifications are sent automatically to all registered users. Your consent is explicitly recorded as required by SMS compliance.
-=======
               <p className="text-xs text-blue-700 leading-relaxed">
-                When you opt into FR Family Investments Notifications you can receive SMS alerts about the {maxNotificationCities} U.S. cities you select. Alerts only begin after you manually check the consent box above, can be adjusted from your profile once every {cityCooldownDays} days, and can be stopped anytime by replying STOP (HELP for help). Message and data rates may apply. To request additional cities, write to <a href="mailto:support@frfamilyinvestments.com" className="underline font-semibold">support@frfamilyinvestments.com</a>.
->>>>>>> 54fcb6833021d61414e11edb91ae0da5a80bb493
+                By registering with FR Family Investments, you agree to receive SMS notifications about new properties available in Dallas. These notifications are sent automatically to all registered users. Your consent is explicitly recorded as required by SMS compliance. Reply STOP to opt out, HELP for help.
               </p>
             </div>
             <p className="text-gray-600 mb-4">Already have an account?</p>

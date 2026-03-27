@@ -42,9 +42,7 @@ export const registerSchema = z.object({
 
         termsAccepted: z.literal(true, {
             errorMap: () => ({ message: 'You must agree to the Terms of Service and Privacy Policy.' })
-        }),
-
-        smsConsent: z.boolean().default(false)
+        })
 })
     .refine((data) => data.password === data.confirm, {
         message: "Passwords do not match",

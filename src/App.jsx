@@ -31,8 +31,6 @@ import UserOfferDetailPage from './pages/UserOfferDetailPage';
 import AdminOffersPage from './pages/AdminOffersPage';
 import AdminOfferDetailPage from './pages/AdminOfferDetailPage';
 import CookieConsent from './components/CookieConsent';
-import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
-import TermsOfServicePage from './pages/TermsOfServicePage';
 
 function App() {
   const [toastTheme, setToastTheme] = useState('light');
@@ -79,16 +77,13 @@ function App() {
                 <Route path='/verify' element={<VerificationPage/>} />
                 <Route path='/privacy-policy' element={<PrivacyPolicyPage/>} />
                 <Route path='/terms-of-service' element={<TermsOfServicePage/>} />
-                
+
                 {/* Ruta pública para confirmar citas por link */}
                 <Route path='/confirm-appointment/:id/:code' element={<ConfirmAppointmentPage/>} />
 
                 {/* Rutas públicas para propiedades */}
                 <Route path='/properties' element={<AllPropertiesPage/>} />
                 <Route path='/properties/:id' element={<PropertyDetailPage/>} />
-                <Route path='/privacy-policy' element={<PrivacyPolicyPage/>} />
-                <Route path='/terms-of-service' element={<TermsOfServicePage/>} />
-
                 {/* Rutas protegidas - Admin y Co-Admin */}
                 <Route element={<ProtectedRoute />}>
                   <Route path='/profile' element={<ProfilePage/>} />

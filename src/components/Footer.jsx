@@ -48,18 +48,12 @@ export default function Footer() {
           </nav>
         </div>
 
-<<<<<<< HEAD
-        <div className="flex items-center gap-4">
-          <div className="text-sm text-gray-500">© 2026 FR Family Investments. All rights reserved.</div>
-=======
         <div className="flex flex-col items-center gap-1 text-center md:items-end">
           <div className="flex items-center gap-4 text-sm text-gray-600">
             <Link to="/privacy-policy" className="hover:text-[var(--gold-accent)] transition-colors">Privacy Policy</Link>
             <Link to="/terms-of-service" className="hover:text-[var(--gold-accent)] transition-colors">Terms of Service</Link>
           </div>
-          <div className="text-sm text-gray-500">© {new Date().getFullYear()} FR Family Investments</div>
-          <div className="text-xs text-gray-400">All rights reserved. FR Family Investments LLC.</div>
->>>>>>> 54fcb6833021d61414e11edb91ae0da5a80bb493
+          <div className="text-sm text-gray-500">© 2026 FR Family Investments. All rights reserved.</div>
         </div>
       </div>
     </footer>
