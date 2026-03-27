@@ -391,11 +391,6 @@ function RegisterPage() {
 
           {/* Login Link */}
           <div className="text-center pt-6 border-t border-gray-100">
-            <div className="bg-blue-50 p-4 rounded-lg mb-4">
-              <p className="text-xs text-blue-700 leading-relaxed">
-                By registering with FR Family Investments, you agree to receive SMS notifications about new properties available in Dallas. These notifications are sent automatically to all registered users. Your consent is explicitly recorded as required by SMS compliance. Reply STOP to opt out, HELP for help.
-              </p>
-            </div>
             <p className="text-gray-600 mb-4">Already have an account?</p>
             <Link
               to='/login'
