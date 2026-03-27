@@ -2,7 +2,7 @@ import axios from './axiosInstance';
 
 export const createAppointmentRequest = (data) => axios.post('/appointments', data);
 
-export const getAppointmentsRequest = () => axios.get('/appointments');
+export const getAppointmentsRequest = (params = {}) => axios.get('/appointments', { params });
 
 export const getAppointmentRequest = (id) => axios.get(`/appointments/${id}`);
 

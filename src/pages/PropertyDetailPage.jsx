@@ -9,7 +9,7 @@ import DocumentUploader from '../components/DocumentUploader';
 import OfferChat from '../components/OfferChat';
 import { useAuth } from '../context/AuthContext';
 import { toast } from 'react-toastify';
-import { IoLocationSharp, IoBedSharp, IoCarSharp, IoHomeSharp, IoCalendarSharp, IoPawSharp, IoCheckmarkCircleSharp, IoCloseCircleSharp, IoPencilSharp, IoTimeSharp, IoSwapHorizontalSharp, IoCashSharp, IoKeySharp, IoBusinessSharp, IoCardSharp, IoDocumentTextSharp, IoExpand, IoArrowBack, IoArrowForward, IoClose, IoResizeSharp } from 'react-icons/io5';
+import { IoLocationSharp, IoBedSharp, IoCarSharp, IoHomeSharp, IoCalendarSharp, IoPawSharp, IoCheckmarkCircleSharp, IoCloseCircleSharp, IoPencilSharp, IoTimeSharp, IoSwapHorizontalSharp, IoCashSharp, IoKeySharp, IoBusinessSharp, IoCardSharp, IoDocumentTextSharp, IoExpand, IoArrowBack, IoArrowForward, IoClose, IoResizeSharp, IoVideocam } from 'react-icons/io5';
 
 
 function PropertyDetailPage() {
@@ -97,7 +97,7 @@ function PropertyDetailPage() {
     }, [showGalleryModal, showOfferModal]);
 
 
-    if (loading) return <div className="flex justify-center p-8">Cargando propiedad...</div>;
+    if (loading) return <div className="flex justify-center p-8">Loading property...</div>;
     if (error) {
         return (
             <div className="flex flex-col items-center justify-center p-8 gap-4">
@@ -118,9 +118,21 @@ function PropertyDetailPage() {
             house: 'House',
             apartment: 'Apartment',
             condo: 'Condo',
-            townhouse: 'Townhouse'
+            townhouse: 'Townhouse',
+            vacant_land: 'Vacant Land'
         };
         return types[type] || type;
+    };
+
+    const formatVideoDuration = (seconds = 0) => {
+        if (!seconds && seconds !== 0) return '—';
+        const totalSeconds = Math.round(seconds);
+        const minutes = Math.floor(totalSeconds / 60);
+        const remainingSeconds = totalSeconds % 60;
+        if (minutes === 0) {
+            return `${remainingSeconds}s`;
+        }
+        return `${minutes}m ${remainingSeconds.toString().padStart(2, '0')}s`;
     };
 
     const handleStatusChange = async (newStatus) => {
@@ -138,8 +150,24 @@ function PropertyDetailPage() {
         }
     };
 
+    const handleMobileBack = () => {
+        if (typeof window !== 'undefined' && window.history.length > 1) {
+            navigate(-1);
+        } else {
+            navigate('/');
+        }
+    };
+
     return (
         <div className="min-h-screen bg-gray-50">
+            <button
+                type="button"
+                onClick={handleMobileBack}
+                className="md:hidden fixed top-4 left-4 z-[12000] bg-white/90 text-gray-800 border border-gray-200 rounded-full shadow-lg px-4 py-2 flex items-center gap-2 backdrop-blur-sm"
+            >
+                <IoArrowBack className="text-base" />
+                <span className="text-sm font-semibold">Back</span>
+            </button>
             {/* Hero Image Full-Width - Respeta Aspect Ratio Original */}
             <div className="w-full bg-gray-50 relative cursor-pointer group" onClick={() => setShowGalleryModal(true)}>
                 {property.images && property.images.length > 0 ? (
@@ -283,6 +311,18 @@ function PropertyDetailPage() {
                                 </div>
                             </div>
                         )}
+
+                        {property.price?.arv && (
+                            <div className="p-4 rounded-xl bg-yellow-50 border-2 border-yellow-300">
+                                <div className="flex items-center gap-3">
+                                    <IoBusinessSharp className="text-3xl text-yellow-600" />
+                                    <div>
+                                        <p className="text-xs font-semibold text-gray-600 uppercase">ARV (After Repair Value)</p>
+                                        <p className="text-2xl font-bold text-yellow-700">${property.price.arv.toLocaleString()}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </div>
 
@@ -388,6 +428,34 @@ function PropertyDetailPage() {
                     }}
                     isAdminOrCoAdmin={isAdmin || isCoAdmin}
                     />
+
+                {property.videos && property.videos.length > 0 && (
+                    <div className="bg-white p-6 rounded-lg shadow-lg mb-8">
+                        <h2 className="text-2xl font-semibold mb-4 flex items-center">
+                            <IoVideocam className="mr-2 text-[var(--gold-accent)]" /> Video tour
+                        </h2>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {property.videos.map((video) => (
+                                <div key={video._id} className="space-y-2">
+                                    <div className="aspect-video bg-black rounded-xl overflow-hidden shadow-md">
+                                        <video
+                                            controls
+                                            src={video.url}
+                                            poster={video.thumbnailUrl || undefined}
+                                            className="w-full h-full object-cover"
+                                        />
+                                    </div>
+                                    <div className="flex items-center justify-between text-sm text-gray-600">
+                                        <span>Duration: {formatVideoDuration(video.duration)}</span>
+                                        {video.bytes && (
+                                            <span>{(video.bytes / (1024 * 1024)).toFixed(1)} MB</span>
+                                        )}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
 
                 {/* Descripción */}
                 <div className="bg-white p-6 rounded-lg shadow-lg mb-8">

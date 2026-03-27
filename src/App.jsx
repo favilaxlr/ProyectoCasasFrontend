@@ -30,6 +30,9 @@ import UserOffersPage from './pages/UserOffersPage';
 import UserOfferDetailPage from './pages/UserOfferDetailPage';
 import AdminOffersPage from './pages/AdminOffersPage';
 import AdminOfferDetailPage from './pages/AdminOfferDetailPage';
+import CookieConsent from './components/CookieConsent';
+import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
+import TermsOfServicePage from './pages/TermsOfServicePage';
 
 function App() {
   const [toastTheme, setToastTheme] = useState('light');
@@ -83,6 +86,8 @@ function App() {
                 {/* Rutas públicas para propiedades */}
                 <Route path='/properties' element={<AllPropertiesPage/>} />
                 <Route path='/properties/:id' element={<PropertyDetailPage/>} />
+                <Route path='/privacy-policy' element={<PrivacyPolicyPage/>} />
+                <Route path='/terms-of-service' element={<TermsOfServicePage/>} />
 
                 {/* Rutas protegidas - Admin y Co-Admin */}
                 <Route element={<ProtectedRoute />}>
@@ -107,6 +112,7 @@ function App() {
                 <Route path="*" element={<NotFound />} />
               </Routes>
               <Footer />
+              <CookieConsent />
             </main>
           </BrowserRouter>
         </AppointmentsProvider>

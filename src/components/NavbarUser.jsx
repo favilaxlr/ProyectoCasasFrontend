@@ -5,6 +5,7 @@ import { IoPerson, IoChevronDownSharp, IoBagOutline, IoLogOutOutline, IoCartOutl
 import {Menu, MenuButton, MenuItem, MenuItems} from '@headlessui/react';
 import { useState, useEffect } from 'react';
 import { getUserOffersRequest } from '../api/offers';
+import CitySelectionReminder from './CitySelectionReminder';
 
 function NavbarUser() {
   const {user, logOut} = useAuth();
@@ -34,6 +35,7 @@ function NavbarUser() {
   }, []);
 
   return (
+    <>
     <nav className="navbar flex justify-between items-center py-3 px-4 md:my-3 md:mx-3 md:py-5 md:px-10 shadow-[0_25px_60px_rgba(3,8,24,0.65)] backdrop-blur-2xl border border-white/10 sticky top-0 z-[10000]">
        <Link to='/' className="hover:scale-105 transition-transform duration-300 mx-auto md:absolute md:left-1/2 md:transform md:-translate-x-1/2">
          <Logo size="small" className="md:size-medium" />
@@ -179,6 +181,8 @@ function NavbarUser() {
          </div>
        )}
     </nav>
+    <CitySelectionReminder />
+    </>
   )
 }
 

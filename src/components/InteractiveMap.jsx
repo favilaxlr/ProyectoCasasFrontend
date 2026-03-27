@@ -266,7 +266,7 @@ function PropertyMarker({ property, isSelected, onPropertyClick, getStatusColor,
             )}
             {property.details?.furnished && (
               <span className="bg-purple-100 text-purple-800 px-2 py-0.5 rounded text-xs">
-                Amueblado
+                Furnished
               </span>
             )}
           </div>
@@ -353,9 +353,9 @@ function InteractiveMap({
 
   const getStatusLabel = (status) => {
     switch(status) {
-      case 'DISPONIBLE': return 'Disponible';
-      case 'EN_CONTRATO': return 'En Contrato';
-      case 'VENDIDA': return 'Vendida';
+      case 'DISPONIBLE': return 'Available';
+      case 'EN_CONTRATO': return 'Under Contract';
+      case 'VENDIDA': return 'Sold';
       default: return status;
     }
   };

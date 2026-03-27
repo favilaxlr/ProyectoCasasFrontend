@@ -36,6 +36,30 @@ function OfferChat({ propertyId, propertyTitle, propertyPrice, onClose }) {
         return () => clearInterval(interval);
     }, [offerId]);
 
+    // Normaliza el dato del remitente para evitar errores cuando el backend
+    // aún no ha poblado completamente el usuario asociado al mensaje.
+    const normalizeSender = (sender) => {
+        if (!sender) {
+            return { id: null, username: '', profileImage: null };
+        }
+
+        if (typeof sender === 'string') {
+            return { id: sender, username: '', profileImage: null };
+        }
+
+        return {
+            id: sender._id || sender.id || null,
+            username: sender.username || '',
+            profileImage: sender.profileImage || null
+        };
+    };
+
+    const getEntityId = (entity) => {
+        if (!entity) return null;
+        if (typeof entity === 'string') return entity;
+        return entity._id || entity.id || null;
+    };
+
     const handleCreateOffer = async (e) => {
         e.preventDefault();
 
@@ -203,10 +227,15 @@ function OfferChat({ propertyId, propertyTitle, propertyPrice, onClose }) {
                     {/* Mensajes */}
                     <div className="border-2 border-gray-200 rounded-lg p-4 mb-4 h-96 overflow-y-auto">
                         {offer?.messages?.map((msg, index) => {
-                            const isMe = msg.sender._id === offer.user._id || msg.sender._id === offer.user;
+                            const senderInfo = normalizeSender(msg.sender);
+                            const offerOwnerId = getEntityId(offer?.user);
+                            const senderId = senderInfo.id;
+                            const isMe = offerOwnerId && senderId && senderId === offerOwnerId;
+                            const adminDisplayName = offer?.assignedTo?.username || 'Team Member';
+                            const displayName = senderInfo.username || (isMe ? 'You' : adminDisplayName);
                             // Usar la foto de perfil real si existe, de lo contrario usar avatar generado
-                            const senderImage = msg.sender.profileImage?.url;
-                            const fallbackAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(msg.sender.username)}&background=random&color=fff&size=128`;
+                            const senderImage = senderInfo.profileImage?.url;
+                            const fallbackAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}&background=random&color=fff&size=128`;
                             
                             return (
                                 <div
@@ -231,7 +260,7 @@ function OfferChat({ propertyId, propertyTitle, propertyPrice, onClose }) {
                                         }`}
                                     >
                                         <p className="text-xs font-semibold mb-1">
-                                            {msg.sender.username}
+                                            {displayName}
                                         </p>
                                         <p className="break-words">{msg.content}</p>
                                         <p className="text-xs mt-1 opacity-75">

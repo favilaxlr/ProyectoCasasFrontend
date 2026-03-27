@@ -483,6 +483,7 @@ function PropertiesPage() {
                                              property.details?.propertyType === 'apartment' ? 'Apartment' :
                                              property.details?.propertyType === 'condo' ? 'Condo' :
                                              property.details?.propertyType === 'townhouse' ? 'Townhouse' :
+                                             property.details?.propertyType === 'vacant_land' ? 'Vacant Land' :
                                              property.details?.propertyType || 'N/A'}
                                         </span>
                                     </div>

@@ -1,13 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router';
-import { createPropertyRequest, getPropertyRequest, updatePropertyRequest, uploadDocumentsRequest } from '../api/properties';
+import { createPropertyRequest, getPropertyRequest, updatePropertyRequest, uploadDocumentsRequest, uploadVideosRequest, deleteVideoRequest } from '../api/properties';
 import PropertyGallery from '../components/PropertyGallery';
 import ImageUploader from '../components/ImageUploader';
+import VideoUploader from '../components/VideoUploader';
 import LocationPicker from '../components/LocationPicker';
 import { geocodeAddress } from '../utils/geocoding';
 import { toast } from 'react-toastify';
-import { IoHomeSharp, IoDocumentTextSharp, IoLocationSharp, IoSettingsSharp, IoCameraSharp, IoCheckmarkSharp, IoCheckmarkCircleSharp, IoWarningSharp, IoCashSharp, IoBedSharp, IoWaterSharp, IoResizeSharp, IoCalendarSharp, IoCarSharp, IoPawSharp, IoRestaurantSharp, IoSparklesSharp, IoMapSharp, IoInformationCircleSharp, IoArrowBackSharp, IoArrowForwardSharp, IoSaveSharp, IoCloseSharp, IoBusinessSharp, IoHelpCircleSharp, IoKeySharp, IoCardSharp, IoCloudUploadOutline, IoTrashOutline } from 'react-icons/io5';
+import { IoHomeSharp, IoDocumentTextSharp, IoLocationSharp, IoSettingsSharp, IoCameraSharp, IoCheckmarkSharp, IoCheckmarkCircleSharp, IoWarningSharp, IoCashSharp, IoBedSharp, IoWaterSharp, IoResizeSharp, IoCalendarSharp, IoCarSharp, IoPawSharp, IoRestaurantSharp, IoSparklesSharp, IoMapSharp, IoInformationCircleSharp, IoArrowBackSharp, IoArrowForwardSharp, IoSaveSharp, IoCloseSharp, IoBusinessSharp, IoHelpCircleSharp, IoKeySharp, IoCardSharp, IoCloudUploadOutline, IoTrashOutline, IoVideocam } from 'react-icons/io5';
 
 const ALLOWED_DOCUMENT_TYPES = [
     'application/pdf',
@@ -24,6 +25,17 @@ const formatFileSize = (bytes = 0) => {
     return `${Math.round((bytes / Math.pow(1024, index)) * 100) / 100} ${units[index]}`;
 };
 
+const formatVideoDuration = (seconds = 0) => {
+    if (!seconds && seconds !== 0) return '—';
+    const totalSeconds = Math.round(seconds);
+    const minutes = Math.floor(totalSeconds / 60);
+    const remainingSeconds = totalSeconds % 60;
+    if (minutes === 0) {
+        return `${remainingSeconds}s`;
+    }
+    return `${minutes}m ${remainingSeconds.toString().padStart(2, '0')}s`;
+};
+
 function PropertyFormPage() {
     const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm({
         defaultValues: {
@@ -34,7 +46,12 @@ function PropertyFormPage() {
             }
         }
     });
+    const resolvePostSaveRoute = () => {
+        if (typeof window === 'undefined') return '/admin/properties';
+        return window.innerWidth < 768 ? '/properties' : '/admin/properties';
+    };
     const [images, setImages] = useState([]);
+    const [videos, setVideos] = useState([]);
     const [documents, setDocuments] = useState([]);
     const [loading, setLoading] = useState(false);
     const [property, setProperty] = useState(null);
@@ -70,8 +87,12 @@ function PropertyFormPage() {
         { number: 4, title: businessMode === 'sale' ? 'Sale Information' : 
                           businessMode === 'rent' ? 'Rent Information' : 
                           'Sale and Rent Information', icon: <IoCashSharp /> },
-        { number: 5, title: 'Images', icon: <IoCameraSharp /> }
+        { number: 5, title: 'Media', icon: <IoCameraSharp /> }
     ];
+
+    const lastStepIndex = steps.length - 1;
+    const isLastStep = currentStep >= lastStepIndex;
+    const progressValue = lastStepIndex > 0 ? Math.min((currentStep / lastStepIndex) * 100, 100) : 100;
 
     // Available business modes
     const businessModes = [
@@ -206,9 +227,18 @@ function PropertyFormPage() {
         );
     };
 
-    const onSubmit = async (data) => {
+    const handlePropertySubmit = async (data) => {
+        const hasExistingImages = Boolean(property?.images?.length);
+        const hasNewImages = images.length > 0;
+
+        if (!hasExistingImages && !hasNewImages) {
+            toast.error('Please upload at least one image before saving');
+            return;
+        }
+
         setLoading(true);
         try {
+
             const formData = new FormData();
             
             if (data.title) formData.append('title', data.title);
@@ -290,8 +320,21 @@ function PropertyFormPage() {
                     toast.error('Property saved, but documents could not be uploaded');
                 }
             }
+
+            if (videos.length > 0 && targetPropertyId) {
+                try {
+                    const videoFormData = new FormData();
+                    videos.forEach((video) => videoFormData.append('videos', video));
+                    await uploadVideosRequest(targetPropertyId, videoFormData);
+                    toast.success('Videos uploaded successfully');
+                    setVideos([]);
+                } catch (videoError) {
+                    console.error('Error uploading videos:', videoError);
+                    toast.error('Property saved, but videos could not be uploaded');
+                }
+            }
         
-            navigate('/admin/properties');
+            navigate(resolvePostSaveRoute(), { replace: true });
         } catch (error) {
             console.error('Error saving property:', error);
             const errorMsg = error.response?.data?.message 
@@ -309,6 +352,26 @@ function PropertyFormPage() {
         console.log('📥 PropertyFormPage recibió archivos:', files?.length);
         // Los archivos ya vienen con su información de preview desde ImageUploader
         setImages(files);
+    };
+
+    const handleVideoSelection = (files) => {
+        setVideos(files);
+    };
+
+    const handleExistingVideoDelete = async (videoId) => {
+        if (!videoId || !id) return;
+        if (!window.confirm('Delete this video?')) {
+            return;
+        }
+
+        try {
+            await deleteVideoRequest(id, videoId);
+            toast.success('Video deleted successfully');
+            loadProperty();
+        } catch (error) {
+            console.error('Error deleting video:', error);
+            toast.error('Error deleting video');
+        }
     };
 
     const handleDocumentSelect = (event) => {
@@ -406,22 +469,40 @@ function PropertyFormPage() {
 
     const nextStep = async () => {
         const isValid = await validateCurrentStep();
-        if (isValid && currentStep < steps.length) {
-            setCurrentStep(currentStep + 1);
+        if (isValid && currentStep < lastStepIndex) {
+            setCurrentStep((prev) => Math.min(prev + 1, lastStepIndex));
         }
     };
 
     const prevStep = () => {
         if (currentStep > 0) {
-            setCurrentStep(currentStep - 1);
+            setCurrentStep((prev) => Math.max(prev - 1, 0));
         }
     };
 
     const goToStep = (step) => {
-        setCurrentStep(step);
+        setCurrentStep(Math.max(0, Math.min(step, lastStepIndex)));
     };
 
     const propertyType = watch('details.propertyType');
+
+    const handleFormSubmit = handleSubmit(async (formData, event) => {
+        if (!isLastStep) {
+            event?.preventDefault();
+            await nextStep();
+            return;
+        }
+        await handlePropertySubmit(formData);
+    });
+
+    // Treat Enter presses as “Next” until we reach the final step to avoid accidental submits
+    const handleFormKeyDown = (event) => {
+        if (event.key !== 'Enter') return;
+        if (event.target?.tagName === 'TEXTAREA') return;
+        if (currentStep >= lastStepIndex) return;
+        event.preventDefault();
+        nextStep();
+    };
 
     return (
         <div className="min-h-screen bg-gray-50 py-8 px-4">
@@ -442,7 +523,7 @@ function PropertyFormPage() {
                         <div className="absolute top-6 left-0 right-0 h-1 bg-gray-200 -z-10">
                             <div 
                                 className="h-full bg-[var(--gold-accent)] transition-all duration-500"
-                                style={{ width: `${(currentStep / (steps.length - 1)) * 100}%` }}
+                                style={{ width: `${progressValue}%` }}
                             />
                         </div>
 
@@ -477,7 +558,7 @@ function PropertyFormPage() {
                     </div>
                 </div>
 
-                <form onSubmit={handleSubmit(onSubmit)}>
+                <form onSubmit={handleFormSubmit} onKeyDown={handleFormKeyDown}>
                     <div className="bg-white rounded-2xl shadow-xl p-8 mb-6 min-h-[500px]">
                         
                         {/* Step 0: Business Mode Selection */}
@@ -768,7 +849,8 @@ function PropertyFormPage() {
                                             { value: 'house', label: 'House', icon: <IoHomeSharp /> },
                                             { value: 'apartment', label: 'Apartment', icon: <IoBusinessSharp /> },
                                             { value: 'condo', label: 'Condo', icon: <IoBusinessSharp /> },
-                                            { value: 'townhouse', label: 'Townhouse', icon: <IoHomeSharp /> }
+                                            { value: 'townhouse', label: 'Townhouse', icon: <IoHomeSharp /> },
+                                            { value: 'vacant_land', label: 'Vacant Land', icon: <IoMapSharp /> }
                                         ].map((type) => (
                                             <label
                                                 key={type.value}
@@ -1149,49 +1231,123 @@ function PropertyFormPage() {
                             <div className="animate-fade-in space-y-6">
                                 <div className="border-b pb-4 mb-6">
                                     <h2 className="text-2xl font-bold text-[var(--charcoal)] flex items-center">
-                                        <IoCameraSharp className="mr-3" /> Property Images
+                                        <IoCameraSharp className="mr-3" /> Property Media
                                     </h2>
-                                    <p className="text-gray-600 mt-1">Images help attract more interested parties</p>
+                                    <p className="text-gray-600 mt-1">High quality images and short videos help increase engagement</p>
                                 </div>
 
-                                {isEditing && property && (
-                                    <div className="mb-6">
-                                        <h3 className="text-lg font-semibold mb-3 text-gray-700">Current Images</h3>
-                                        <PropertyGallery 
-                                            property={property} 
-                                            isEditable={true}
-                                            onImageUpdate={loadProperty}
-                                        />
-                                    </div>
-                                )}
-                                
-                                <div>
-                                    {isEditing ? (
-                                        <ImageUploader 
-                                            propertyId={id}
-                                            onImagesUploaded={loadProperty}
-                                        />
-                                    ) : (
-                                        <ImageUploader 
-                                            onChange={handleImageChange}
-                                        />
-                                    )}
-                                </div>
+                                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                    <div className="space-y-6">
+                                        {isEditing && property && (
+                                            <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
+                                                <h3 className="text-lg font-semibold mb-3 text-gray-700">Current Images</h3>
+                                                <PropertyGallery 
+                                                    property={property} 
+                                                    isEditable={true}
+                                                    onImageUpdate={loadProperty}
+                                                />
+                                            </div>
+                                        )}
 
-                                <div className="bg-blue-50 border-l-4 border-blue-400 p-4 rounded-r-xl mt-4">
-                                    <div className="flex">
-                                        <div className="mr-3">
-                                            <IoHelpCircleSharp className="text-2xl text-blue-600" />
+                                        <div className="bg-gradient-to-br from-white via-gray-50 to-gray-100 border border-gray-200 rounded-2xl p-6 shadow-sm">
+                                            <div className="flex items-center justify-between mb-4">
+                                                <h3 className="text-xl font-bold text-[var(--charcoal)] flex items-center">
+                                                    <IoCameraSharp className="mr-2" /> Upload Images
+                                                </h3>
+                                                <span className="text-xs uppercase tracking-widest text-gray-400">Step 5</span>
+                                            </div>
+                                            {isEditing ? (
+                                                <ImageUploader 
+                                                    propertyId={id}
+                                                    onImagesUploaded={loadProperty}
+                                                />
+                                            ) : (
+                                                <ImageUploader 
+                                                    onChange={handleImageChange}
+                                                />
+                                            )}
+
+                                            <div className="bg-blue-50 border-l-4 border-blue-400 p-4 rounded-r-xl mt-4">
+                                                <div className="flex">
+                                                    <div className="mr-3">
+                                                        <IoHelpCircleSharp className="text-2xl text-blue-600" />
+                                                    </div>
+                                                    <div>
+                                                        <p className="text-sm font-medium text-blue-800">Tips for better images:</p>
+                                                        <ul className="text-xs text-blue-700 mt-2 space-y-1">
+                                                            <li>• Use good natural lighting</li>
+                                                            <li>• Show different angles of each room</li>
+                                                            <li>• Include outdoor areas if available</li>
+                                                            <li>• Use the buttons to reorder images</li>
+                                                            <li>• Mark with the star the image you want to appear first</li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <p className="text-sm font-medium text-blue-800">Tips for better images:</p>
-                                            <ul className="text-xs text-blue-700 mt-2 space-y-1">
-                                                <li>• Use good natural lighting</li>
-                                                <li>• Show different angles of each room</li>
-                                                <li>• Include outdoor areas if available</li>
-                                                <li>• Use the buttons to reorder images</li>
-                                                <li>• Mark with the star the image you want to appear first</li>
-                                            </ul>
+                                    </div>
+
+                                    <div className="space-y-6">
+                                        <div className="bg-gradient-to-br from-white via-gray-50 to-gray-100 border border-gray-200 rounded-2xl p-6 shadow-sm">
+                                            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-4">
+                                                <div>
+                                                    <h3 className="text-xl font-bold text-[var(--charcoal)] flex items-center">
+                                                        <IoVideocam className="mr-2" /> Property Videos
+                                                    </h3>
+                                                    <p className="text-sm text-gray-600">
+                                                        Attach up to 3 short walkthroughs (MP4, MOV, AVI, MPEG or WebM)
+                                                    </p>
+                                                </div>
+                                                <span className="text-sm text-gray-500">
+                                                    {videos.length}/3 selected
+                                                </span>
+                                            </div>
+
+                                            <VideoUploader
+                                                selectedVideos={videos}
+                                                onChange={handleVideoSelection}
+                                            />
+
+                                            {isEditing && property?.videos?.length > 0 && (
+                                                <div className="mt-6">
+                                                    <h4 className="text-sm font-semibold text-gray-700 mb-3">Current videos</h4>
+                                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                        {property.videos.map((video) => (
+                                                            <div key={video._id} className="bg-gray-50 border border-gray-200 rounded-2xl p-3">
+                                                                <div className="aspect-video bg-black rounded-xl overflow-hidden mb-3">
+                                                                    <video
+                                                                        controls
+                                                                        src={video.url}
+                                                                        poster={video.thumbnailUrl || undefined}
+                                                                        className="w-full h-full object-cover"
+                                                                    />
+                                                                </div>
+                                                                <div className="flex items-center justify-between text-sm text-gray-600">
+                                                                    <div>
+                                                                        <p className="font-semibold text-gray-800">
+                                                                            Duration: {formatVideoDuration(video.duration)}
+                                                                        </p>
+                                                                        {video.bytes && (
+                                                                            <p className="text-xs text-gray-500">{formatFileSize(video.bytes)}</p>
+                                                                        )}
+                                                                    </div>
+                                                                    <button
+                                                                        type="button"
+                                                                        onClick={() => handleExistingVideoDelete(video._id)}
+                                                                        className="text-red-500 hover:text-red-600 p-2 rounded-full hover:bg-red-50"
+                                                                    >
+                                                                        <IoTrashOutline size={18} />
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            )}
+
+                                            <p className="text-xs text-gray-500 mt-4">
+                                                Videos are uploaded after saving the property. You can delete existing ones at any time.
+                                            </p>
                                         </div>
                                     </div>
                                 </div>
@@ -1293,14 +1449,14 @@ function PropertyFormPage() {
                         <div className="flex gap-3">
                             <button
                                 type="button"
-                                onClick={() => navigate('/admin/properties')}
+                                onClick={() => navigate(resolvePostSaveRoute())}
                                 className="px-6 py-3 bg-gray-200 text-gray-700 rounded-xl font-medium hover:bg-gray-300 transition-all flex items-center"
                             >
                                 <IoCloseSharp className="mr-2" />
                                 Cancel
                             </button>
 
-                            {currentStep < steps.length ? (
+                            {!isLastStep ? (
                                 <button
                                     type="button"
                                     onClick={nextStep}

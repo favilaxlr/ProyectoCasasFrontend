@@ -248,6 +248,8 @@ function AllPropertiesPage() {
                   <option value="house">House</option>
                   <option value="apartment">Apartment</option>
                   <option value="condo">Condo</option>
+                  <option value="townhouse">Townhouse</option>
+                   <option value="vacant_land">Vacant Land</option>
                 </select>
               </div>
             </div>

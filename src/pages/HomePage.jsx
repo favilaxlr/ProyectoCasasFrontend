@@ -5,6 +5,7 @@ import PropertyCard from '../components/PropertyCard'
 import InteractiveMap from '../components/InteractiveMap'
 import Logo from '../components/Logo'
 import { IoLocationSharp, IoFunnelSharp, IoBusinessSharp, IoGlobeOutline, IoEarthSharp, IoCloseSharp, IoMenuSharp } from 'react-icons/io5'
+import WelcomeModal from '../components/WelcomeModal'
 
 function HomePage() {
   const { user } = useAuth()
@@ -15,9 +16,22 @@ function HomePage() {
   const [mapStyle, setMapStyle] = useState('osm') // 'osm' o 'satellite'
   const [operationType, setOperationType] = useState('all') // 'all', 'sale', 'rent', 'both'
   const [isPanelOpen, setIsPanelOpen] = useState(false)
+  const [showWelcomeModal, setShowWelcomeModal] = useState(false)
 
   useEffect(() => {
     loadProperties()
+  }, [])
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const dismissed = window.sessionStorage.getItem('welcomeModalDismissed')
+
+    if (!dismissed) {
+      const timer = setTimeout(() => setShowWelcomeModal(true), 400)
+      return () => clearTimeout(timer)
+    }
+
+    setShowWelcomeModal(false)
   }, [])
 
   const loadProperties = async () => {
@@ -30,7 +44,7 @@ function HomePage() {
   }
 
   // Filtrar por tipo de operación
-  const filteredProperties = properties.filter(property => {
+  const filteredProperties = Array.isArray(properties) ? properties.filter(property => {
     if (operationType === 'all') return true
     
     // Si filtramos por 'Venta', mostrar propiedades 'sale' y 'both'
@@ -49,7 +63,7 @@ function HomePage() {
     }
     
     return true
-  })
+  }) : []
 
   const sortedProperties = [...filteredProperties].sort((a, b) => {
     if (sortOption === 'price-low') return (a.price?.sale || 0) - (b.price?.sale || 0)
@@ -57,8 +71,24 @@ function HomePage() {
     return 0
   })
 
+  const handleCloseWelcomeModal = () => {
+    setShowWelcomeModal(false)
+    if (typeof window !== 'undefined') {
+      window.sessionStorage.setItem('welcomeModalDismissed', 'true')
+    }
+  }
+
+  const handlePropertySelect = (property) => {
+    setSelectedProperty(property)
+
+    if (typeof window !== 'undefined' && window.innerWidth < 768) {
+      setIsPanelOpen(false)
+    }
+  }
+
   return (
     <div className="flex flex-col" style={{ height: 'calc(100vh - 70px)' }}>
+      <WelcomeModal open={showWelcomeModal} onClose={handleCloseWelcomeModal} />
       {/* Header con Filtros - Responsive */}
       <div className="main-header px-4 md:px-6 py-3 md:py-4 flex-shrink-0 border-b border-gray-700/50 shadow-sm relative z-[100]">
         <div className="flex justify-end items-center gap-2 md:gap-4">
@@ -187,7 +217,7 @@ function HomePage() {
                     className={`compact-card cursor-pointer ${
                       selectedProperty?._id === property._id ? 'selected' : ''
                     }`}
-                    onClick={() => setSelectedProperty(property)}
+                    onClick={() => handlePropertySelect(property)}
                   >
                     <PropertyCard property={property} compact={true} />
                   </div>

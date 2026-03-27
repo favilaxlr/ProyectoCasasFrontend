@@ -18,6 +18,9 @@ export const getUserOfferRequest = (id) => axios.get(`/offers/my-offers/${id}`);
 export const sendOfferMessageRequest = (id, content) => 
     axios.post(`/offers/my-offers/${id}/messages`, { content });
 
+export const cancelUserOfferRequest = (id) => 
+    axios.put(`/offers/my-offers/${id}/cancel`);
+
 // ========== ADMIN/CO-ADMIN ENDPOINTS ==========
 
 // Obtener ofertas pendientes (no asignadas)

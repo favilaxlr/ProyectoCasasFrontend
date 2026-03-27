@@ -11,6 +11,7 @@ function AdminOfferDetailPage() {
     const [sending, setSending] = useState(false);
     const [loading, setLoading] = useState(true);
     const [updatingStatus, setUpdatingStatus] = useState(false);
+    const [cancellingOffer, setCancellingOffer] = useState(false);
     const messagesEndRef = useRef(null);
 
     const scrollToBottom = () => {
@@ -86,6 +87,23 @@ function AdminOfferDetailPage() {
         }
     };
 
+    const handleCancelOffer = async () => {
+        const confirmed = window.confirm('Cancel this offer? The chat will be archived so you can reference it later.');
+        if (!confirmed) return;
+
+        setCancellingOffer(true);
+        try {
+            await updateOfferStatusRequest(id, 'closed');
+            toast.info('Offer cancelled and archived.');
+            await loadOffer();
+        } catch (error) {
+            console.error('Error cancelling offer:', error);
+            toast.error('Error cancelling offer');
+        } finally {
+            setCancellingOffer(false);
+        }
+    };
+
     const getStatusBadge = (status) => {
         const statuses = {
             pending: { color: 'bg-yellow-100 text-yellow-800 border-yellow-300', icon: <IoTimeOutline />, text: 'Pending' },
@@ -102,6 +120,28 @@ function AdminOfferDetailPage() {
                 <span className="ml-1">{badge.text}</span>
             </span>
         );
+    };
+
+    const normalizeSender = (sender) => {
+        if (!sender) {
+            return { id: null, username: '', profileImage: null };
+        }
+
+        if (typeof sender === 'string') {
+            return { id: sender, username: '', profileImage: null };
+        }
+
+        return {
+            id: sender._id || sender.id || null,
+            username: sender.username || '',
+            profileImage: sender.profileImage || null
+        };
+    };
+
+    const getEntityId = (entity) => {
+        if (!entity) return null;
+        if (typeof entity === 'string') return entity;
+        return entity._id || entity.id || null;
     };
 
     if (loading) {
@@ -127,6 +167,16 @@ function AdminOfferDetailPage() {
         );
     }
 
+    const property = offer.property || null;
+    const propertyId = property?._id;
+    const propertyTitle = property?.title || 'Property unavailable';
+    const propertyImages = property?.images || [];
+    const mainImage = propertyImages.find(img => img.isMain)?.url || propertyImages[0]?.url;
+    const propertyAddress = property?.address;
+    const askingPrice = property?.price?.sale;
+
+    const assignedId = getEntityId(offer.assignedTo);
+
     return (
         <div className="max-w-4xl mx-auto p-6">
             {/* Header */}
@@ -147,26 +197,45 @@ function AdminOfferDetailPage() {
             {/* Property & User Info */}
             <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
                 <div className="flex flex-col md:flex-row gap-6">
-                    {offer.property?.images?.[0] && (
-                        <div className="md:w-1/3">
+                    <div className="md:w-1/3">
+                        {mainImage ? (
                             <img
-                                src={offer.property.images.find(img => img.isMain)?.url || offer.property.images[0].url}
-                                alt={offer.property.title}
+                                src={mainImage}
+                                alt={propertyTitle}
                                 className="w-full h-48 object-cover rounded-lg"
                             />
-                        </div>
-                    )}
+                        ) : (
+                            <div className="w-full h-48 rounded-lg bg-gray-100 border-2 border-dashed border-gray-300 flex items-center justify-center text-gray-400">
+                                <IoHomeOutline className="text-4xl" />
+                            </div>
+                        )}
+                    </div>
                     <div className="flex-1">
-                        <Link
-                            to={`/properties/${offer.property._id}`}
-                            className="text-2xl font-bold text-gray-800 hover:text-[var(--gold-accent)] transition-colors flex items-center"
-                        >
-                            {offer.property.title}
-                            <IoHomeOutline className="ml-2" />
-                        </Link>
+                        {propertyId ? (
+                            <Link
+                                to={`/properties/${propertyId}`}
+                                className="text-2xl font-bold text-gray-800 hover:text-[var(--gold-accent)] transition-colors flex items-center"
+                            >
+                                {propertyTitle}
+                                <IoHomeOutline className="ml-2" />
+                            </Link>
+                        ) : (
+                            <p className="text-2xl font-bold text-gray-500 flex items-center">
+                                {propertyTitle}
+                                <IoHomeOutline className="ml-2 text-gray-400" />
+                            </p>
+                        )}
                         <p className="text-gray-600 mt-2">
-                            {offer.property.address?.street}, {offer.property.address?.city}, {offer.property.address?.state}
+                            {propertyAddress?.street && propertyAddress?.city
+                                ? `${propertyAddress.street}, ${propertyAddress.city}${propertyAddress?.state ? `, ${propertyAddress.state}` : ''}`
+                                : 'Address unavailable'}
                         </p>
+
+                        {!property && (
+                            <div className="mt-3 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">
+                                This property was removed, but you can still review or close the offer history.
+                            </div>
+                        )}
 
                         <div className="mt-3 p-4 bg-gray-100 rounded-lg border-2 border-gray-300">
                             <div className="flex items-center gap-3 mb-3">
@@ -206,11 +275,11 @@ function AdminOfferDetailPage() {
                                     ${offer.offerAmount?.toLocaleString()}
                                 </p>
                             </div>
-                            {offer.property.price?.sale && (
+                            {askingPrice && (
                                 <div className="bg-blue-50 p-3 rounded-lg flex-1">
                                     <p className="text-sm text-gray-600">Asking Price</p>
                                     <p className="text-2xl font-bold text-blue-600">
-                                        ${offer.property.price.sale?.toLocaleString()}
+                                        ${askingPrice?.toLocaleString()}
                                     </p>
                                 </div>
                             )}
@@ -219,7 +288,7 @@ function AdminOfferDetailPage() {
                         {/* Status Control */}
                         <div className="mt-4">
                             <label className="block text-sm font-semibold mb-2">Offer Status</label>
-                            <div className="flex gap-2">
+                            <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
                                 <select
                                     value={offer.status}
                                     onChange={(e) => handleStatusChange(e.target.value)}
@@ -231,7 +300,19 @@ function AdminOfferDetailPage() {
                                     <option value="rejected">Rejected</option>
                                     <option value="closed">Closed</option>
                                 </select>
-                                {getStatusBadge(offer.status)}
+                                <div className="flex gap-2 items-center">
+                                    {getStatusBadge(offer.status)}
+                                    {offer.status !== 'closed' && offer.status !== 'rejected' && (
+                                        <button
+                                            type="button"
+                                            onClick={handleCancelOffer}
+                                            disabled={cancellingOffer}
+                                            className="text-sm font-semibold px-4 py-2 border-2 border-red-300 text-red-600 rounded-lg hover:bg-red-50 transition-colors disabled:opacity-60"
+                                        >
+                                            {cancellingOffer ? 'Cancelling…' : 'Cancel Offer'}
+                                        </button>
+                                    )}
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -245,8 +326,11 @@ function AdminOfferDetailPage() {
                 {/* Messages */}
                 <div className="border-2 border-gray-200 rounded-lg p-4 mb-4 h-96 overflow-y-auto bg-gray-50">
                     {offer.messages?.map((msg, index) => {
-                        const isAdmin = msg.sender._id === offer.assignedTo._id || msg.sender._id === offer.assignedTo;
-                        const senderImage = msg.sender.profileImage?.url || `https://ui-avatars.com/api/?name=${encodeURIComponent(msg.sender.username)}&background=random&color=fff&size=128`;
+                        const senderInfo = normalizeSender(msg.sender);
+                        const senderId = senderInfo.id;
+                        const isAdmin = assignedId && senderId && senderId === assignedId;
+                        const displayName = senderInfo.username || (isAdmin ? 'Team Member' : 'Guest');
+                        const senderImage = senderInfo.profileImage?.url || `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}&background=random&color=fff&size=128`;
                         return (
                             <div
                                 key={index}
@@ -255,10 +339,12 @@ function AdminOfferDetailPage() {
                                 {!isAdmin && (
                                     <img
                                         src={senderImage}
-                                        alt={msg.sender.username}
-                                        className="w-8 h-8 rounded-full object-cover flex-shrink-0 border-2 border-gray-300"                                        onError={(e) => {
-                                            e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(msg.sender.username)}&background=random&color=fff&size=128`;
-                                        }}                                    />
+                                        alt={displayName}
+                                        className="w-8 h-8 rounded-full object-cover flex-shrink-0 border-2 border-gray-300"
+                                        onError={(e) => {
+                                            e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}&background=random&color=fff&size=128`;
+                                        }}
+                                    />
                                 )}
                                 <div
                                     className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
@@ -268,7 +354,7 @@ function AdminOfferDetailPage() {
                                     }`}
                                 >
                                     <p className="text-xs font-semibold mb-1">
-                                        {msg.sender.username}
+                                        {displayName}
                                     </p>
                                     <p className="break-words">{msg.content}</p>
                                     <p className={`text-xs mt-1 ${isAdmin ? 'text-blue-100' : 'text-gray-500'}`}>
@@ -278,10 +364,10 @@ function AdminOfferDetailPage() {
                                 {isAdmin && (
                                     <img
                                         src={senderImage}
-                                        alt={msg.sender.username}
+                                        alt={displayName}
                                         className="w-8 h-8 rounded-full object-cover flex-shrink-0 border-2 border-blue-300"
                                         onError={(e) => {
-                                            e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(msg.sender.username)}&background=random&color=fff&size=128`;
+                                            e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}&background=random&color=fff&size=128`;
                                         }}
                                     />
                                 )}

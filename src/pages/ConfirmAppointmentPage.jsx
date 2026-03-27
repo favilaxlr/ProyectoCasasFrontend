@@ -38,7 +38,7 @@ const ConfirmAppointmentPage = () => {
             <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-blue-100">
                 <div className="text-center">
                     <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-blue-600 mx-auto mb-4"></div>
-                    <p className="text-lg text-gray-600">Confirmando tu cita...</p>
+                    <p className="text-lg text-gray-600">Confirming your appointment...</p>
                 </div>
             </div>
         );
@@ -53,10 +53,10 @@ const ConfirmAppointmentPage = () => {
                             <IoCheckmarkCircleSharp className="text-green-600 text-5xl" />
                         </div>
                         <h1 className="text-3xl font-bold text-gray-800 mb-2">
-                            ¡Cita Confirmada!
+                            Appointment Confirmed!
                         </h1>
                         <p className="text-gray-600">
-                            Tu cita ha sido confirmada exitosamente
+                            Your appointment has been confirmed successfully
                         </p>
                     </div>
 
@@ -135,7 +135,7 @@ const ConfirmAppointmentPage = () => {
                     onClick={() => navigate('/')}
                     className="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 py-3 rounded-lg font-semibold transition-all"
                 >
-                    Volver al inicio
+                    Back to home
                 </button>
             </div>
         </div>
