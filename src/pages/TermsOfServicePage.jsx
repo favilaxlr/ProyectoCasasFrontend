@@ -9,7 +9,7 @@ export default function TermsOfServicePage() {
         <p>By using FR Family Investments website and services, you agree to these terms. FR Family Investments provides property notifications, appointment scheduling, and verification via SMS as part of our service.</p>
 
         <h2 className="text-2xl font-semibold mt-6 mb-3">SMS Program</h2>
-        <p>Enrollment is voluntary and requires explicit opt-in at registration. Message and data rates may apply. You may opt-out at any time by replying STOP. For help, reply HELP or contact support@frfamilyinvestments.com.</p>
+        <p>Enrollment is voluntary and requires explicit opt-in at registration. Message and data rates may apply. Message frequency varies based on your activity. You may opt-out at any time by replying <strong>STOP</strong>. For help, reply <strong>HELP</strong> or contact support@frfamilyinvestments.com.</p>
 
         <h2 className="text-2xl font-semibold mt-6 mb-3">Privacy Link</h2>
         <p>Read our <a className="text-blue-600 hover:underline" href="/privacy-policy">Privacy Policy</a> for details on data handling and SMS opt-in/out.</p>
