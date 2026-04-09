@@ -364,6 +364,9 @@ function RegisterPage() {
                   <a href="https://frfamilyinvestments.com/terms-of-service" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">Terms of Service</a> and <a href="https://frfamilyinvestments.com/privacy-policy" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">Privacy Policy</a>.
                 </span>
               </label>
+              <p className="text-xs text-blue-700 mt-2 font-semibold">
+                Consent to receive SMS messages is optional and is not a condition for creating an account or performing any action on the platform.
+              </p>
               {errors.smsConsent && (
                 <p className="text-red-500 text-sm mt-1 animate-fade-in">{errors.smsConsent.message}</p>
               )}

@@ -25,7 +25,7 @@ export default function PrivacyPolicyPage() {
         <p>We collect your phone number, transaction data, and SMS consent only to deliver requested services. Consent is optional and can be revoked at any time by replying STOP.</p>
       </section>
 
-      <section className="text-sm text-gray-600">This privacy policy is written in English for compliance with Twilio/TCR reviews.</section>
+      {/* Línea eliminada: referencia a Twilio/TCR para compliance eliminada */}
     </main>
   );
 }
