@@ -359,7 +359,7 @@ function RegisterPage() {
                   {...register('smsConsent')}
                 />
                 <span>
-                  "I consent to join the FR Family Investments Notifications SMS program and receive automated texts from FR Family Investments about appointments, verification codes, and curated properties. Message and data rates may apply. Message frequency varies. Reply STOP to opt out, HELP for help. Consent is optional and not a condition of purchase or account creation."
+                  "I consent to join the FR Family Investments Notifications SMS program and receive automated texts from FR Family Investments about appointments, verification codes, and curated properties. Message and data rates may apply. Message frequency varies. Reply STOP to opt out, HELP for help. Consent is optional and is not a condition for creating an account or performing any action on the platform."
                   <br />
                   <a href="https://frfamilyinvestments.com/terms-of-service" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">Terms of Service</a> and <a href="https://frfamilyinvestments.com/privacy-policy" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">Privacy Policy</a>.
                 </span>
