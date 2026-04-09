@@ -225,7 +225,7 @@ function RegisterPage() {
                 By providing your phone number you acknowledge that FR Family Investments may send account-critical texts (like verification codes or fraud alerts). Marketing updates and appointment reminders are optional and require selecting the SMS consent checkbox near "Create Account." Message and data rates may apply, and message frequency varies. Reply STOP to cancel, HELP for help. View our{' '}
                 <a href="https://frfamilyinvestments.com/privacy-policy" target="_blank" rel="noopener noreferrer" className="font-semibold underline">Privacy Policy</a>{' '}
                 and{' '}
-                <a href="https://frfamilyinvestments.com/terms-of-service" target="_blank" rel="noopener noreferrer" className="font-semibold underline">Terms of Service</a>. Your consent is never a condition of purchase or account creation.
+                <a href="https://frfamilyinvestments.com/terms-of-service" target="_blank" rel="noopener noreferrer" className="font-semibold underline">Terms of Service</a>. Your consent is never a condition for creating an account or performing any action on the platform.
               </div>
             </div>
 
