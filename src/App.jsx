@@ -31,6 +31,8 @@ import UserOfferDetailPage from './pages/UserOfferDetailPage';
 import AdminOffersPage from './pages/AdminOffersPage';
 import AdminOfferDetailPage from './pages/AdminOfferDetailPage';
 import CookieConsent from './components/CookieConsent';
+import AboutPage from './pages/AboutPage';
+import ContactPage from './pages/ContactPage';
 
 function App() {
   const [toastTheme, setToastTheme] = useState('light');
@@ -75,6 +77,8 @@ function App() {
                 <Route path='/login' element={<LoginPage />} />
                 <Route path='/register' element={<RegisterPage/>} />
                 <Route path='/verify' element={<VerificationPage/>} />
+                <Route path='/about' element={<AboutPage/>} />
+                <Route path='/contact' element={<ContactPage/>} />
                 <Route path='/privacy-policy' element={<PrivacyPolicyPage/>} />
                 <Route path='/terms-of-service' element={<TermsOfServicePage/>} />
 

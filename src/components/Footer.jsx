@@ -2,11 +2,53 @@ import { Link } from 'react-router-dom';
 
 export default function Footer() {
   return (
-    <footer className="mt-12 border-t border-gray-200/40 py-8">
-      <div className="w-full px-6 flex flex-col md:flex-row items-center justify-between gap-4">
-        <div className="flex items-center gap-4">
-          <div className="text-lg font-semibold">FR Family Investments</div>
-          <nav className="flex items-center gap-3 text-sm text-gray-600">
+    <footer className="mt-12 border-t border-gray-200/40 py-12">
+      <div className="w-full px-6">
+        {/* Top Section - Links and Contact */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8 pb-8 border-b border-gray-200/40">
+          {/* Company Info */}
+          <div>
+            <h3 className="text-lg font-semibold mb-4">FR Family Investments</h3>
+            <div className="text-sm text-gray-600 space-y-2">
+              <p>P.O. Box 568</p>
+              <p>Lillian, TX 76061</p>
+              <p className="pt-2">
+                <a href="tel:+18179071638" className="hover:text-[var(--gold-accent)] transition-colors">
+                  +1 (817) 907-1638
+                </a>
+              </p>
+              <p>
+                <a href="mailto:info@frfamilyinvestments.com" className="hover:text-[var(--gold-accent)] transition-colors">
+                  info@frfamilyinvestments.com
+                </a>
+              </p>
+            </div>
+          </div>
+
+          {/* Quick Links */}
+          <div>
+            <h4 className="font-semibold mb-4 text-gray-900">Quick Links</h4>
+            <nav className="flex flex-col gap-2 text-sm text-gray-600">
+              <Link to="/about" className="hover:text-[var(--gold-accent)] transition-colors">About Us</Link>
+              <Link to="/contact" className="hover:text-[var(--gold-accent)] transition-colors">Contact</Link>
+              <Link to="/properties" className="hover:text-[var(--gold-accent)] transition-colors">Browse Properties</Link>
+            </nav>
+          </div>
+
+          {/* Legal Links */}
+          <div>
+            <h4 className="font-semibold mb-4 text-gray-900">Legal</h4>
+            <nav className="flex flex-col gap-2 text-sm text-gray-600">
+              <Link to="/privacy-policy" className="hover:text-[var(--gold-accent)] transition-colors">Privacy Policy</Link>
+              <Link to="/terms-of-service" className="hover:text-[var(--gold-accent)] transition-colors">Terms of Service</Link>
+            </nav>
+          </div>
+        </div>
+
+        {/* Bottom Section - Social and Copyright */}
+        <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <nav className="flex items-center gap-3 text-sm text-gray-600">
             <a
               href="https://www.facebook.com/people/Fermin-Martinez/pfbid0JiMwPPwGNaZmds3FEiHJi9vqHgc7nJhY7d5UxSmQZd7T64otBvH6VG5WBYX8ScCCl/?mibextid=wwXIfr&rdid=Kqr9dZ6hNjAMkJbK&share_url=https%3A%2F%2Fwww.facebook.com%2Fshare%2F1BXmhACHE9%2F%3Fmibextid%3DwwXIfr"
               target="_blank"
@@ -45,15 +87,10 @@ export default function Footer() {
                 <path d="M194.2 64.3c-6.6-.8-13.1-1.2-19.6-1.2v61.5c0 22.9-18.5 41.5-41.4 41.5-22.9 0-41.5-18.6-41.5-41.5s18.6-41.4 41.5-41.4c4.1 0 8.1.6 11.9 1.8v27.6c-3.4-1.1-7-1.7-10.9-1.7-11.8 0-21.5 9.7-21.5 21.5 0 11.9 9.7 21.6 21.5 21.6 11.8 0 21.5-9.7 21.5-21.6V54h32.9c1.1 7.2 3.6 13.9 7.4 19.9z" fill="currentColor"/>
               </svg>
             </a>
-          </nav>
-        </div>
-
-        <div className="flex flex-col items-center gap-1 text-center md:items-end">
-          <div className="flex items-center gap-4 text-sm text-gray-600">
-            <Link to="/privacy-policy" className="hover:text-[var(--gold-accent)] transition-colors">Privacy Policy</Link>
-            <Link to="/terms-of-service" className="hover:text-[var(--gold-accent)] transition-colors">Terms of Service</Link>
+            </nav>
           </div>
-          <div className="text-sm text-gray-500">© 2026 FR Family Investments. All rights reserved.</div>
+
+          <div className="text-sm text-gray-500 text-center md:text-right">© 2026 FR Family Investments. All rights reserved.</div>
         </div>
       </div>
     </footer>
