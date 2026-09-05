@@ -119,7 +119,7 @@ function PropertyDetailPage() {
             apartment: 'Apartment',
             condo: 'Condo',
             townhouse: 'Townhouse',
-            vacant_land: 'Vacant Land'
+            vacant_land: 'Urban Land'
         };
         return types[type] || type;
     };
@@ -395,21 +395,32 @@ function PropertyDetailPage() {
 
                 {/* Key Features - Clean Design with Icons */}
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                    <div className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow text-center">
-                        <IoBedSharp className="text-4xl text-blue-600 mx-auto mb-3" />
-                        <p className="text-2xl font-bold text-gray-900 mb-1">{property.details?.bedrooms || 0}</p>
-                        <p className="text-sm text-gray-600 uppercase font-semibold">Bedrooms</p>
-                    </div>
-                    <div className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow text-center">
-                        <IoHomeSharp className="text-4xl text-blue-600 mx-auto mb-3" />
-                        <p className="text-2xl font-bold text-gray-900 mb-1">{property.details?.bathrooms || 0}</p>
-                        <p className="text-sm text-gray-600 uppercase font-semibold">Bathrooms</p>
-                    </div>
+                    {property.details?.propertyType !== 'vacant_land' && (
+                        <>
+                            <div className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow text-center">
+                                <IoBedSharp className="text-4xl text-blue-600 mx-auto mb-3" />
+                                <p className="text-2xl font-bold text-gray-900 mb-1">{property.details?.bedrooms || 0}</p>
+                                <p className="text-sm text-gray-600 uppercase font-semibold">Bedrooms</p>
+                            </div>
+                            <div className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow text-center">
+                                <IoHomeSharp className="text-4xl text-blue-600 mx-auto mb-3" />
+                                <p className="text-2xl font-bold text-gray-900 mb-1">{property.details?.bathrooms || 0}</p>
+                                <p className="text-sm text-gray-600 uppercase font-semibold">Bathrooms</p>
+                            </div>
+                        </>
+                    )}
                     {property.details?.squareFeet && (
                         <div className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow text-center">
                             <IoResizeSharp className="text-4xl text-blue-600 mx-auto mb-3" />
                             <p className="text-2xl font-bold text-gray-900 mb-1">{property.details.squareFeet.toLocaleString()}</p>
-                            <p className="text-sm text-gray-600 uppercase font-semibold">sq ft</p>
+                            <p className="text-sm text-gray-600 uppercase font-semibold">House sq ft</p>
+                        </div>
+                    )}
+                    {property.details?.lotSquareFeet && (
+                        <div className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow text-center">
+                            <IoResizeSharp className="text-4xl text-blue-600 mx-auto mb-3" />
+                            <p className="text-2xl font-bold text-gray-900 mb-1">{property.details.lotSquareFeet.toLocaleString()}</p>
+                            <p className="text-sm text-gray-600 uppercase font-semibold">Lot sq ft</p>
                         </div>
                     )}
                     <div className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow text-center">

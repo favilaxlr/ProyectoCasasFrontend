@@ -280,9 +280,15 @@ function PropertyFormPage() {
 
             if (data.details) {
                 if (data.details.propertyType) formData.append('details.propertyType', data.details.propertyType);
-                if (data.details.bedrooms !== undefined) formData.append('details.bedrooms', Number(data.details.bedrooms));
-                if (data.details.bathrooms !== undefined) formData.append('details.bathrooms', Number(data.details.bathrooms));
+                if (data.details.propertyType === 'vacant_land') {
+                    formData.append('details.bedrooms', Number(data.details.bedrooms) || 0);
+                    formData.append('details.bathrooms', Number(data.details.bathrooms) || 0);
+                } else {
+                    if (data.details.bedrooms !== undefined) formData.append('details.bedrooms', Number(data.details.bedrooms));
+                    if (data.details.bathrooms !== undefined) formData.append('details.bathrooms', Number(data.details.bathrooms));
+                }
                 if (data.details.squareFeet) formData.append('details.squareFeet', Number(data.details.squareFeet));
+                if (data.details.lotSquareFeet) formData.append('details.lotSquareFeet', Number(data.details.lotSquareFeet));
                 if (data.details.yearBuilt) formData.append('details.yearBuilt', Number(data.details.yearBuilt));
                 formData.append('details.parking', data.details.parking || false);
                 formData.append('details.petFriendly', data.details.petFriendly || false);
@@ -436,9 +442,21 @@ function PropertyFormPage() {
                 }
                 break;
             case 3:
-                if (!values.details?.propertyType || 
-                    values.details?.bedrooms === undefined || 
-                    values.details?.bathrooms === undefined) {
+                if (!values.details?.propertyType) {
+                    toast.error('Please complete the property details');
+                    return false;
+                }
+                if (values.details.propertyType === 'vacant_land') {
+                    if (!values.details.lotSquareFeet) {
+                        toast.error('Please enter the lot size for urban land');
+                        return false;
+                    }
+                } else if (
+                    values.details.bedrooms === undefined ||
+                    values.details.bedrooms === '' ||
+                    values.details.bathrooms === undefined ||
+                    values.details.bathrooms === ''
+                ) {
                     toast.error('Please complete the property details');
                     return false;
                 }
@@ -853,7 +871,7 @@ function PropertyFormPage() {
                                             { value: 'apartment', label: 'Apartment', icon: <IoBusinessSharp /> },
                                             { value: 'condo', label: 'Condo', icon: <IoBusinessSharp /> },
                                             { value: 'townhouse', label: 'Townhouse', icon: <IoHomeSharp /> },
-                                            { value: 'vacant_land', label: 'Vacant Land', icon: <IoMapSharp /> }
+                                            { value: 'vacant_land', label: 'Urban Land', icon: <IoMapSharp /> }
                                         ].map((type) => (
                                             <label
                                                 key={type.value}
@@ -877,60 +895,78 @@ function PropertyFormPage() {
                                 </div>
 
                                 <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
+                                    {propertyType !== 'vacant_land' && (
+                                        <>
+                                            <div>
+                                                <label className="flex items-center text-sm font-semibold mb-2 text-gray-700">
+                                                    <IoBedSharp className="mr-2" /> Bedrooms *
+                                                </label>
+                                                <input
+                                                    type="number"
+                                                    {...register('details.bedrooms', { 
+                                                        required: propertyType !== 'vacant_land' ? 'Required' : false,
+                                                        min: { value: 0, message: 'Minimum 0' }
+                                                    })}
+                                                    placeholder="3"
+                                                    className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 transition-all focus:ring-2 focus:ring-[var(--gold-accent)] focus:border-[var(--gold-accent)]"
+                                                />
+                                            </div>
+
+                                            <div>
+                                                <label className="flex items-center text-sm font-semibold mb-2 text-gray-700">
+                                                    <IoWaterSharp className="mr-2" /> Bathrooms *
+                                                </label>
+                                                <input
+                                                    type="number"
+                                                    step="0.5"
+                                                    {...register('details.bathrooms', { 
+                                                        required: propertyType !== 'vacant_land' ? 'Required' : false,
+                                                        min: { value: 0, message: 'Minimum 0' }
+                                                    })}
+                                                    placeholder="2"
+                                                    className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 transition-all focus:ring-2 focus:ring-[var(--gold-accent)] focus:border-[var(--gold-accent)]"
+                                                />
+                                            </div>
+
+                                            <div>
+                                                <label className="flex items-center text-sm font-semibold mb-2 text-gray-700">
+                                                    <IoResizeSharp className="mr-2" /> House size (sq ft)
+                                                </label>
+                                                <input
+                                                    type="number"
+                                                    {...register('details.squareFeet')}
+                                                    placeholder="1500"
+                                                    className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 transition-all focus:ring-2 focus:ring-[var(--gold-accent)] focus:border-[var(--gold-accent)]"
+                                                />
+                                            </div>
+                                        </>
+                                    )}
+
                                     <div>
                                         <label className="flex items-center text-sm font-semibold mb-2 text-gray-700">
-                                            <IoBedSharp className="mr-2" /> Bedrooms *
+                                            <IoMapSharp className="mr-2" /> Lot size (sq ft) {propertyType === 'vacant_land' ? '*' : ''}
                                         </label>
                                         <input
                                             type="number"
-                                            {...register('details.bedrooms', { 
-                                                required: 'Required',
-                                                min: { value: 0, message: 'Minimum 0' }
-                                            })}
-                                            placeholder="3"
+                                            {...register('details.lotSquareFeet')}
+                                            placeholder="7200"
                                             className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 transition-all focus:ring-2 focus:ring-[var(--gold-accent)] focus:border-[var(--gold-accent)]"
                                         />
                                     </div>
 
-                                    <div>
-                                        <label className="flex items-center text-sm font-semibold mb-2 text-gray-700">
-                                            <IoWaterSharp className="mr-2" /> Bathrooms *
-                                        </label>
-                                        <input
-                                            type="number"
-                                            step="0.5"
-                                            {...register('details.bathrooms', { 
-                                                required: 'Required',
-                                                min: { value: 0, message: 'Minimum 0' }
-                                            })}
-                                            placeholder="2"
-                                            className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 transition-all focus:ring-2 focus:ring-[var(--gold-accent)] focus:border-[var(--gold-accent)]"
-                                        />
-                                    </div>
-
-                                    <div>
-                                        <label className="flex items-center text-sm font-semibold mb-2 text-gray-700">
-                                            <IoResizeSharp className="mr-2" /> Square Feet
-                                        </label>
-                                        <input
-                                            type="number"
-                                            {...register('details.squareFeet')}
-                                            placeholder="1500"
-                                            className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 transition-all focus:ring-2 focus:ring-[var(--gold-accent)] focus:border-[var(--gold-accent)]"
-                                        />
-                                    </div>
-
-                                    <div>
-                                        <label className="flex items-center text-sm font-semibold mb-2 text-gray-700">
-                                            <IoCalendarSharp className="mr-2" /> Year Built
-                                        </label>
-                                        <input
-                                            type="number"
-                                            {...register('details.yearBuilt')}
-                                            placeholder="2020"
-                                            className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 transition-all focus:ring-2 focus:ring-[var(--gold-accent)] focus:border-[var(--gold-accent)]"
-                                        />
-                                    </div>
+                                    {propertyType !== 'vacant_land' && (
+                                        <div>
+                                            <label className="flex items-center text-sm font-semibold mb-2 text-gray-700">
+                                                <IoCalendarSharp className="mr-2" /> Year Built
+                                            </label>
+                                            <input
+                                                type="number"
+                                                {...register('details.yearBuilt')}
+                                                placeholder="2020"
+                                                className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 transition-all focus:ring-2 focus:ring-[var(--gold-accent)] focus:border-[var(--gold-accent)]"
+                                            />
+                                        </div>
+                                    )}
                                 </div>
 
                                 <div>

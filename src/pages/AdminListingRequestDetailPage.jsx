@@ -109,6 +109,12 @@ function AdminListingRequestDetailPage() {
                         {request.estimatedPrice && (
                             <p><strong>Estimated price:</strong> ${Number(request.estimatedPrice).toLocaleString()}</p>
                         )}
+                        {request.squareFeet && (
+                            <p><strong>House size:</strong> {Number(request.squareFeet).toLocaleString()} sq ft</p>
+                        )}
+                        {request.lotSquareFeet && (
+                            <p><strong>Lot size:</strong> {Number(request.lotSquareFeet).toLocaleString()} sq ft</p>
+                        )}
                         <p><strong>Submitted:</strong> {new Date(request.createdAt).toLocaleString()}</p>
                         {request.user?.username && (
                             <p><strong>Account:</strong> {request.user.username}</p>

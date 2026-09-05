@@ -483,14 +483,20 @@ function PropertiesPage() {
                                              property.details?.propertyType === 'apartment' ? 'Apartment' :
                                              property.details?.propertyType === 'condo' ? 'Condo' :
                                              property.details?.propertyType === 'townhouse' ? 'Townhouse' :
-                                             property.details?.propertyType === 'vacant_land' ? 'Vacant Land' :
+                                             property.details?.propertyType === 'vacant_land' ? 'Urban Land' :
                                              property.details?.propertyType || 'N/A'}
                                         </span>
                                     </div>
                                     {property.details?.squareFeet && (
                                         <div className="flex justify-between">
-                                            <span>Area:</span>
+                                            <span>House size:</span>
                                             <span className="font-semibold">{property.details.squareFeet.toLocaleString()} sq ft</span>
+                                        </div>
+                                    )}
+                                    {property.details?.lotSquareFeet && (
+                                        <div className="flex justify-between">
+                                            <span>Lot size:</span>
+                                            <span className="font-semibold">{property.details.lotSquareFeet.toLocaleString()} sq ft</span>
                                         </div>
                                     )}
                                     {property.price?.deposit && (

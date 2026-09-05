@@ -131,7 +131,9 @@ function PropertyCard({ property, compact = false }) {
               </span>
               <span className="flex items-center gap-1 whitespace-nowrap">
                 <IoLocationSharp className="text-[var(--gold-accent)]" />
-                {property.details?.squareFeet || 0} Sq. Ft.
+                {property.details?.propertyType === 'vacant_land'
+                  ? `${(property.details?.lotSquareFeet || 0).toLocaleString()} Lot sq ft`
+                  : `${(property.details?.squareFeet || 0).toLocaleString()} Sq. Ft.`}
               </span>
             </div>
           </div>
@@ -245,9 +247,11 @@ function PropertyCard({ property, compact = false }) {
               {property.details?.bedrooms} beds, {property.details?.bathrooms} baths
             </span>
           </div>
-          {property.details?.squareFeet && (
+          {(property.details?.squareFeet || property.details?.lotSquareFeet) && (
             <span className="text-xs text-gray-600">
-              {property.details.squareFeet} sq ft
+              {property.details?.squareFeet ? `${property.details.squareFeet.toLocaleString()} house` : ''}
+              {property.details?.squareFeet && property.details?.lotSquareFeet ? ' · ' : ''}
+              {property.details?.lotSquareFeet ? `${property.details.lotSquareFeet.toLocaleString()} lot` : ''}
             </span>
           )}
         </div>
@@ -346,7 +350,7 @@ function PropertyCard({ property, compact = false }) {
                 if (type === 'apartment') return 'Apartment';
                 if (type === 'condo') return 'Condo';
                 if (type === 'townhouse') return 'Townhouse';
-                if (type === 'vacant_land') return 'Vacant Land';
+                if (type === 'vacant_land') return 'Urban Land';
                 if (typeof type === 'string' || typeof type === 'number') return type;
                 return '';
               })()}

@@ -5,7 +5,7 @@ export const PROPERTY_TYPES = [
     { value: 'apartment', label: 'Apartment' },
     { value: 'condo', label: 'Condo' },
     { value: 'townhouse', label: 'Townhouse' },
-    { value: 'vacant_land', label: 'Vacant Land' }
+    { value: 'vacant_land', label: 'Urban Land' }
 ];
 
 export const listingRequestSchema = z.object({
@@ -38,6 +38,18 @@ export const listingRequestSchema = z.object({
             .positive('Estimated price must be positive')
             .optional()
     ),
+    squareFeet: z.preprocess(
+        (val) => (val === '' || val === null || val === undefined ? undefined : Number(val)),
+        z.number({ error: 'House size must be a number' })
+            .positive('House size must be positive')
+            .optional()
+    ),
+    lotSquareFeet: z.preprocess(
+        (val) => (val === '' || val === null || val === undefined ? undefined : Number(val)),
+        z.number({ error: 'Lot size must be a number' })
+            .positive('Lot size must be positive')
+            .optional()
+    ),
     description: z
         .string('Description is required')
         .trim()
@@ -46,4 +58,12 @@ export const listingRequestSchema = z.object({
     aceptaPrivacidad: z.boolean().refine((value) => value === true, {
         message: 'You must accept the Privacy Policy'
     })
+}).superRefine((data, ctx) => {
+    if (data.propertyType === 'vacant_land' && !data.lotSquareFeet) {
+        ctx.addIssue({
+            code: 'custom',
+            path: ['lotSquareFeet'],
+            message: 'Lot size is required for urban land'
+        });
+    }
 });

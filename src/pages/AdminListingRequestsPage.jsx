@@ -133,6 +133,8 @@ function AdminListingRequestsPage() {
                                                 <p className="text-gray-600 text-sm mt-1">{request.location}</p>
                                                 <p className="text-gray-500 text-sm mt-1">
                                                     {typeLabel(request.propertyType)}
+                                                    {request.squareFeet ? ` · ${Number(request.squareFeet).toLocaleString()} house sq ft` : ''}
+                                                    {request.lotSquareFeet ? ` · ${Number(request.lotSquareFeet).toLocaleString()} lot sq ft` : ''}
                                                     {request.images?.length ? ` · ${request.images.length} photo${request.images.length === 1 ? '' : 's'}` : ''}
                                                 </p>
                                             </div>

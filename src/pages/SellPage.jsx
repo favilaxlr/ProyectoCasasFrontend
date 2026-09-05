@@ -18,6 +18,8 @@ const defaultValues = {
     location: '',
     propertyType: '',
     estimatedPrice: '',
+    squareFeet: '',
+    lotSquareFeet: '',
     description: '',
     aceptaPrivacidad: false
 };
@@ -29,7 +31,7 @@ export default function SellPage() {
     const [photoKey, setPhotoKey] = useState(0);
     const [submitError, setSubmitError] = useState('');
 
-    const { register, handleSubmit, control, reset, setValue, formState: { errors, isSubmitting } } = useForm({
+    const { register, handleSubmit, control, reset, setValue, watch, formState: { errors, isSubmitting } } = useForm({
         resolver: zodResolver(listingRequestSchema),
         defaultValues
     });
@@ -51,6 +53,12 @@ export default function SellPage() {
         formData.append('propertyType', data.propertyType);
         if (data.estimatedPrice) {
             formData.append('estimatedPrice', data.estimatedPrice);
+        }
+        if (data.squareFeet) {
+            formData.append('squareFeet', data.squareFeet);
+        }
+        if (data.lotSquareFeet) {
+            formData.append('lotSquareFeet', data.lotSquareFeet);
         }
         formData.append('description', data.description);
         formData.append('aceptaPrivacidad', 'true');
@@ -257,6 +265,42 @@ export default function SellPage() {
                                         />
                                         {errors.estimatedPrice && (
                                             <p className="mt-1 text-sm text-red-500">{errors.estimatedPrice.message}</p>
+                                        )}
+                                    </div>
+                                </div>
+                                <div className="grid gap-4 sm:grid-cols-2">
+                                    {watch('propertyType') !== 'vacant_land' && (
+                                        <div>
+                                            <label htmlFor="squareFeet" className="mb-1 block text-sm font-medium text-gray-700">
+                                                House size (sq ft)
+                                            </label>
+                                            <input
+                                                id="squareFeet"
+                                                type="number"
+                                                min={1}
+                                                placeholder="e.g. 1800"
+                                                className={`input-field w-full ${errors.squareFeet ? 'error' : ''}`}
+                                                {...register('squareFeet')}
+                                            />
+                                            {errors.squareFeet && (
+                                                <p className="mt-1 text-sm text-red-500">{errors.squareFeet.message}</p>
+                                            )}
+                                        </div>
+                                    )}
+                                    <div>
+                                        <label htmlFor="lotSquareFeet" className="mb-1 block text-sm font-medium text-gray-700">
+                                            Lot size (sq ft) {watch('propertyType') === 'vacant_land' ? '*' : ''}
+                                        </label>
+                                        <input
+                                            id="lotSquareFeet"
+                                            type="number"
+                                            min={1}
+                                            placeholder="e.g. 7200"
+                                            className={`input-field w-full ${errors.lotSquareFeet ? 'error' : ''}`}
+                                            {...register('lotSquareFeet')}
+                                        />
+                                        {errors.lotSquareFeet && (
+                                            <p className="mt-1 text-sm text-red-500">{errors.lotSquareFeet.message}</p>
                                         )}
                                     </div>
                                 </div>
