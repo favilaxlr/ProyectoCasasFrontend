@@ -1,7 +1,7 @@
 import {Link, useNavigate} from 'react-router';
 import { useAuth } from '../context/AuthContext';
 import Logo from './Logo';
-import { IoPerson, IoLogOutOutline, IoChevronDownSharp, IoBagAdd, IoHomeSharp, IoCalendarSharp, IoChatbubblesSharp, IoPeopleSharp, IoSettingsSharp, IoCashSharp, IoMenu, IoClose} from 'react-icons/io5'
+import { IoPerson, IoLogOutOutline, IoChevronDownSharp, IoBagAdd, IoHomeSharp, IoCalendarSharp, IoChatbubblesSharp, IoPeopleSharp, IoSettingsSharp, IoCashSharp, IoMenu, IoClose, IoPricetagOutline} from 'react-icons/io5'
 import {Menu, MenuButton, MenuItem, MenuItems} from '@headlessui/react';
 import { useNotificationCount } from '../hooks/useNotificationCount';
 import { useState } from 'react';
@@ -9,7 +9,7 @@ import { useState } from 'react';
 function NavbarAdmin() {
   const {user, logOut} = useAuth();
   const navigate = useNavigate();
-  const { pendingOffersCount, pendingAppointmentsCount } = useNotificationCount();
+  const { pendingOffersCount, pendingAppointmentsCount, pendingListingRequestsCount } = useNotificationCount();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   
   return (
@@ -20,6 +20,13 @@ function NavbarAdmin() {
           <div className="absolute right-0 top-0 h-40 w-40 rounded-full bg-[var(--hyper-pink)] blur-[120px]"></div>
         </div>
         <div className="flex justify-between items-center relative z-10">
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
+            className="lg:hidden text-white p-2 hover:bg-white/15 rounded-xl transition-colors absolute left-3 z-10"
+          >
+            {mobileMenuOpen ? <IoClose size={28} /> : <IoMenu size={28} />}
+          </button>
           {/* Logo */}
           <Link to='/' className="hover:scale-105 transition-transform duration-300 mx-auto md:absolute md:left-1/2 md:transform md:-translate-x-1/2">
             <Logo size="small" className="md:size-medium" />
@@ -63,6 +70,31 @@ function NavbarAdmin() {
                         <IoBagAdd className="text-green-600" size={16} />
                       </div>
                       <span className="font-medium">Add Property</span>
+                    </button>
+                  </MenuItem>
+
+                  <MenuItem>
+                    <button onClick={ ()=>{navigate('/sell')}}
+                            className="group flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-gray-700 hover:bg-[var(--gold-accent)]/10 hover:text-[var(--gold-accent)] data-focus:bg-[var(--gold-accent)]/10 transition-all">
+                      <div className="p-1.5 rounded-lg bg-amber-50 group-hover:bg-amber-100 transition-colors">
+                        <IoPricetagOutline className="text-amber-600" size={16} />
+                      </div>
+                      <span className="font-medium">Sell Your Home</span>
+                    </button>
+                  </MenuItem>
+
+                  <MenuItem>
+                    <button onClick={ ()=>{navigate('/admin/listing-requests')}}
+                            className="group flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-gray-700 hover:bg-[var(--gold-accent)]/10 hover:text-[var(--gold-accent)] data-focus:bg-[var(--gold-accent)]/10 transition-all">
+                      <div className="p-1.5 rounded-lg bg-amber-50 group-hover:bg-amber-100 transition-colors">
+                        <IoHomeSharp className="text-amber-700" size={16} />
+                      </div>
+                      <span className="font-medium">Seller Requests</span>
+                      {pendingListingRequestsCount > 0 && (
+                        <span className="ml-auto bg-red-500 text-white text-xs font-bold rounded-full px-2 py-0.5 min-w-[20px] text-center">
+                          {pendingListingRequestsCount}
+                        </span>
+                      )}
                     </button>
                   </MenuItem>
                   
@@ -161,13 +193,6 @@ function NavbarAdmin() {
             </li>
           </ul>
 
-          {/* Mobile Menu Button */}
-          <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="lg:hidden text-white p-2 hover:bg-white/10 rounded-lg transition-colors"
-          >
-            {mobileMenuOpen ? <IoClose size={28} /> : <IoMenu size={28} />}
-          </button>
         </div>
 
         {/* Mobile Menu */}
@@ -192,6 +217,27 @@ function NavbarAdmin() {
                 >
                   <IoBagAdd size={18} className="text-[var(--citrus-lime)]" />
                   <span className="font-medium">Add Property</span>
+                </button>
+
+                <button
+                  onClick={() => { navigate('/sell'); setMobileMenuOpen(false); }}
+                  className="w-full flex items-center gap-3 px-3 py-2.5 text-white/90 hover:bg-white/10 rounded-2xl transition-colors"
+                >
+                  <IoPricetagOutline size={18} className="text-[var(--gold-accent)]" />
+                  <span className="font-medium">Sell Your Home</span>
+                </button>
+
+                <button
+                  onClick={() => { navigate('/admin/listing-requests'); setMobileMenuOpen(false); }}
+                  className="w-full flex items-center gap-3 px-3 py-2.5 text-white/90 hover:bg-white/10 rounded-2xl transition-colors"
+                >
+                  <IoHomeSharp size={18} className="text-[var(--ember-orange)]" />
+                  <span className="font-medium">Seller Requests</span>
+                  {pendingListingRequestsCount > 0 && (
+                    <span className="ml-auto bg-white text-[var(--soft-black)] text-xs font-bold rounded-full px-2 py-0.5 min-w-[20px] text-center">
+                      {pendingListingRequestsCount}
+                    </span>
+                  )}
                 </button>
 
                 <button

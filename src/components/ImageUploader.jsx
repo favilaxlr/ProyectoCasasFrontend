@@ -1,8 +1,12 @@
 import { useState, useRef } from 'react';
 import { addImagesRequest } from '../api/properties';
 import { IoCloseCircle, IoStarSharp, IoStar, IoArrowBack, IoArrowForward } from 'react-icons/io5';
+import { toast } from 'react-toastify';
 
-function ImageUploader({ propertyId, onImagesUploaded, initialImages = [], onChange }) {
+const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+const MAX_FILE_SIZE = 5 * 1024 * 1024;
+
+function ImageUploader({ propertyId, onImagesUploaded, initialImages = [], onChange, maxFiles = 10 }) {
     const [uploading, setUploading] = useState(false);
     const [dragOver, setDragOver] = useState(false);
     const [previewImages, setPreviewImages] = useState(initialImages);
@@ -12,10 +16,36 @@ function ImageUploader({ propertyId, onImagesUploaded, initialImages = [], onCha
     const handleFileSelect = async (files) => {
         if (!files || files.length === 0) return;
 
-        console.log('📸 Selected files:', files.length);
+        const selected = Array.from(files);
+        const remainingSlots = Math.max(0, maxFiles - previewImages.length);
+        if (remainingSlots === 0) {
+            toast.error(`You can add up to ${maxFiles} photos`);
+            return;
+        }
+
+        const accepted = [];
+        for (const file of selected.slice(0, remainingSlots)) {
+            if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
+                toast.error(`${file.name} is not a supported image type`);
+                continue;
+            }
+            if (file.size > MAX_FILE_SIZE) {
+                toast.error(`${file.name} exceeds 5MB`);
+                continue;
+            }
+            accepted.push(file);
+        }
+
+        if (selected.length > remainingSlots) {
+            toast.error(`You can add up to ${maxFiles} photos`);
+        }
+
+        if (accepted.length === 0) return;
+
+        console.log('📸 Selected files:', accepted.length);
 
         // Create preview URLs for the selected files
-        const newPreviews = Array.from(files).map((file, index) => ({
+        const newPreviews = accepted.map((file, index) => ({
             file,
             url: URL.createObjectURL(file),
             isMain: previewImages.length === 0 && index === 0

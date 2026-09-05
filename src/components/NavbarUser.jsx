@@ -1,7 +1,7 @@
 import {Link, useNavigate} from 'react-router';
 import { useAuth } from '../context/AuthContext';
 import Logo from './Logo';
-import { IoPerson, IoChevronDownSharp, IoBagOutline, IoLogOutOutline, IoCartOutline, IoCashOutline, IoMenu, IoClose} from 'react-icons/io5'
+import { IoPerson, IoChevronDownSharp, IoBagOutline, IoLogOutOutline, IoCartOutline, IoCashOutline, IoMenu, IoClose, IoPricetagOutline} from 'react-icons/io5'
 import {Menu, MenuButton, MenuItem, MenuItems} from '@headlessui/react';
 import { useState, useEffect } from 'react';
 import { getUserOffersRequest } from '../api/offers';
@@ -36,7 +36,14 @@ function NavbarUser() {
 
   return (
     <>
-    <nav className="navbar flex justify-between items-center py-3 px-4 md:my-3 md:mx-3 md:py-5 md:px-10 shadow-[0_25px_60px_rgba(3,8,24,0.65)] backdrop-blur-2xl border border-white/10 sticky top-0 z-[10000]">
+    <nav className="navbar relative flex justify-between items-center py-3 px-4 md:my-3 md:mx-3 md:py-5 md:px-10 shadow-[0_25px_60px_rgba(3,8,24,0.65)] backdrop-blur-2xl border border-white/10 sticky top-0 z-[10000]">
+       <button
+         onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+         aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
+         className="md:hidden text-white p-2 hover:bg-white/15 rounded-xl transition-colors absolute left-4 z-10"
+       >
+         {mobileMenuOpen ? <IoClose size={28} /> : <IoMenu size={28} />}
+       </button>
        <Link to='/' className="hover:scale-105 transition-transform duration-300 mx-auto md:absolute md:left-1/2 md:transform md:-translate-x-1/2">
          <Logo size="small" className="md:size-medium" />
        </Link>
@@ -61,6 +68,13 @@ function NavbarUser() {
                     className="group flex w-full items-center gap-2 rounded-lg px-3 py-1.5 text-gray-700 hover:bg-gray-100 data-focus:bg-gray-100">
               <IoBagOutline className="text-gray-500" size={20} />
               View Properties
+            </button>
+          </MenuItem>
+          <MenuItem>
+            <button onClick={ ()=>{navigate('/sell')}} 
+                    className="group flex w-full items-center gap-2 rounded-lg px-3 py-1.5 text-gray-700 hover:bg-gray-100 data-focus:bg-gray-100">
+              <IoPricetagOutline className="text-gray-500" size={20} />
+              Sell Your Home
             </button>
           </MenuItem>
           <MenuItem>
@@ -119,13 +133,6 @@ function NavbarUser() {
         </li>
        </ul>
 
-       {/* Mobile Menu Button */}
-       <button
-         onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-         className="md:hidden text-white p-2 hover:bg-white/10 rounded-lg transition-colors"
-       >
-         {mobileMenuOpen ? <IoClose size={28} /> : <IoMenu size={28} />}
-       </button>
 
        {/* Mobile Menu */}
        {mobileMenuOpen && (
@@ -137,6 +144,14 @@ function NavbarUser() {
              >
                <IoBagOutline size={20} className="text-[var(--electric-sky)]" />
                <span className="font-medium">View Properties</span>
+             </button>
+
+             <button
+               onClick={() => { navigate('/sell'); setMobileMenuOpen(false); }}
+               className="w-full flex items-center gap-3 px-4 py-3 text-white/90 hover:bg-white/10 rounded-2xl transition-colors"
+             >
+               <IoPricetagOutline size={20} className="text-[var(--citrus-lime)]" />
+               <span className="font-medium">Sell Your Home</span>
              </button>
              
              <button

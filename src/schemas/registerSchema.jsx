@@ -32,17 +32,13 @@ export const registerSchema = z.object({
         .min(6, 'Password must be at least 6 characters')
         .max(20, 'Password too long'),
 
-    smsConsent: z.literal(true, {
-        errorMap: () => ({ message: 'You must agree to receive SMS messages from FR Family Investments.' })
+    smsConsent: z.boolean().refine((value) => value === true, {
+        message: 'You must agree to receive SMS messages from FR Family Investments.'
     }),
 
-        confirm: z
-            .string('Confirm password')
-            .min(6, 'Confirmation must be at least 6 characters'),
-
-        termsAccepted: z.literal(true, {
-            errorMap: () => ({ message: 'You must agree to the Terms of Service and Privacy Policy.' })
-        })
+    confirm: z
+        .string('Confirm password')
+        .min(6, 'Confirmation must be at least 6 characters')
 })
     .refine((data) => data.password === data.confirm, {
         message: "Passwords do not match",

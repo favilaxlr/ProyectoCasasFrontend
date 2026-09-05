@@ -14,7 +14,7 @@ function VerificationPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [isResending, setIsResending] = useState(false);
   const [cooldownTime, setCooldownTime] = useState(0);
-  const userEmail = location.state?.email || '';
+  const [userEmail, setUserEmail] = useState(location.state?.email || '');
   const userPhone = location.state?.phone || '';
   
   // Function to mask the phone showing only the last 4 digits
@@ -36,6 +36,11 @@ function VerificationPage() {
   }, [cooldownTime]);
 
   const onSubmit = handleSubmit(async (values) => {
+    if (!userEmail) {
+      toast.error('Enter the email you used to register');
+      return;
+    }
+
     setIsLoading(true);
     try {
       const response = await verifyCodeRequest({
@@ -106,7 +111,17 @@ function VerificationPage() {
           <div className="space-y-2 text-sm">
             <div className="flex items-center justify-center text-[var(--gold-accent)] font-semibold">
               <IoMailSharp className="w-5 h-5 mr-2" />
-              <span>{userEmail}</span>
+              {userEmail ? (
+                <span>{userEmail}</span>
+              ) : (
+                <input
+                  type="email"
+                  value={userEmail}
+                  onChange={(e) => setUserEmail(e.target.value.trim())}
+                  placeholder="your@email.com"
+                  className="px-3 py-1 border-2 border-gray-200 rounded-lg text-sm text-[var(--charcoal)] font-normal"
+                />
+              )}
             </div>
             {userPhone && (
               <div className="flex items-center justify-center text-[var(--gold-accent)] font-semibold">

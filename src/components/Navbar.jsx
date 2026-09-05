@@ -3,7 +3,7 @@ import NavbarUser from "./NavbarUser";
 import Logo from "./Logo";
 import { useAuth } from '../context/AuthContext';
 import { Link } from 'react-router';
-import { IoPersonAdd, IoLogIn, IoMenu, IoClose, IoHomeSharp, IoEyeOutline } from 'react-icons/io5';
+import { IoPersonAdd, IoLogIn, IoMenu, IoClose, IoEyeOutline, IoPricetagOutline } from 'react-icons/io5';
 import Tooltip from '@mui/material/Tooltip';
 import { useState } from 'react';
 
@@ -20,19 +20,18 @@ function Navbar() {
   return (
     <nav className="navbar flex flex-col lg:flex-row justify-between items-center py-3 md:py-6 px-4 md:px-6 lg:px-10 shadow-2xl backdrop-blur-sm relative z-[10000] rounded-none">
       {/* Contenedor para móvil y tablet */}
-      <div className="flex lg:hidden justify-center items-center w-full relative">
-        {/* Logo centrado en móvil/tablet */}
-        <Link to='/' className="hover:scale-105 transition-transform duration-300">
-          <Logo size="small" className="md:h-10" />
-        </Link>
-        
-        {/* Mobile Menu Button - posicionado a la derecha */}
+      <div className="flex lg:hidden justify-center items-center w-full relative min-h-10">
         <button
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="text-white p-2 hover:bg-white/10 rounded-lg transition-colors absolute right-0"
+          aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
+          className="text-white p-2 hover:bg-white/15 rounded-xl transition-colors absolute left-0 z-10"
         >
           {mobileMenuOpen ? <IoClose size={28} /> : <IoMenu size={28} />}
         </button>
+
+        <Link to='/' className="hover:scale-105 transition-transform duration-300">
+          <Logo size="small" className="md:h-10" />
+        </Link>
       </div>
 
       {/* Logo centrado en desktop grande - posición absoluta */}
@@ -48,6 +47,14 @@ function Navbar() {
         >
           <IoEyeOutline size={20} />
           View Properties
+          <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-[var(--gold-accent)] transition-all duration-300 group-hover:w-full"></span>
+        </Link>
+        <Link 
+          to='/sell' 
+          className="flex items-center gap-2 text-white hover:text-[var(--gold-accent)] font-medium text-base xl:text-lg transition-all duration-300 hover:scale-105 relative group whitespace-nowrap"
+        >
+          <IoPricetagOutline size={20} />
+          Sell Your Home
           <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-[var(--gold-accent)] transition-all duration-300 group-hover:w-full"></span>
         </Link>
         
@@ -84,6 +91,14 @@ function Navbar() {
           >
             <IoEyeOutline size={20} />
             <span>View Properties</span>
+          </Link>
+          <Link 
+            to='/sell'
+            onClick={() => setMobileMenuOpen(false)}
+            className="flex items-center gap-3 text-white hover:text-[var(--gold-accent)] font-medium text-base transition-all duration-300 py-2 px-3 rounded-lg hover:bg-white/10"
+          >
+            <IoPricetagOutline size={20} />
+            <span>Sell Your Home</span>
           </Link>
           
           <Link 

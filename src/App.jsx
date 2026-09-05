@@ -33,6 +33,9 @@ import AdminOfferDetailPage from './pages/AdminOfferDetailPage';
 import CookieConsent from './components/CookieConsent';
 import AboutPage from './pages/AboutPage';
 import ContactPage from './pages/ContactPage';
+import SellPage from './pages/SellPage';
+import AdminListingRequestsPage from './pages/AdminListingRequestsPage';
+import AdminListingRequestDetailPage from './pages/AdminListingRequestDetailPage';
 
 function App() {
   const [toastTheme, setToastTheme] = useState('light');
@@ -79,6 +82,7 @@ function App() {
                 <Route path='/verify' element={<VerificationPage/>} />
                 <Route path='/about' element={<AboutPage/>} />
                 <Route path='/contact' element={<ContactPage/>} />
+                <Route path='/sell' element={<SellPage/>} />
                 <Route path='/privacy-policy' element={<PrivacyPolicyPage/>} />
                 <Route path='/terms-of-service' element={<TermsOfServicePage/>} />
 
@@ -106,6 +110,8 @@ function App() {
                 {/* Rutas solo para Admin */}
                 <Route element={<AdminOnlyRoute />}>
                   <Route path='/admin/users' element={<UsersManagementPage/>} />
+                  <Route path='/admin/listing-requests' element={<AdminListingRequestsPage />} />
+                  <Route path='/admin/listing-requests/:id' element={<AdminListingRequestDetailPage />} />
                 </Route>
                 
                 <Route path="*" element={<NotFound />} />

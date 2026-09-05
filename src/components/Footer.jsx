@@ -32,6 +32,7 @@ export default function Footer() {
               <Link to="/about" className="hover:text-[var(--gold-accent)] transition-colors">About Us</Link>
               <Link to="/contact" className="hover:text-[var(--gold-accent)] transition-colors">Contact</Link>
               <Link to="/properties" className="hover:text-[var(--gold-accent)] transition-colors">Browse Properties</Link>
+              <Link to="/sell" className="hover:text-[var(--gold-accent)] transition-colors">Sell Your Home</Link>
             </nav>
           </div>
 

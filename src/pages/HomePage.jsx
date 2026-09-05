@@ -3,8 +3,8 @@ import { useAuth } from '../context/AuthContext'
 import { getAllPropertiesRequest } from '../api/properties'
 import PropertyCard from '../components/PropertyCard'
 import InteractiveMap from '../components/InteractiveMap'
-import Logo from '../components/Logo'
-import { IoLocationSharp, IoFunnelSharp, IoBusinessSharp, IoGlobeOutline, IoEarthSharp, IoCloseSharp, IoMenuSharp } from 'react-icons/io5'
+import { Link } from 'react-router'
+import { IoBusinessSharp, IoGlobeOutline, IoEarthSharp, IoCloseSharp, IoMenuSharp, IoPricetagOutline } from 'react-icons/io5'
 import WelcomeModal from '../components/WelcomeModal'
 
 function HomePage() {
@@ -91,7 +91,17 @@ function HomePage() {
       <WelcomeModal open={showWelcomeModal} onClose={handleCloseWelcomeModal} />
       {/* Header con Filtros - Responsive */}
       <div className="main-header px-4 md:px-6 py-3 md:py-4 flex-shrink-0 border-b border-gray-700/50 shadow-sm relative z-[100]">
-        <div className="flex justify-end items-center gap-2 md:gap-4">
+        <div className="flex justify-between lg:justify-end items-center gap-2 md:gap-4">
+          <Link
+            to="/sell"
+            className="lg:hidden flex items-center gap-1.5 md:gap-2 bg-[var(--gold-accent)] hover:opacity-90 text-white px-2.5 md:px-4 py-2 rounded-lg shadow-sm transition-all flex-shrink-0 text-xs md:text-sm font-semibold"
+          >
+            <IoPricetagOutline className="text-base md:text-lg flex-shrink-0" />
+            <span className="sm:hidden">Sell</span>
+            <span className="hidden sm:inline whitespace-nowrap">Sell Your Home</span>
+          </Link>
+
+          <div className="flex items-center gap-2 md:gap-4">
           {/* Filtro de Tipo de Operación */}
           <div className="flex items-center gap-1 md:gap-2 bg-white px-1.5 md:px-3 py-2 rounded-lg border border-gray-300 hover:border-[var(--gold-accent)] transition-all shadow-sm flex-shrink-0">
             <IoBusinessSharp className="text-[var(--gold-accent)] text-base md:text-lg flex-shrink-0" />
@@ -123,6 +133,7 @@ function HomePage() {
               </div>
             </div>
           )}
+          </div>
         </div>
       </div>
 

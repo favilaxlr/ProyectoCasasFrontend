@@ -20,7 +20,6 @@ function RegisterPage() {
   const { register, handleSubmit, formState: { errors }, control, setValue, watch } = useForm({
     resolver: zodResolver(registerSchema),
     defaultValues: {
-      termsAccepted: false,
       smsConsent: false,
       notificationCities: []
     }
@@ -235,7 +234,6 @@ function RegisterPage() {
                 <IoPhonePortraitSharp className="w-4 h-4 mr-2 text-[var(--gold-accent)]" />
                 Notification Cities
               </label>
-              <input type="hidden" {...register('notificationCities')} />
               {citiesLoading ? (
                 <p className="text-sm text-gray-500">Loading available cities...</p>
               ) : (
