@@ -5,6 +5,7 @@ import { IoPerson, IoLogOutOutline, IoChevronDownSharp, IoBagAdd, IoHomeSharp, I
 import {Menu, MenuButton, MenuItem, MenuItems} from '@headlessui/react';
 import { useNotificationCount } from '../hooks/useNotificationCount';
 import { useState } from 'react';
+import SellHomeLink from './SellHomeLink';
 
 function NavbarAdmin() {
   const {user, logOut} = useAuth();
@@ -31,9 +32,17 @@ function NavbarAdmin() {
           <Link to='/' className="hover:scale-105 transition-transform duration-300 mx-auto md:absolute md:left-1/2 md:transform md:-translate-x-1/2">
             <Logo size="small" className="md:size-medium" />
           </Link>
+          <SellHomeLink
+            variant="icon"
+            className="lg:hidden absolute right-3 z-10 w-10 h-10"
+            onClick={() => setMobileMenuOpen(false)}
+          />
 
           {/* Desktop Navigation Items */}
           <ul className="hidden lg:flex gap-3 items-center ml-auto">
+            <li>
+              <SellHomeLink variant="full" className="px-4 py-2.5 text-sm" />
+            </li>
             {/* Propiedades Menu */}
             <li className="relative">
               <Menu>

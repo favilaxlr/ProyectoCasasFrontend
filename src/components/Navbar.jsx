@@ -6,6 +6,7 @@ import { Link } from 'react-router';
 import { IoPersonAdd, IoLogIn, IoMenu, IoClose, IoEyeOutline, IoPricetagOutline } from 'react-icons/io5';
 import Tooltip from '@mui/material/Tooltip';
 import { useState } from 'react';
+import SellHomeLink from './SellHomeLink';
 
 function Navbar() {
     const { isAuthenticated, isAdmin, isCoAdmin} = useAuth();
@@ -32,6 +33,12 @@ function Navbar() {
         <Link to='/' className="hover:scale-105 transition-transform duration-300">
           <Logo size="small" className="md:h-10" />
         </Link>
+
+        <SellHomeLink
+          variant="icon"
+          className="absolute right-0 z-10 w-10 h-10"
+          onClick={() => setMobileMenuOpen(false)}
+        />
       </div>
 
       {/* Logo centrado en desktop grande - posición absoluta */}

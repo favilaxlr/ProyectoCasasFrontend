@@ -4,7 +4,14 @@ import { IoCloseCircle, IoStarSharp, IoStar, IoArrowBack, IoArrowForward } from 
 import { toast } from 'react-toastify';
 
 const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+const ALLOWED_IMAGE_EXTENSIONS = /\.(jpe?g|png|gif|webp)$/i;
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
+
+const isAllowedImage = (file) => {
+    if (ALLOWED_IMAGE_TYPES.includes(file.type)) return true;
+    if (!file.type && ALLOWED_IMAGE_EXTENSIONS.test(file.name || '')) return true;
+    return false;
+};
 
 function ImageUploader({ propertyId, onImagesUploaded, initialImages = [], onChange, maxFiles = 10 }) {
     const [uploading, setUploading] = useState(false);
@@ -25,7 +32,7 @@ function ImageUploader({ propertyId, onImagesUploaded, initialImages = [], onCha
 
         const accepted = [];
         for (const file of selected.slice(0, remainingSlots)) {
-            if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
+            if (!isAllowedImage(file)) {
                 toast.error(`${file.name} is not a supported image type`);
                 continue;
             }

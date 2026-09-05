@@ -293,9 +293,10 @@ function PropertyFormPage() {
                 formData.append('amenities', amenity);
             });
 
-            images.forEach(image => {
-                formData.append('images', image);
-            });
+            images
+                .map((image) => (image instanceof File ? image : image?.file))
+                .filter((file) => file instanceof File)
+                .forEach((file) => formData.append('images', file));
 
             let targetPropertyId = isEditing ? id : null;
 
@@ -337,11 +338,13 @@ function PropertyFormPage() {
             navigate(resolvePostSaveRoute(), { replace: true });
         } catch (error) {
             console.error('Error saving property:', error);
-            const errorMsg = error.response?.data?.message 
-                ? (Array.isArray(error.response.data.message) 
-                    ? error.response.data.message.join(', ') 
-                    : error.response.data.message)
-                : 'Error saving property';
+            const errorMsg = error.code === 'ECONNABORTED'
+                ? 'The upload timed out. Try fewer or smaller photos and save again.'
+                : error.response?.data?.message
+                    ? (Array.isArray(error.response.data.message)
+                        ? error.response.data.message.join(', ')
+                        : error.response.data.message)
+                    : (error.message || 'Error saving property');
             toast.error(errorMsg);
         } finally {
             setLoading(false);

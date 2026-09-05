@@ -8,9 +8,7 @@ export const getPropertyRequest = (id) => axios.get('/properties/public/' + id);
 export const getPropertiesRequest = () => axios.get('/properties');
 
 export const createPropertyRequest = (property) => axios.post('/properties', property, {
-    headers: {
-        'Content-Type': 'multipart/form-data'
-    }
+    timeout: 90000
 });
 
 export const updatePropertyRequest = (id, property) => axios.put('/properties/' + id, property);
@@ -19,9 +17,7 @@ export const deletePropertyRequest = (id) => axios.delete('/properties/' + id);
 
 // Gestión de imágenes
 export const addImagesRequest = (id, formData) => axios.post(`/properties/${id}/images`, formData, {
-    headers: {
-        'Content-Type': 'multipart/form-data'
-    }
+    timeout: 90000
 });
 
 export const deleteImageRequest = (propertyId, imageId) => 
@@ -33,17 +29,13 @@ export const setMainImageRequest = (propertyId, imageId) =>
 // Gestión de documentos
 export const uploadDocumentsRequest = (propertyId, formData) => 
     axios.post(`/properties/${propertyId}/documents`, formData, {
-        headers: {
-            'Content-Type': 'multipart/form-data'
-        }
+        timeout: 90000
     });
 
 // Gestión de videos
 export const uploadVideosRequest = (propertyId, formData) => 
     axios.post(`/properties/${propertyId}/videos`, formData, {
-        headers: {
-            'Content-Type': 'multipart/form-data'
-        }
+        timeout: 120000
     });
 
 export const deleteVideoRequest = (propertyId, videoId) => 

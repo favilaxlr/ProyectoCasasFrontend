@@ -2,6 +2,7 @@ import {Link, useNavigate} from 'react-router';
 import { useAuth } from '../context/AuthContext';
 import Logo from './Logo';
 import { IoPerson, IoChevronDownSharp, IoBagOutline, IoLogOutOutline, IoCartOutline, IoCashOutline, IoMenu, IoClose, IoPricetagOutline} from 'react-icons/io5'
+import SellHomeLink from './SellHomeLink';
 import {Menu, MenuButton, MenuItem, MenuItems} from '@headlessui/react';
 import { useState, useEffect } from 'react';
 import { getUserOffersRequest } from '../api/offers';
@@ -47,9 +48,17 @@ function NavbarUser() {
        <Link to='/' className="hover:scale-105 transition-transform duration-300 mx-auto md:absolute md:left-1/2 md:transform md:-translate-x-1/2">
          <Logo size="small" className="md:size-medium" />
        </Link>
+       <SellHomeLink
+         variant="icon"
+         className="md:hidden absolute right-4 z-10 w-10 h-10"
+         onClick={() => setMobileMenuOpen(false)}
+       />
        
        {/* Desktop Menu */}
        <ul className="hidden md:flex gap-x-4 items-center ml-auto">
+        <li>
+          <SellHomeLink variant="full" className="px-4 py-2 text-sm" />
+        </li>
         <li>
         <Menu>
         <MenuButton className="inline-flex items-center gap-2 rounded-2xl px-4 py-2 text-sm font-semibold text-white/90 bg-white/10 border border-white/10 hover:border-white/40 hover:bg-white/20 transition-all backdrop-blur-sm">
