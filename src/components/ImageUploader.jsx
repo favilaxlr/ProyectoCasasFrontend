@@ -2,14 +2,15 @@ import { useState, useRef } from 'react';
 import { addImagesRequest } from '../api/properties';
 import { IoCloseCircle, IoStarSharp, IoStar, IoArrowBack, IoArrowForward } from 'react-icons/io5';
 import { toast } from 'react-toastify';
+import { compressImageFile } from '../utils/compressImage';
 
-const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
-const ALLOWED_IMAGE_EXTENSIONS = /\.(jpe?g|png|gif|webp)$/i;
-const MAX_FILE_SIZE = 5 * 1024 * 1024;
+const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp', 'image/heic', 'image/heif'];
+const ALLOWED_IMAGE_EXTENSIONS = /\.(jpe?g|png|gif|webp|hei[cf])$/i;
+const MAX_FILE_SIZE = 20 * 1024 * 1024;
 
 const isAllowedImage = (file) => {
-    if (ALLOWED_IMAGE_TYPES.includes(file.type)) return true;
-    if (!file.type && ALLOWED_IMAGE_EXTENSIONS.test(file.name || '')) return true;
+    if (ALLOWED_IMAGE_TYPES.includes((file.type || '').toLowerCase())) return true;
+    if (ALLOWED_IMAGE_EXTENSIONS.test(file.name || '')) return true;
     return false;
 };
 
@@ -37,10 +38,15 @@ function ImageUploader({ propertyId, onImagesUploaded, initialImages = [], onCha
                 continue;
             }
             if (file.size > MAX_FILE_SIZE) {
-                toast.error(`${file.name} exceeds 5MB`);
+                toast.error(`${file.name} is larger than 20MB`);
                 continue;
             }
-            accepted.push(file);
+            try {
+                accepted.push(await compressImageFile(file));
+            } catch (error) {
+                console.error('Error preparing image:', error);
+                accepted.push(file);
+            }
         }
 
         if (selected.length > remainingSlots) {
@@ -294,7 +300,7 @@ function ImageUploader({ propertyId, onImagesUploaded, initialImages = [], onCha
                         </button>
                     </div>
                     <p className="text-xs text-gray-500">
-                        PNG, JPG, GIF up to 5MB each (maximum 10 images)
+                        JPG, PNG, WEBP or HEIC. Photos are compressed automatically (maximum 10).
                     </p>
                 </div>
             </div>

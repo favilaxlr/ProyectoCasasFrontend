@@ -47,13 +47,7 @@ instance.interceptors.request.use(
 
         return config;
     },
-    (error) => {
-        if (response?.status === 401 || response?.status === 403) {
-            clearAuthToken();
-        }
-
-        return Promise.reject(error);
-    }
+    (error) => Promise.reject(error)
 );
 
 instance.interceptors.response.use(

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router';
-import { createPropertyRequest, getPropertyRequest, updatePropertyRequest, uploadDocumentsRequest, uploadVideosRequest, deleteVideoRequest } from '../api/properties';
+import { createPropertyRequest, getPropertyRequest, updatePropertyRequest, addImagesRequest, uploadDocumentsRequest, uploadVideosRequest, deleteVideoRequest } from '../api/properties';
 import PropertyGallery from '../components/PropertyGallery';
 import ImageUploader from '../components/ImageUploader';
 import VideoUploader from '../components/VideoUploader';
@@ -299,10 +299,9 @@ function PropertyFormPage() {
                 formData.append('amenities', amenity);
             });
 
-            images
+            const imageFiles = images
                 .map((image) => (image instanceof File ? image : image?.file))
-                .filter((file) => file instanceof File)
-                .forEach((file) => formData.append('images', file));
+                .filter((file) => file instanceof File);
 
             let targetPropertyId = isEditing ? id : null;
 
@@ -313,6 +312,22 @@ function PropertyFormPage() {
                 const response = await createPropertyRequest(formData);
                 toast.success('Property created successfully');
                 targetPropertyId = response?.data?._id || null;
+            }
+
+            if (imageFiles.length > 0 && targetPropertyId) {
+                try {
+                    const batchSize = 3;
+                    for (let index = 0; index < imageFiles.length; index += batchSize) {
+                        const imageFormData = new FormData();
+                        imageFiles.slice(index, index + batchSize).forEach((file) => {
+                            imageFormData.append('images', file);
+                        });
+                        await addImagesRequest(targetPropertyId, imageFormData);
+                    }
+                } catch (imageError) {
+                    console.error('Error uploading property images:', imageError);
+                    toast.error('Property saved, but some photos could not be uploaded. Open the listing and add them again.');
+                }
             }
 
             if (documents.length > 0 && targetPropertyId) {
