@@ -16,12 +16,14 @@ function PropertyCard({ property, compact = false }) {
 
   if (compact) {
     return (
-      <div className="card p-2 md:p-5 hover:shadow-xl transition-shadow overflow-hidden">
+      <div className={`card p-2 md:p-5 hover:shadow-xl transition-shadow overflow-hidden ${
+        property.status === 'VENDIDA' ? 'border-2 border-red-400 bg-red-50/70' : ''
+      }`}>
         <div className="flex flex-col md:flex-row md:space-x-4 space-y-2 md:space-y-0 mb-2 md:mb-3 min-w-0">
           {/* Imagen compacta */}
           <div className="flex-shrink-0 w-full md:w-40 lg:w-48">
             {mainImage ? (
-              <div className="w-full h-32 md:h-32 lg:h-36 rounded-lg overflow-hidden bg-gray-100 shadow-md flex items-center justify-center">
+              <div className="relative w-full h-32 md:h-32 lg:h-36 rounded-lg overflow-hidden bg-gray-100 shadow-md flex items-center justify-center">
                 <img
                   src={mainImage.url}
                   alt={property.title}
@@ -31,6 +33,11 @@ function PropertyCard({ property, compact = false }) {
                     setShowPreview(true);
                   }}
                 />
+                {property.status === 'VENDIDA' && (
+                  <span className="absolute top-2 left-2 bg-red-600 text-white text-[10px] md:text-xs font-bold px-2 py-0.5 rounded">
+                    SOLD
+                  </span>
+                )}
               </div>
             ) : (
               <div className="w-full h-32 md:h-32 lg:h-36 bg-gray-200 rounded-lg flex items-center justify-center">
@@ -176,7 +183,15 @@ function PropertyCard({ property, compact = false }) {
         <h1 className="text-xl font-bold text-[var(--charcoal)]">
           {property.title}
         </h1>
-        {property.availability?.isAvailable && (
+        {property.status === 'VENDIDA' ? (
+          <span className="bg-red-600 text-white px-2 py-1 rounded text-xs font-semibold">
+            Sold
+          </span>
+        ) : property.status === 'EN_CONTRATO' ? (
+          <span className="bg-orange-500 text-white px-2 py-1 rounded text-xs font-semibold">
+            Under contract
+          </span>
+        ) : (
           <span className="bg-green-500 text-white px-2 py-1 rounded text-xs">
             Available
           </span>

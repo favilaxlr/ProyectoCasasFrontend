@@ -56,7 +56,7 @@ function AllPropertiesPage() {
             <span>Back</span>
           </button>
           <h1 className="text-xl md:text-2xl font-bold text-white tracking-wide" style={{ fontFamily: "'Arial', sans-serif" }}>
-            Available Properties
+            Properties
           </h1>
         </div>
         
